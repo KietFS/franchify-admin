@@ -19,6 +19,7 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import {
+  BuildingStorefrontIcon,
   ChartBarSquareIcon,
   CurrencyDollarIcon,
   GiftIcon,
@@ -133,8 +134,7 @@ export default function MainLayout(props: ISideBarProps) {
     <UserCircleIcon className="h-6 w-6 text-gray-500" />,
     <TagIcon className="h-6 w-6 text-gray-500" />,
     <InboxStackIcon className="h-6 w-6 text-gray-500" />,
-    // <GiftIcon className="h-6 w-6 text-gray-500" />,
-    <CurrencyDollarIcon className="h-6 w-6 text-gray-500" />,
+    <BuildingStorefrontIcon className="h-6 w-6 text-gray-500" />,
   ];
 
   const activeIcons = [
@@ -142,8 +142,7 @@ export default function MainLayout(props: ISideBarProps) {
     <UserCircleIcon className="h-6 w-6 text-gray-500 font-semibold" />,
     <TagIcon className="h-6 w-6 text-gray-500 font-semibold" />,
     <InboxStackIcon className="h-6 w-6 text-gray-500 font-semibold" />,
-    // <GiftIcon className="h-6 w-6 text-gray-500" />,
-    <CurrencyDollarIcon className="h-6 w-6 text-gray-500 font-semibold" />,
+    <BuildingStorefrontIcon className="h-6 w-6 text-gray-500 font-semibold" />,
   ];
 
   const to = [

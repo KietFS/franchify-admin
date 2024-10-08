@@ -35,7 +35,7 @@ const StoreMangement = () => {
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
 
-  const getAllProducts = async () => {
+  const getAllStores = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
@@ -98,10 +98,10 @@ const StoreMangement = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: "bidId", headerName: "ID", width: 100 },
+    { field: "Id", headerName: "ID", width: 100 },
     {
       field: "product",
-      headerName: "Tên sản phẩm",
+      headerName: "Tên cửa hàng phẩm",
       width: 350,
       renderCell: (params: GridRenderCellParams<any>) => {
         return (
@@ -118,98 +118,11 @@ const StoreMangement = () => {
         );
       },
     },
-    {
-      field: "revenue",
-      headerAlign: "left",
-      align: "left",
-      headerName: "Số tiền thanh toán",
-      type: "number",
-      width: 100,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        return (
-          <div>
-            <div className="w-[120px]">
-              <p className="text-regular text-sm text-green-500">
-                {params.value?.toString()?.prettyMoney()}
-              </p>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      field: "priceWin",
-      headerAlign: "left",
-      align: "left",
-      headerName: "Giá chiến thắng",
-      type: "number",
-      width: 150,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        return (
-          <div>
-            <div className="w-[120px]">
-              <p>{params.value?.toString()?.prettyMoney()}</p>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      field: "winner",
-      headerAlign: "left",
-      align: "left",
-      headerName: "Người chiến thắng",
-      type: "text",
-      width: 200,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        return (
-          <div>
-            <div className="w-[120px]">
-              <p>{params.value || "Không có thông tin"}</p>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      field: "bidClosingDate",
-      headerAlign: "left",
-      align: "left",
-      headerName: "Ngày chiến thắng",
-      type: "text",
-      width: 200,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        return (
-          <div>
-            <div className="w-[120px]">
-              <p className="text-gray-500 text-sm font-regualr">
-                {params.value?.toString()?.prettyDate() || "Không có thông tin"}
-              </p>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      field: "sellerPaymentStatus",
-      headerAlign: "left",
-      align: "left",
-      headerName: "Trạng thái thanh toán",
-      type: "number",
-      width: 150,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        return (
-          <div>
-            <PaymentStatusBadge status={params?.value as any} />
-          </div>
-        );
-      },
-    },
   ];
 
   React.useEffect(() => {
     if (!!user) {
-      getAllProducts();
+      getAllStores();
     }
   }, [user]);
 
@@ -245,7 +158,6 @@ const StoreMangement = () => {
                 columns={columns}
                 hideFooterPagination
                 disableSelectionOnClick
-                // onPageChange={(current) => setPage(current)}
                 onSelectionModelChange={(newSelectionModel) => {
                   setDeleteDisable(!deleteDisable);
                   setSelectionModel(newSelectionModel);

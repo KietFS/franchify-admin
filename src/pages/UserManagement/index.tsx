@@ -59,6 +59,8 @@ const UserManagement = () => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "username", headerName: "Tên người dùng", width: 400 },
+    { field: "email", headerName: "Email", width: 250 },
+    { field: "phoneNumber", headerName: "Số điện thoại", width: 200 },
     {
       field: "isActive",
       headerName: "Trạng thái",
@@ -159,14 +161,14 @@ const UserManagement = () => {
     const { addLoadingEffect } = params || {};
     try {
       addLoadingEffect && setLoading(true);
-      const response = await axios.get(
-        `${apiURL}/profiles?page=${page - 1}&size=${ROW_PER_PAGE}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await axios.get(`http://localhost:4000/tenant/users`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response) {
+        console.log("response is", response);
+      }
       if (response?.data?.success == true) {
         setUsers(response?.data?.data);
         setTotalPage(response?.data?._totalPage);
