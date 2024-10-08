@@ -1,15 +1,14 @@
 import React, { ReactComponentElement, ReactNode } from "react";
 
 import {
+  BuildingStorefrontIcon,
   ChartBarSquareIcon,
-  CurrencyDollarIcon,
-  GiftIcon,
   InboxStackIcon,
   TagIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Header from "../../components/Header";
-import { Link, useLocation, useParams, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 
 interface IMainLayoutProps {
   children: ReactNode;
@@ -58,9 +57,9 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
 
         <Link to="/payment-management">
           <div className="flex items-center space-x-3  py-4 px-4 hover:bg-gray-100 cursor-pointer">
-            <CurrencyDollarIcon className="h-6 w-6 text-gray-500" />
+            <BuildingStorefrontIcon className="h-6 w-6 text-gray-500" />
             <p className="text-gray-500 font-semibold text-lg">
-              Quản lý thanh toán
+              Quản lý cửa hàng
             </p>
           </div>
         </Link>

@@ -4,7 +4,7 @@ import { IUser } from "../../../types/user";
 export type IInputMode = "INPUT_OTP" | "INPUT_PHONE_NUMBER";
 interface IInitialState {
   isAuth: boolean;
-  accessToken: string;
+  accessToken: string | null;
   user: IUser | null;
   openSideBar: boolean;
 }
@@ -23,7 +23,7 @@ const authSlice = createSlice({
     setAuth: (state, actions: PayloadAction<boolean>) => {
       state.isAuth = actions.payload;
     },
-    setAccessToken: (state, actions: PayloadAction<string>) => {
+    setAccessToken: (state, actions: PayloadAction<string | null>) => {
       state.accessToken = actions.payload;
     },
     setUser: (state, actions: PayloadAction<IUser | null>) => {

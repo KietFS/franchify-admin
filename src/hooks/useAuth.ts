@@ -54,10 +54,6 @@ export const useAuth = () => {
     }
   };
 
-  useEffect(() => {
-    user && localStorage.setItem("admin", JSON.stringify(user));
-  }, [user]);
-
   const googleLogin = async () => {
     try {
       setLoginLoading(true);

@@ -7,15 +7,12 @@ import {
   GridValueGetterParams,
 } from "@mui/x-data-grid";
 import MainLayout from "../../components/SIdeBar";
-import { Button, Pagination, Skeleton, TablePagination } from "@mui/material";
+import { Pagination } from "@mui/material";
 import axios from "axios";
 import { useAppSelector } from "../../hooks/useRedux";
 import { IRootState } from "../../redux";
-import Spinner from "../../components/Spinner";
 import { apiURL } from "../../config/constanst";
 import LoadingSkeleton from "../../components/LoadingSkeleton";
-import ActionMenu from "../../components/ActionMenu";
-import { toast } from "react-toastify";
 import PaymentStatusBadge from "../../components/PaymentStatusBadge";
 
 interface IItemProps {
@@ -26,7 +23,7 @@ interface IItemProps {
   username: string;
 }
 
-const PaymentManagement = () => {
+const StoreMangement = () => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
   const [selectionModel, setSelectionModel] =
     React.useState<GridSelectionModel>([]);
@@ -264,4 +261,4 @@ const PaymentManagement = () => {
   );
 };
 
-export default PaymentManagement;
+export default StoreMangement;

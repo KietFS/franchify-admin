@@ -6,11 +6,12 @@ import LoginPage from "../pages/Auth/Login";
 import { useAppSelector } from "../hooks/useRedux";
 import { IRootState } from "../redux";
 import CategoryMangement from "../pages/CategoryManagement";
-import PaymentManagement from "../pages/RevenueMangement";
+import StoreMangement from "../pages/StoreManagement";
 
 export default function RootApp() {
   const { accessToken } = useAppSelector((state: IRootState) => state.auth);
-  const isExited = localStorage.getItem("admin");
+
+  console.log("accessToken is", accessToken);
 
   return (
     <div>
@@ -37,7 +38,7 @@ export default function RootApp() {
         <ProductManagement />
       </Route>
       <Route path="/payment-management">
-        <PaymentManagement />
+        <StoreMangement />
       </Route>
       <Route path="/login">
         <LoginPage />

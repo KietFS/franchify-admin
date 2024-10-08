@@ -157,21 +157,8 @@ export default function MainLayout(props: ISideBarProps) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} sx={{ backgroundColor: "#4b5563" }}>
+      <AppBar position="fixed" open={true} sx={{ backgroundColor: "#4b5563" }}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: "none" }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-
           <Box
             sx={{
               display: "flex",
@@ -186,7 +173,7 @@ export default function MainLayout(props: ISideBarProps) {
           </Box>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={true}>
         <DrawerHeader
           sx={{ pl: 4 }}
           style={{ display: "flex", justifyContent: "space-between" }}
@@ -202,7 +189,7 @@ export default function MainLayout(props: ISideBarProps) {
             "Quản lý người dùng",
             "Quản lý danh mục",
             "Quản lý sản phẩm",
-            "Quản lý thanh toán",
+            "Quản lý cửa hàng",
           ].map((text, index) => (
             <Link to={to[index]}>
               <ListItem key={text} disablePadding sx={{ display: "block" }}>
@@ -210,16 +197,15 @@ export default function MainLayout(props: ISideBarProps) {
                   sx={{
                     minHeight: 48,
                     mb: 2,
-                    justifyContent: open ? "initial" : "center",
+                    justifyContent: "initial",
                     px: 4,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 3 : "auto",
+                      mr: 3,
                       color: path == to[index] ? "primary" : "black",
-                      justifyContent: "center",
                     }}
                     color={path == to[index] ? "blue" : "black"}
                   >
