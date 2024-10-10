@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material";
 import React from "react";
 
 type IButtonVariant = "primary" | "secondary" | "red";
@@ -24,7 +25,7 @@ const Button: React.FC<IButtonProps> = (props) => {
 
   return (
     <button
-      className={`items-center rounded-lg px-4 py-2 text-center w-fit flex hover:opacity-50 ${className} ${
+      className={`items-center min-w-[200px] justify-center rounded-lg px-4 py-2 text-center w-fit flex hover:opacity-50 ${className} ${
         variant === "primary" && "bg-gray-500"
       } ${variant === "secondary" && "bg-white"}
       ${variant === "red" && "bg-red-500"} ${
@@ -37,8 +38,7 @@ const Button: React.FC<IButtonProps> = (props) => {
     >
       {isLoading ? (
         <>
-          <div className="mr-2">{title}</div>
-          ...
+          <CircularProgress sx={{ color: "white" }} />
         </>
       ) : (
         title

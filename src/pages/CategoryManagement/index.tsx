@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
   DataGrid,
@@ -22,6 +21,8 @@ import CustomFieldDialog from "./CustomFieldsDialog";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useHistory } from "react-router-dom";
 import CreateCategoryDialog from "./CreateCategoryDialog";
+import { useDispatch } from "react-redux";
+import { setListCategory } from "../../redux/slices/category";
 
 const CategoryMangement = () => {
   //state
@@ -35,6 +36,8 @@ const CategoryMangement = () => {
   const [selectedRow, setSelectedRow] = React.useState<string | number>("");
   const [openCreateDialog, setOpenCreateDialog] =
     React.useState<boolean>(false);
+
+  const dispatch = useDispatch();
 
   //hooks
   const { user, accessToken } = useAppSelector(
@@ -61,6 +64,7 @@ const CategoryMangement = () => {
       });
       if (response?.data.success) {
         setCategories(response?.data?.data?.data);
+        dispatch(setListCategory(response?.data?.data?.data));
       }
     } catch (error) {
       console.log("GET PRODUCT CATEGORY ERROR", error);
@@ -80,6 +84,7 @@ const CategoryMangement = () => {
       if (response?.data?.success) {
         setLoading(false);
         response && setCategories(response?.data?.data);
+        dispatch(setListCategory(response?.data?.data?.data));
       }
     } catch (error) {
       setLoading(false);

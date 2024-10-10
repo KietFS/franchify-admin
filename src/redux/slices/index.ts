@@ -1,8 +1,8 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import auth from "./auth";
-import filter from "./filter";
+import categories from "./category";
 
 export const reducer = combineReducers({
   auth,
-  filter,
+  categories,
 });

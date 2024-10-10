@@ -53,6 +53,7 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
     onClickEvent,
     onChangeValue,
     mode = "text",
+    placeholder,
   } = props;
   const { setFieldValue } = useFormikContext();
   const [field, meta] = useField(props.name);
@@ -127,7 +128,7 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
         )}
       </div>
       <div
-        className={`flex  border w-80 ${
+        className={`flex  border w-full ${
           focus && !isError
             ? "border-2 border-gray-500"
             : isError
@@ -145,7 +146,9 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
           <>{(objectTypes as any)?.[mode]?.icon}</>
         </div>
         <input
-          placeholder={(objectTypes as any)?.[mode]?.placeholder || ""}
+          placeholder={
+            placeholder || (objectTypes as any)?.[mode]?.placeholder || ""
+          }
           {...field}
           onBlur={handleOnBlur}
           type={
