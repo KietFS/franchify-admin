@@ -1,11 +1,24 @@
 declare module "@heroicons/react/outline";
 declare module "styled-components";
 
+interface ProductPrice {
+  price: number;
+  displayPrice: string;
+  salePrice?: number;
+  displaySalePrice?: string;
+}
+
 interface IProduct {
   id: string;
-  name: string;
   upc: string;
+  name: string;
+  price: ProductPrice;
+  isOnSale?: boolean;
   fullDescription?: string;
+  shortDescription?: string;
+  nutritionInformations?: string;
+  categoryId?: number;
+  images?: string[];
 }
 
 interface IProductCategory {

@@ -59,7 +59,7 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
         renderValue={(value) => (
           <div className="flex h-full items-center">
             <p className="text-gray-900 text-sm items-center  ">
-              {value[keyLabel]}
+              {optionSelected[keyLabel]}
             </p>
           </div>
         )}

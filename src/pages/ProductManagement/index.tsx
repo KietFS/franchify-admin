@@ -23,6 +23,7 @@ import ActionMenu from "../../components/ActionMenu";
 import { toast } from "react-toastify";
 import CustomDialog from "../../components/CustomDialog";
 import ProductForm from "./ProductForm";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 interface IProductHomePageResponse {
   id: string;
@@ -80,7 +81,7 @@ const ProductManagement = () => {
   const refreshProducts = async () => {
     try {
       const response = await axios.get(
-        `${apiURL}/products?&page=${page - 1}&size=10&sort=bidCreatedDate,desc`,
+        `${apiURL}/products?&page=${page - 1}&size=10`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -88,7 +89,7 @@ const ProductManagement = () => {
         }
       );
       if (response?.data?.success) {
-        setProducts(response?.data?.data);
+        setProducts(response?.data?.data?.results);
         setTotalPage(response?.data?._totalPage);
       } else {
         setProducts([]);
@@ -114,6 +115,14 @@ const ProductManagement = () => {
     {
       field: "createdAt",
       headerName: "Ngày tạo",
+      width: 150,
+      renderCell: (params: GridRenderCellParams<any>) => {
+        return <div>{(params.value as string).prettyDate()}</div>;
+      },
+    },
+    {
+      field: "updatedAt",
+      headerName: "Ngày cập nhật",
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
         return <div>{(params.value as string).prettyDate()}</div>;
@@ -175,7 +184,10 @@ const ProductManagement = () => {
     }
   };
 
-  const updateProduct = async (id: string | number) => {
+  const updateProduct = async (
+    id: string | number,
+    values: Omit<IProduct, "id">
+  ) => {
     try {
       setActionLoading(true);
       setSelectedRow(id);
@@ -188,6 +200,29 @@ const ProductManagement = () => {
         setActionLoading(false);
         refreshProducts();
         toast.success("Cập nhật sản phẩm thành công");
+        setOpenUpdateModal(false);
+      } else {
+        console.log("Error", response?.data?.data, response?.data?.error);
+      }
+    } catch (error) {
+      setActionLoading(false);
+      console.log("Client Error", error);
+    }
+  };
+
+  const createProduct = async (values: Omit<IProduct, "id">) => {
+    try {
+      setActionLoading(true);
+      const response = await axios.post(`${apiURL}/products/`, values, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response?.data?.success) {
+        setActionLoading(false);
+        refreshProducts();
+        toast.success("Thêm sản phẩm thành công");
+        setOpenUpdateModal(false);
       } else {
         console.log("Error", response?.data?.data, response?.data?.error);
       }
@@ -212,18 +247,19 @@ const ProductManagement = () => {
             </div>
           ) : (
             <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-              <div className="flex flex-row justify-between items-center">
-                <div></div>
-                <div className="flex flex-row gap-x-2">
-                  <Pagination
-                    onChange={(event, changedPage) => setPage(changedPage)}
-                    count={totalPage}
-                    defaultPage={1}
-                    page={page}
-                  />
-                </div>
+              <div className="flex flex-row-reverse gap-y-2 w-full">
+                <button
+                  onClick={() => {
+                    setOpenUpdateModal(true);
+                    setSelectedItem(null);
+                  }}
+                  className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
+                >
+                  <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
+                  <p>Thêm sản phẩm</p>
+                </button>
               </div>
-              <div className="h-[800px] w-full ">
+              <div className="h-[700px] w-full ">
                 <DataGrid
                   rows={products}
                   paginationMode="server"
@@ -240,6 +276,14 @@ const ProductManagement = () => {
                   selectionModel={selectionModel}
                   checkboxSelection={false}
                 />
+                <div className="flex gap-x-2 mt-4 flex-row-reverse">
+                  <Pagination
+                    onChange={(event, changedPage) => setPage(changedPage)}
+                    count={totalPage}
+                    defaultPage={1}
+                    page={page}
+                  />
+                </div>
               </div>
             </div>
           )
@@ -248,14 +292,25 @@ const ProductManagement = () => {
 
       {openUpdateModal ? (
         <CustomDialog
-          title="Chỉnh sửa sản phẩm"
+          title={!!selectedItem ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
           children={
             <ProductForm
               onClose={() => setOpenUpdateModal(false)}
-              loading={false}
+              loading={actionLoading}
               currentProduct={selectedItem}
+              onConfirm={(productValue) => {
+                if (!!selectedItem) {
+                  updateProduct(selectedItem?.id, productValue);
+                  // setOpenUpdateModal(false);
+                } else {
+                  createProduct({
+                    ...productValue,
+                  });
+                  // setOpenUpdateModal(false);
+                }
+              }}
             />
           }
         />
