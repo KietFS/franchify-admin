@@ -1,23 +1,11 @@
 declare module "@heroicons/react/outline";
 declare module "styled-components";
 
-type IProductCondition = "Used" | "Fullbox";
-
-type ICategoryProps = "Nam" | "Nữ" | "Unisex";
-
 interface IProduct {
   id: string;
   name: string;
-  condition: IProductCondition;
-  startPrice: number;
-  currentPrice: number;
-  imagePath: string[];
-  category: ICategoryProps;
-  brand: string;
-  color: string;
-  size: string;
-  bidIncrement: number;
-  bidClosingDate: string;
+  upc: string;
+  fullDescription?: string;
 }
 
 interface IProductCategory {
