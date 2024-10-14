@@ -17,8 +17,23 @@ interface IProduct {
   fullDescription?: string;
   shortDescription?: string;
   nutritionInformations?: string;
-  categoryId?: number;
+  category?: number;
   images?: string[];
+  thumbnail?: string;
+}
+
+interface IStoreProduct {
+  product: IProduct;
+  price: ProductPrice;
+  inventory: number;
+}
+
+interface IStore {
+  id: number;
+  storeCode: number;
+  supportPickup: boolean;
+  openTime: number;
+  closeTime: number;
 }
 
 interface IProductCategory {

@@ -6,8 +6,6 @@ import {
   GridSelectionModel,
 } from "@mui/x-data-grid";
 import MainLayout from "../../components/SIdeBar";
-
-//axios
 import axios from "axios";
 import { useAppSelector } from "../../hooks/useRedux";
 import { IRootState } from "../../redux";
@@ -24,12 +22,10 @@ import CreateCategoryDialog from "./CreateCategoryDialog";
 import { useDispatch } from "react-redux";
 import { setListCategory } from "../../redux/slices/category";
 
-const CategoryMangement = () => {
-  //state
+const CategoryManagement = () => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
   const [selectionModel, setSelectionModel] =
     React.useState<GridSelectionModel>([]);
-
   const [categories, setCategories] = React.useState<IProductCategory[]>([]);
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const [actionLoading, setActionLoading] = React.useState<boolean>(false);
@@ -38,58 +34,27 @@ const CategoryMangement = () => {
     React.useState<boolean>(false);
 
   const dispatch = useDispatch();
-
-  //hooks
   const { user, accessToken } = useAppSelector(
     (state: IRootState) => state.auth
   );
   const history = useHistory();
 
-  const handleNavigate = (id: string | number) => {
-    // Chuyển hướng đến một đường dẫn cụ thể (ví dụ: "/category/123")
-    history.push(`/category/${id}`);
-
-    // Hoặc bạn có thể sử dụng biến id động
-    // const categoryId = 123;
-    // history.push(`/category/${categoryId}`);
-  };
-
-  const getAllCategories = async () => {
+  const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:4000/category`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (response?.data.success) {
-        setCategories(response?.data?.data?.data);
-        dispatch(setListCategory(response?.data?.data?.data));
-      }
-    } catch (error) {
-      console.log("GET PRODUCT CATEGORY ERROR", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const refreshCategory = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`http://localhost:4000/category`, {
+      const response = await axios.get(`${apiURL}/category`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       if (response?.data?.success) {
-        setLoading(false);
-        response && setCategories(response?.data?.data);
+        setCategories(response?.data?.data?.data);
         dispatch(setListCategory(response?.data?.data?.data));
       }
     } catch (error) {
-      setLoading(false);
-      console.log("REFRESH CATEGORY ERORR", error);
+      console.error("GET PRODUCT CATEGORY ERROR", error);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -100,19 +65,24 @@ const CategoryMangement = () => {
     if (item.id !== null) {
       try {
         const response = await axios.put(
-          `${apiURL}/categories/${item.id}`,
-          item
+          `${apiURL}/category/${item.id}`,
+          item,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
         );
         if (response?.data?.success) {
           onSuccess();
           toast.success("Cập nhật danh mục thành công");
         } else {
           onSuccess();
-          toast.success("Cập nhật danh mục thất bại");
-          console.log("Update current category error");
+          toast.error("Cập nhật danh mục thất bại");
+          console.error("Update current category error");
         }
       } catch (error) {
-        console.log("Errors is", error);
+        console.error("Errors is", error);
       }
     }
   };
@@ -122,20 +92,50 @@ const CategoryMangement = () => {
     onSuccess: () => void
   ) => {
     try {
-      const response = await axios.post(`${apiURL}/categories/`, item);
+      const response = await axios.post(`${apiURL}/category/`, item, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       if (response?.data?.success) {
         onSuccess();
-        refreshCategory();
+        fetchCategories();
         toast.success("Tạo danh mục mới thành công");
       } else {
         onSuccess();
-        refreshCategory();
-        toast.success("Tạo danh mục mới thất bại thất bại");
+        fetchCategories();
+        toast.error("Tạo danh mục mới thất bại");
       }
     } catch (error) {
-      console.log("Errors is");
+      console.error("Errors is", error);
     }
   };
+
+  const removeCategory = async (id: string | number) => {
+    try {
+      setActionLoading(true);
+      setSelectedRow(id);
+      const response = await axios.delete(`${apiURL}/category/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response?.data?.success) {
+        fetchCategories();
+        toast.success("Xóa danh mục thành công");
+      } else {
+        console.error("Error", response?.data?.data, response?.data?.error);
+      }
+    } catch (error) {
+      console.error("Client Error", error);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
@@ -145,16 +145,15 @@ const CategoryMangement = () => {
       width: 460,
       renderCell: (params) => (
         <div className="w-[100px]">
-          {/* <img src={params.value?.split("?")[0]} width={80} height={60} /> */}
           <ViewHistoryCell
             category={params.row}
-            onUpdateItem={(retunredParams, actionSuccess) => {
-              updateCurrentCategory(retunredParams, () => {
+            onUpdateItem={(returnedParams, actionSuccess) => {
+              updateCurrentCategory(returnedParams, () => {
                 actionSuccess();
-                refreshCategory();
+                fetchCategories();
               });
             }}
-            onClose={() => refreshCategory()}
+            onClose={() => fetchCategories()}
           />
         </div>
       ),
@@ -162,18 +161,15 @@ const CategoryMangement = () => {
     {
       field: "properties",
       headerName: "Các trường",
-      renderCell: (params: GridRenderCellParams<string>) => {
-        return (
-          <div className="w-[100px]">
-            {/* <img src={params.value?.split("?")[0]} width={80} height={60} /> */}
-            <p>
-              {!!params?.row?.properties[0]?.name
-                ? `${params?.row?.properties[0]?.name}...`
-                : "Chưa có"}
-            </p>
-          </div>
-        );
-      },
+      renderCell: (params: GridRenderCellParams<string>) => (
+        <div className="w-[100px]">
+          <p>
+            {!!params?.row?.properties[0]?.name
+              ? `${params?.row?.properties[0]?.name}...`
+              : "Chưa có"}
+          </p>
+        </div>
+      ),
       width: 200,
     },
     {
@@ -184,39 +180,15 @@ const CategoryMangement = () => {
       headerAlign: "left",
       align: "left",
       renderCell: (params: GridRenderCellParams<any>) => {
-        const removeCategory = async (id: string | number) => {
-          try {
-            setActionLoading(true);
-            setSelectedRow(id);
-            //THIS NEED TO FIX
-            const response = await axios.delete(`${apiURL}/categories/${id}/`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
-
-            if (response?.data?.success) {
-              setActionLoading(false);
-
-              refreshCategory();
-              toast.success("Xóa danh mục thành công");
-            } else {
-              console.log("Error", response?.data?.data, response?.data?.error);
-            }
-          } catch (error) {
-            setActionLoading(false);
-            console.log("Client Error", error);
-          }
-        };
         const options = [
           {
             id: "delete",
             title: "Xóa danh mục",
             onPress: () => removeCategory(params.row?.id),
-            onActionSuccess: () => refreshCategory(),
+            onActionSuccess: () => fetchCategories(),
           },
         ];
-        return actionLoading && selectedRow == params.row?.id ? (
+        return actionLoading && selectedRow === params.row?.id ? (
           <Spinner size={20} />
         ) : (
           <ActionMenu options={options} />
@@ -225,60 +197,48 @@ const CategoryMangement = () => {
     },
   ];
 
-  React.useEffect(() => {
-    getAllCategories();
-  }, []);
-
   return (
     <>
       <MainLayout
         title="Danh sách các danh mục"
         content={
-          <>
-            {isLoading ? (
-              <div className="w-full h-full px-8 mt-20">
-                <LoadingSkeleton />
+          isLoading ? (
+            <div className="w-full h-full px-8 mt-20">
+              <LoadingSkeleton />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
+              <div className="flex justify-between">
+                <div></div>
+                <button
+                  onClick={() => setOpenCreateDialog(true)}
+                  className="bg-gray-500 text-white w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
+                >
+                  <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
+                  <p>Thêm danh mục</p>
+                </button>
               </div>
-            ) : (
-              <>
-                <div className="flex w-full justify-between">
-                  <div></div>
-                  <button
-                    onClick={() => setOpenCreateDialog(true)}
-                    className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
-                  >
-                    <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
-                    <p>Thêm danh mục</p>
-                  </button>
-                </div>
-                <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-                  <div className="flex flex-row justify-between items-center">
-                    <div></div>
-                    <div className="flex flex-row gap-x-2"></div>
-                  </div>
-                  <div className="h-[700px] w-full">
-                    <DataGrid
-                      rows={categories}
-                      columns={columns}
-                      pageSize={10}
-                      disableSelectionOnClick
-                      rowsPerPageOptions={[10]}
-                      onSelectionModelChange={(newSelectionModel) => {
-                        setDeleteDisable(!deleteDisable);
-                        setSelectionModel(newSelectionModel);
-                      }}
-                      selectionModel={selectionModel}
-                      checkboxSelection={false}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-          </>
+              <div className="h-[700px] w-full">
+                <DataGrid
+                  rows={categories}
+                  columns={columns}
+                  pageSize={10}
+                  disableSelectionOnClick
+                  rowsPerPageOptions={[10]}
+                  onSelectionModelChange={(newSelectionModel) => {
+                    setDeleteDisable(!deleteDisable);
+                    setSelectionModel(newSelectionModel);
+                  }}
+                  selectionModel={selectionModel}
+                  checkboxSelection={false}
+                />
+              </div>
+            </div>
+          )
         }
       />
 
-      {openCreateDialog ? (
+      {openCreateDialog && (
         <CreateCategoryDialog
           onClose={() => setOpenCreateDialog(false)}
           onOpenCustomFields={() => {}}
@@ -287,12 +247,12 @@ const CategoryMangement = () => {
           }
           open={openCreateDialog}
         />
-      ) : null}
+      )}
     </>
   );
 };
 
-export default CategoryMangement;
+export default CategoryManagement;
 
 interface IViewCustomFieldCellProps {
   category: IProductCategory;
@@ -323,19 +283,17 @@ const ViewHistoryCell: React.FC<IViewCustomFieldCellProps> = (props) => {
       >
         <p className="text-left mr-10">{props.category?.name}</p>
       </button>
-      {openPropertyDialog ? (
+      {openPropertyDialog && (
         <PropertiesDialog
           category={category}
           open={openPropertyDialog}
-          onClose={() => {
-            setOpenPropertyDialog(false);
-          }}
+          onClose={() => setOpenPropertyDialog(false)}
           onOpenCustomFields={handleOpenCustomField}
           onUpdateFields={(fields, actionSuccess) => {
             props.onUpdateItem(fields, actionSuccess);
           }}
         />
-      ) : null}
+      )}
 
       <CustomFieldDialog
         open={openCustomField}
@@ -343,7 +301,7 @@ const ViewHistoryCell: React.FC<IViewCustomFieldCellProps> = (props) => {
         onUpdateOptions={(value, actionSuccess) => {
           let cloned = category?.properties;
           category?.properties?.forEach((property, propertyIndex) => {
-            if (property?.name == currentItem?.name) {
+            if (property?.name === currentItem?.name) {
               cloned[propertyIndex].options = value;
             }
           });

@@ -49,7 +49,7 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
 
   const handleAddProperty = () => {
     let updatedProperties = [...propertyValues];
-    updatedProperties.push({ name: "", type: "text", options: [] });
+    updatedProperties.push({ name: "", type: "string", options: [] });
     setPropertyValues(updatedProperties);
   };
 
@@ -155,7 +155,7 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
                                   placeholder={`Chọn trường`}
                                   name={"type"}
                                   label={``}
-                                  options={["text", "number", "boolean"]}
+                                  options={["string", "number", "boolean"]}
                                   optionSelected={propertyValues?.[index].type}
                                   onSelect={(option) => {
                                     let clonedPropertyValue = [

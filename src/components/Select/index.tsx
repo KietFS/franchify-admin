@@ -25,6 +25,8 @@ const MenuProps = {
 };
 
 const SelectComponent: React.FC<ISelectProps> = (props) => {
+  console.log("optionSelected", props.optionSelected);
+
   const ref = useRef();
   const {
     name,

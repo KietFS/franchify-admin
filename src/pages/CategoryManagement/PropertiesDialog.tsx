@@ -64,22 +64,8 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
 
   const handleAddProperty = () => {
     let updatedProperties = [...propertyValues];
-    updatedProperties.push({ name: " ", type: "text", options: [] });
+    updatedProperties.push({ name: " ", type: "string", options: [] });
     setPropertyValues(updatedProperties);
-  };
-
-  const refreshProperties = async () => {
-    setIsRefresh(true);
-    try {
-      const response = await axios.get(`${apiURL}/categories/${category.id}/`);
-      if (response?.data?.data?.properties) {
-        setPropertyValues(response.data.data.properties);
-      }
-    } catch (error: any) {
-      console.error(`Error fetching properties: ${error?.message}`);
-    } finally {
-      setIsRefresh(false);
-    }
   };
 
   return (
@@ -189,7 +175,7 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
                                   placeholder={`Chọn trường`}
                                   name={"type"}
                                   label={``}
-                                  options={["text", "number", "boolean"]}
+                                  options={["string", "number", "boolean"]}
                                   optionSelected={propertyValues?.[index].type}
                                   onSelect={(option) => {
                                     let clonedPropertyValue = [
@@ -249,7 +235,7 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
                                 name: nameValue,
                                 properties: propertyValues,
                               },
-                              refreshProperties
+                              () => onClose()
                             );
                           }}
                         />

@@ -24,7 +24,7 @@ interface IProductFormProps {
   onConfirm: (values: IFormValue) => void;
 }
 
-const ProductForm: React.FC<IProductFormProps> = (props) => {
+const StoreProductForm: React.FC<IProductFormProps> = (props) => {
   const { currentProduct, onClose, loading, onConfirm } = props;
   const [initialValues, setInitialValues] = React.useState<IFormValue | null>(
     currentProduct || null
@@ -194,4 +194,4 @@ const ProductForm: React.FC<IProductFormProps> = (props) => {
   );
 };
 
-export default ProductForm;
+export default StoreProductForm;

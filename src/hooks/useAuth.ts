@@ -8,6 +8,7 @@ import { setAccessToken, setUser } from "../redux/slices/auth";
 import { useAppSelector } from "./useRedux";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import { apiURL } from "../config/constanst";
 
 export const useAuth = () => {
   const [loginWithGoogle] = useSignInWithGoogle(auth);
@@ -25,7 +26,7 @@ export const useAuth = () => {
   const login = async (phoneNumber: string, password: string) => {
     try {
       setLoginLoading(true);
-      const response = await axios.post("http://localhost:4000/tenant/signin", {
+      const response = await axios.post(`${apiURL}/tenant/signin`, {
         phoneNumber,
         password,
       });

@@ -54,11 +54,48 @@ const UserManagement = () => {
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
 
-  const ROW_PER_PAGE = 10;
-
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "username", headerName: "Tên người dùng", width: 400 },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 70,
+      renderHeader: () => <div className="text-gray-800 font-bold">ID</div>,
+    },
+    {
+      field: "username",
+      headerName: "Tên người dùng",
+      width: 250,
+      renderHeader: () => (
+        <div className="text-gray-800 font-bold">Tên người dùng</div>
+      ),
+    },
+    {
+      field: "role",
+      headerName: "Vai trò",
+      width: 250,
+      renderCell: (params) => {
+        switch (params.value) {
+          case "admin":
+            return (
+              <p className="px-2 py-1 text-yellow-800 bg-yellow-50 rounded-full text-xs font-bold">
+                Quản trị viên
+              </p>
+            );
+          case "staff":
+            return (
+              <p className="px-2 py-1 text-blue-800 bg-blue-50 rounded-full text-xs font-bold">
+                Nhân viên
+              </p>
+            );
+          default:
+            return (
+              <p className="px-2 py-1 text-green-800 bg-green-50 rounded-full text-xs font-bold">
+                Người dùng
+              </p>
+            );
+        }
+      },
+    },
     { field: "email", headerName: "Email", width: 250 },
     { field: "phoneNumber", headerName: "Số điện thoại", width: 200 },
     {
@@ -166,9 +203,6 @@ const UserManagement = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      if (response) {
-        console.log("response is", response);
-      }
       if (response?.data?.success == true) {
         setUsers(response?.data?.data);
         setTotalPage(response?.data?._totalPage);
