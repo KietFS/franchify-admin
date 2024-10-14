@@ -1,121 +1,114 @@
-import * as React from "react";
-import {
-  DataGrid,
-  GridColDef,
-  GridRenderCellParams,
-  GridSelectionModel,
-  GridValueGetterParams,
-} from "@mui/x-data-grid";
-import MainLayout from "../../components/SIdeBar";
-import { Pagination } from "@mui/material";
-import axios from "axios";
-import { useAppSelector } from "../../hooks/useRedux";
-import { IRootState } from "../../redux";
-import { apiURL } from "../../config/constanst";
-import LoadingSkeleton from "../../components/LoadingSkeleton";
-import PaymentStatusBadge from "../../components/PaymentStatusBadge";
+import * as React from 'react';
+import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
+import MainLayout from '../../components/SIdeBar';
+import { Pagination } from '@mui/material';
+import axios from 'axios';
+import { useAppSelector } from '../../hooks/useRedux';
+import { IRootState } from '../../redux';
+import { apiURL } from '../../config/constanst';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
-interface IItemProps {
-  id: string;
+interface IStoreProps {
+  id: number;
   name: string;
-  startPrice: number;
-  imagePath: string;
-  username: string;
+  storeCode: number;
+  supportDelivery: boolean;
+  supportPickup: boolean;
+  openTime: number;
+  closeTime: number;
+  lng: number | null;
+  lat: number | null;
 }
 
 const StoreMangement = () => {
-  const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
-  const [selectionModel, setSelectionModel] =
-    React.useState<GridSelectionModel>([]);
-  const { user, accessToken } = useAppSelector(
-    (state: IRootState) => state.auth
-  );
-  const [products, setProducts] = React.useState<IItemProps[]>([]);
+  const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
+  const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
+  const [stores, setStores] = React.useState<IStoreProps[]>([]);
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
-  const [totalPage, setTotalPage] = React.useState<number>(0);
+  const [totalPage, setTotalPage] = React.useState<number>(1);
 
+  // Function to get stores data
   const getAllStores = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await axios.get(
-        `${apiURL}/bids/revenue?&page=${page - 1}&size=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await axios.get(`${apiURL}/store?page=${page}&pageSize=10`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       if (response?.data?.success) {
-        let formattedResponse = response?.data?.data.map((item: any) => {
-          return {
-            ...item,
-            winner: item?.product?.holder,
-            bidClosingDate: item?.product?.bidClosingDate,
-            revenue: item?.priceWin / 10,
-          };
-        });
-        setProducts(formattedResponse);
-        setTotalPage(response?.data?._totalPage);
-      } else {
-        setProducts([]);
+        setStores(response?.data?.data?.results || []);
+        setTotalPage(Math.ceil(response?.data?.data?.total / 10)); // Update total page count
       }
     } catch (error) {
-      console.log("GET PRODUCT RESPONSE", error);
+      console.error('GET STORE ERROR', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const refreshProducts = async () => {
-    try {
-      const response = await axios.get(
-        `${apiURL}/bids/revenue?&page=${page - 1}&size=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response?.data?.success) {
-        let formattedResponse = response?.data?.data.map((item: any) => {
-          return {
-            ...item,
-            winner: item?.product?.holder,
-            bidClosingDate: item?.product?.bidClosingDate,
-            revenue: item?.priceWin / 10,
-          };
-        });
-        setProducts(formattedResponse);
-        setTotalPage(response?.data?._totalPage);
-      } else {
-        setProducts([]);
-      }
-    } catch (error) {
-      console.log("GET PRODUCT RESPONSE", error);
-    } finally {
-    }
-  };
-
+  // Column configuration for the DataGrid
   const columns: GridColDef[] = [
-    { field: "Id", headerName: "ID", width: 100 },
+    { field: 'id', headerName: 'ID', width: 100 },
     {
-      field: "product",
-      headerName: "Tên cửa hàng phẩm",
-      width: 350,
-      renderCell: (params: GridRenderCellParams<any>) => {
-        return (
-          <div className="flex items-center">
-            <div className="w-[120px]">
-              <img
-                src={params.value?.imagePath?.split("?")[0]}
-                width={80}
-                height={60}
-              />
-            </div>
-            <p className="mt-2 text-sm text-gray-600">{params?.value?.name}</p>
-          </div>
-        );
+      field: 'name',
+      headerName: 'Tên cửa hàng',
+      width: 250,
+    },
+    {
+      field: 'supportDelivery',
+      headerName: 'Hỗ trợ giao hàng',
+      width: 150,
+      renderCell: (params: GridRenderCellParams<boolean>) =>
+        params.value === true ? (
+          <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
+            Có hỗ trợ
+          </p>
+        ) : (
+          <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
+            Không hỗ trợ
+          </p>
+        ),
+    },
+    {
+      field: 'supportPickup',
+      headerName: 'Hỗ trợ lấy hàng',
+      width: 150,
+      renderCell: (params: GridRenderCellParams<boolean>) =>
+        params.value === true ? (
+          <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
+            Có hỗ trợ
+          </p>
+        ) : (
+          <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
+            Không hỗ trợ
+          </p>
+        ),
+    },
+    {
+      field: 'openTime',
+      headerName: 'Giờ mở cửa',
+      width: 150,
+    },
+    {
+      field: 'closeTime',
+      headerName: 'Giờ đóng cửa',
+      width: 150,
+    },
+    {
+      field: 'address',
+      headerName: 'Địa chỉ',
+      width: 400,
+      valueGetter: (params) => {
+        const { streetAddress, state, city, country } = params.row.address || {};
+
+        // Kiểm tra nếu bất kỳ trường nào bị thiếu
+        if (!streetAddress || !state || !city || !country) {
+          return 'Chưa có địa chỉ';
+        }
+
+        return `${streetAddress}, ${state}, ${city}, ${country}`;
       },
     },
   ];
@@ -124,19 +117,19 @@ const StoreMangement = () => {
     if (!!user) {
       getAllStores();
     }
-  }, [user]);
+  }, [user, page]);
 
   return (
     <MainLayout
-      title="Danh sách sản phẩm "
+      title="Danh sách cửa hàng"
       content={
         isLoading ? (
-          <div className="w-full h-full px-8 mt-20">
+          <div className="mt-20 h-full w-full px-8">
             <LoadingSkeleton />
           </div>
         ) : (
-          <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-            <div className="flex flex-row justify-between items-center">
+          <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+            <div className="flex flex-row items-center justify-between">
               <div></div>
               <div className="flex flex-row gap-x-2">
                 <Pagination
@@ -147,10 +140,10 @@ const StoreMangement = () => {
                 />
               </div>
             </div>
-            <div className="h-[800px] w-full ">
+            <div className="h-[800px] w-full">
               <DataGrid
-                rows={products}
-                getRowId={(row) => row.bidId}
+                rows={stores}
+                getRowId={(row) => row.id}
                 paginationMode="server"
                 page={page}
                 rowCount={totalPage}
@@ -159,7 +152,6 @@ const StoreMangement = () => {
                 hideFooterPagination
                 disableSelectionOnClick
                 onSelectionModelChange={(newSelectionModel) => {
-                  setDeleteDisable(!deleteDisable);
                   setSelectionModel(newSelectionModel);
                 }}
                 selectionModel={selectionModel}

@@ -1,71 +1,47 @@
-import * as React from "react";
-import {
-  DataGrid,
-  GridColDef,
-  GridRenderCellParams,
-  GridSelectionModel,
-} from "@mui/x-data-grid";
-import MainLayout from "../../components/SIdeBar";
-import {
-  Button,
-  Dialog,
-  Pagination,
-  Skeleton,
-  TablePagination,
-} from "@mui/material";
-import axios from "axios";
-import { useAppSelector } from "../../hooks/useRedux";
-import { IRootState } from "../../redux";
-import Spinner from "../../components/Spinner";
-import { apiURL } from "../../config/constanst";
-import LoadingSkeleton from "../../components/LoadingSkeleton";
-import ActionMenu from "../../components/ActionMenu";
-import { toast } from "react-toastify";
-import CustomDialog from "../../components/CustomDialog";
-import ProductForm from "./ProductForm";
-import {
-  EyeDropperIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import * as React from 'react';
+import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
+import MainLayout from '../../components/SIdeBar';
+import { Button, Dialog, Pagination, Skeleton, TablePagination } from '@mui/material';
+import axios from 'axios';
+import { useAppSelector } from '../../hooks/useRedux';
+import { IRootState } from '../../redux';
+import Spinner from '../../components/Spinner';
+import { apiURL } from '../../config/constanst';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
+import ActionMenu from '../../components/ActionMenu';
+import { toast } from 'react-toastify';
+import CustomDialog from '../../components/CustomDialog';
+import ProductForm from './ProductForm';
+import { EyeDropperIcon, EyeIcon, EyeSlashIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 interface ITenantProductManagementProps {
-  onChangeViewMode: (mode: "tenant" | "store") => void;
+  onChangeViewMode: (mode: 'tenant' | 'store') => void;
 }
 
-const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
-  props
-) => {
+const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props) => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
-  const [selectionModel, setSelectionModel] =
-    React.useState<GridSelectionModel>([]);
-  const { user, accessToken } = useAppSelector(
-    (state: IRootState) => state.auth
-  );
+  const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
+  const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
   const [products, setProducts] = React.useState<IProduct[]>([]);
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
   const [actionLoading, setActionLoading] = React.useState<boolean>(false);
-  const [selectedRow, setSelectedRow] = React.useState<string | number>("");
+  const [selectedRow, setSelectedRow] = React.useState<string | number>('');
   const [selectedItem, setSelectedItem] = React.useState<IProduct | null>(null);
   const [openUpdateModal, setOpenUpdateModal] = React.useState<boolean>(false);
 
   const getAllProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${apiURL}/products?&page=${page}&pageSize=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await axios.get(`${apiURL}/products?&page=${page}&pageSize=10`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       if (response) {
-        console.log("GET PRODUCT RESPONSE", response);
+        console.log('GET PRODUCT RESPONSE', response);
       }
 
       if (response?.data?.success) {
@@ -75,79 +51,69 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
         setProducts([]);
       }
     } catch (error) {
-      console.log("GET PRODUCT RESPONSE", error);
+      console.log('GET PRODUCT RESPONSE', error);
     } finally {
       setLoading(false);
     }
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
+    { field: 'id', headerName: 'ID', width: 70 },
     {
-      field: "upc",
-      headerName: "Mã sản phẩm",
+      field: 'upc',
+      headerName: 'Mã sản phẩm',
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return (
-          <div className="text-gray-800 font-semibold text-sm">
-            {params.value}
-          </div>
-        );
+        return <div className="text-sm font-semibold text-gray-800">{params.value}</div>;
       },
     },
-    { field: "name", headerName: "Tên sản phẩm", width: 250 },
+    { field: 'name', headerName: 'Tên sản phẩm', width: 250 },
     {
-      field: "category",
-      headerName: "Danh mục",
+      field: 'category',
+      headerName: 'Danh mục',
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return (
-          <div className="text-yellow-600 font-semibold text-sm">
-            {params.value?.name}
-          </div>
-        );
+        return <div className="text-sm font-semibold text-yellow-600">{params.value?.name}</div>;
       },
     },
     {
-      field: "price",
-      headerName: "Giá bán",
+      field: 'price',
+      headerName: 'Giá bán',
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
         return (
-          <div className="text-green-800 font-semibold text-sm">
-            {params.value?.displayPrice}
-          </div>
+          <div className="text-sm font-semibold text-green-800">{params.value?.displayPrice}</div>
         );
       },
     },
     {
-      field: "createdAt",
-      headerName: "Ngày tạo",
+      field: 'createdAt',
+      headerName: 'Ngày tạo',
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
         return <div>{(params.value as string).prettyDate()}</div>;
       },
     },
     {
-      field: "updatedAt",
-      headerName: "Ngày cập nhật",
+      field: 'updatedAt',
+      headerName: 'Ngày cập nhật',
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
         return <div>{(params.value as string).prettyDate()}</div>;
       },
     },
     {
-      field: "actions",
-      headerName: "Hành động",
-      type: "string",
+      field: 'actions',
+      headerName: 'Hành động',
+      type: 'string',
       width: 300,
-      headerAlign: "left",
-      align: "left",
+      headerAlign: 'left',
+      align: 'left',
       renderCell: (params: GridRenderCellParams<any>) => {
         const options = [
           {
-            id: "update",
-            title: "Cập nhật sản phẩm",
+            id: 'update',
+            title: 'Cập nhật sản phẩm',
             onPress: () => {
               setSelectedItem(params.row as IProduct);
               setOpenUpdateModal(true);
@@ -164,10 +130,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
     },
   ];
 
-  const updateProduct = async (
-    id: string | number,
-    values: Omit<IProduct, "id">
-  ) => {
+  const updateProduct = async (id: string | number, values: Omit<IProduct, 'id'>) => {
     try {
       setActionLoading(true);
       setSelectedRow(id);
@@ -179,22 +142,18 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
       if (response?.data?.success) {
         setActionLoading(false);
         getAllProducts();
-        toast.success("Cập nhật sản phẩm thành công");
+        toast.success('Cập nhật sản phẩm thành công');
         setOpenUpdateModal(false);
       } else {
-        toast.error(
-          response?.data?.data ||
-            response?.data?.error ||
-            "Cập nhật sản phẩm thất bại"
-        );
+        toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
       }
     } catch (error) {
       setActionLoading(false);
-      console.log("Client Error", error);
+      console.log('Client Error', error);
     }
   };
 
-  const createProduct = async (values: Omit<IProduct, "id">) => {
+  const createProduct = async (values: Omit<IProduct, 'id'>) => {
     try {
       setActionLoading(true);
       const response = await axios.post(`${apiURL}/products/`, values, {
@@ -205,14 +164,14 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
       if (response?.data?.success) {
         setActionLoading(false);
         getAllProducts();
-        toast.success("Thêm sản phẩm thành công");
+        toast.success('Thêm sản phẩm thành công');
         setOpenUpdateModal(false);
       } else {
-        console.log("Error", response?.data?.data, response?.data?.error);
+        console.log('Error', response?.data?.data, response?.data?.error);
       }
     } catch (error) {
       setActionLoading(false);
-      console.log("Client Error", error);
+      console.log('Client Error', error);
     }
   };
 
@@ -226,35 +185,35 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
         title="Danh sách sản phẩm "
         content={
           isLoading ? (
-            <div className="w-full h-full px-8 mt-20">
+            <div className="mt-20 h-full w-full px-8">
               <LoadingSkeleton />
             </div>
           ) : (
             <>
-              <div className="flex flex-row-reverse gap-y-2 gap-x-2 w-full mb-6">
+              <div className="mb-6 flex w-full flex-row-reverse gap-x-2 gap-y-2">
                 <button
                   onClick={() => {
                     setOpenUpdateModal(true);
                     setSelectedItem(null);
                   }}
-                  className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
+                  className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
                 >
-                  <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
+                  <PlusIcon className="h-[20px] w-[20px] font-bold text-white" />
                   <p>Thêm sản phẩm</p>
                 </button>
                 <button
                   onClick={() => {
-                    props.onChangeViewMode("store");
+                    props.onChangeViewMode('store');
                   }}
-                  className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
+                  className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
                 >
-                  <EyeIcon className="w-[20px] h-[20px] text-white font-bold mr-1" />
+                  <EyeIcon className="mr-1 h-[20px] w-[20px] font-bold text-white" />
                   <p>Xem theo cửa hàng</p>
                 </button>
               </div>
 
-              <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-                <div className="h-[700px] w-full ">
+              <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+                <div className="h-[700px] w-full">
                   <DataGrid
                     rows={products}
                     paginationMode="server"
@@ -271,7 +230,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
                     selectionModel={selectionModel}
                     checkboxSelection={false}
                   />
-                  <div className="flex gap-x-2 mt-4 flex-row-reverse">
+                  <div className="mt-4 flex flex-row-reverse gap-x-2">
                     <Pagination
                       onChange={(event, changedPage) => setPage(changedPage)}
                       count={totalPage}
@@ -288,7 +247,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
 
       {openUpdateModal ? (
         <CustomDialog
-          title={!!selectedItem ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+          title={!!selectedItem ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'}
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
           children={
