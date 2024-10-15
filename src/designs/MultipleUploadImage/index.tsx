@@ -12,15 +12,10 @@ const UploadImage: React.FC<IUploadImageProps> = (props) => {
   const { onSelect } = props;
 
   const uploadImage = async (e: any) => {
-    console.log("E is", { e });
-    console.log("TARGET FILE", Object.values(e.target.files));
     const listFile = Object.values(e.target.files) as any[];
     const base64 = await Promise.all(
       listFile?.map(async (file) => await convertBase64(file))
     );
-
-    console.log("BASE 64", base64);
-    console.log(base64);
     setBaseImage([...baseImage, listFile]);
     onSelect(listFile);
     setImgShow(base64);
@@ -42,11 +37,9 @@ const UploadImage: React.FC<IUploadImageProps> = (props) => {
   };
 
   const remove = (index: any) => {
-    console.log(index);
     const temp = imgShow;
     const cloned = temp;
     cloned.splice(index, 1);
-    console.log(cloned);
     setImgShow([...cloned]);
 
     const temp2 = baseImage;

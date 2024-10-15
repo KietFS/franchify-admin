@@ -1,41 +1,57 @@
-import * as React from 'react';
-import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
-import MainLayout from '../../components/SIdeBar';
-import { Button, Dialog, Pagination, Skeleton, TablePagination } from '@mui/material';
-import axios from 'axios';
-import { useAppSelector } from '../../hooks/useRedux';
-import { IRootState } from '../../redux';
-import Spinner from '../../components/Spinner';
-import { apiURL } from '../../config/constanst';
-import LoadingSkeleton from '../../components/LoadingSkeleton';
-import ActionMenu from '../../components/ActionMenu';
-import { toast } from 'react-toastify';
-import CustomDialog from '../../components/CustomDialog';
-import ProductForm from './ProductForm';
-import { PlusIcon } from '@heroicons/react/24/outline';
-import SelectComponent from '../../components/Select';
-import ImportProductForm from './ImportProducForm';
-import StoreProductForm from './StoreProductForm';
+import * as React from "react";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridSelectionModel,
+} from "@mui/x-data-grid";
+import MainLayout from "../../components/SIdeBar";
+import {
+  Button,
+  Dialog,
+  Pagination,
+  Skeleton,
+  TablePagination,
+} from "@mui/material";
+import axios from "axios";
+import { useAppSelector } from "../../hooks/useRedux";
+import { IRootState } from "../../redux";
+import Spinner from "../../components/Spinner";
+import { apiURL } from "../../config/constanst";
+import LoadingSkeleton from "../../components/LoadingSkeleton";
+import ActionMenu from "../../components/ActionMenu";
+import { toast } from "react-toastify";
+import CustomDialog from "../../components/CustomDialog";
+import ProductForm from "./ProductForm";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import SelectComponent from "../../components/Select";
+import ImportProductForm from "./ImportProducForm";
+import StoreProductForm from "./StoreProductForm";
 
 interface IStoreManagementProps {
-  onChangeViewMode: (mode: 'tenant' | 'store') => void;
+  onChangeViewMode: (mode: "tenant" | "store") => void;
 }
 
 const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
-  const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
-  const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
+  const [selectionModel, setSelectionModel] =
+    React.useState<GridSelectionModel>([]);
+  const { user, accessToken } = useAppSelector(
+    (state: IRootState) => state.auth
+  );
   const [products, setProducts] = React.useState<any[]>([]);
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
   const [actionLoading, setActionLoading] = React.useState<boolean>(false);
-  const [selectedRow, setSelectedRow] = React.useState<string | number>('');
+  const [selectedRow, setSelectedRow] = React.useState<string | number>("");
   const [selectedItem, setSelectedItem] = React.useState<IProduct | null>(null);
-  const [openImportProductModal, setOpenImportProductModal] = React.useState<boolean>(false);
+  const [openImportProductModal, setOpenImportProductModal] =
+    React.useState<boolean>(false);
   const [currentStore, setCurrentStore] = React.useState<IStore | null>(null);
   const [listStore, setListStore] = React.useState<IStore[]>([]);
   const [openUpdateModal, setOpenUpdateModal] = React.useState<boolean>(false);
+  const [storeLoading, setStoreLoading] = React.useState<boolean>(false);
 
   const getAllProducts = async () => {
     try {
@@ -46,11 +62,11 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        },
+        }
       );
 
       if (response) {
-        console.log('GET PRODUCT RESPONSE', response);
+        console.log("GET PRODUCT RESPONSE", response);
       }
 
       if (response?.data?.success) {
@@ -60,7 +76,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
         setProducts([]);
       }
     } catch (error) {
-      console.log('GET PRODUCT RESPONSE', error);
+      console.log("GET PRODUCT RESPONSE", error);
     } finally {
       setLoading(false);
     }
@@ -68,92 +84,107 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
 
   const getAllStores = async () => {
     try {
+      setStoreLoading(true);
       const response = await axios.get(`${apiURL}/store`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       if (response?.data?.success) {
-        console.log('response', response?.data);
-        if (user.role == 'admin') {
+        setStoreLoading(false);
+        if (user.role == "admin") {
           setListStore([
             ...response?.data?.data?.results,
             {
-              id: 'all',
-              name: 'Tất cả cửa hàng',
+              id: "all",
+              name: "Tất cả cửa hàng",
             },
           ]);
         } else {
           setListStore(response?.data?.data?.results);
+          setStoreLoading(false);
         }
         setCurrentStore(response?.data?.data?.results?.[0]);
+      } else {
+        setStoreLoading(false);
       }
     } catch (error) {
-      console.log('GET STORE ERROR', error);
+      setStoreLoading(false);
+      console.log("GET STORE ERROR", error);
     }
   };
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    { field: "id", headerName: "ID", width: 70 },
     {
-      field: 'product.upc',
-      headerName: 'Mã sản phẩm',
+      field: "product.upc",
+      headerName: "Mã sản phẩm",
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
         return <div className="">{params.row.product?.upc}</div>;
       },
     },
     {
-      field: 'product.name',
-      headerName: 'Tên sản phẩm',
+      field: "product.name",
+      headerName: "Tên sản phẩm",
       width: 250,
       renderCell: (params: GridRenderCellParams<any>) => {
         return <div className="">{params.row.product?.name}</div>;
       },
     },
     {
-      field: 'inventory',
-      headerName: 'Còn trong kho',
+      field: "inventory",
+      headerName: "Còn trong kho",
       width: 150,
     },
     {
-      field: 'price',
-      headerName: 'Giá bán',
+      field: "price",
+      headerName: "Giá bán",
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
         return (
-          <div className="text-sm font-semibold text-green-800">{params.value?.displayPrice}</div>
+          <div className="text-green-800 font-semibold text-sm">
+            {params.value?.displayPrice}
+          </div>
         );
       },
     },
     {
-      field: 'product.reatedAt',
-      headerName: 'Ngày tạo',
+      field: "product.reatedAt",
+      headerName: "Ngày tạo",
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return <div className="">{(params.row.product?.createdAt as string).prettyDate()}</div>;
+        return (
+          <div className="">
+            {(params.row.product?.createdAt as string).prettyDate()}
+          </div>
+        );
       },
     },
     {
-      field: 'product.updatedAt',
-      headerName: 'Ngày cập nhật',
+      field: "product.updatedAt",
+      headerName: "Ngày cập nhật",
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return <div className="">{(params.row.product?.updatedAt as string).prettyDate()}</div>;
+        return (
+          <div className="">
+            {(params.row.product?.updatedAt as string).prettyDate()}
+          </div>
+        );
       },
     },
     {
-      field: 'actions',
-      headerName: 'Hành động',
-      type: 'string',
+      field: "actions",
+      headerName: "Hành động",
+      type: "string",
       width: 300,
-      headerAlign: 'left',
-      align: 'left',
+      headerAlign: "left",
+      align: "left",
       renderCell: (params: GridRenderCellParams<any>) => {
         const options = [
           {
-            id: 'update',
-            title: 'Cập nhật sản phẩm',
+            id: "update",
+            title: "Cập nhật sản phẩm",
             onPress: () => {
               setSelectedItem(params.row as IProduct);
               setOpenUpdateModal(true);
@@ -170,7 +201,10 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
     },
   ];
 
-  const updateProduct = async (id: string | number, values: Omit<IProduct, 'id'>) => {
+  const updateProduct = async (
+    id: string | number,
+    values: Omit<IProduct, "id">
+  ) => {
     try {
       setActionLoading(true);
       setSelectedRow(id);
@@ -182,14 +216,18 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
       if (response?.data?.success) {
         setActionLoading(false);
         getAllProducts();
-        toast.success('Cập nhật sản phẩm thành công');
+        toast.success("Cập nhật sản phẩm thành công");
         setOpenImportProductModal(false);
       } else {
-        toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
+        toast.error(
+          response?.data?.data ||
+            response?.data?.error ||
+            "Cập nhật sản phẩm thất bại"
+        );
       }
     } catch (error) {
       setActionLoading(false);
-      console.log('Client Error', error);
+      console.log("Client Error", error);
     }
   };
 
@@ -209,12 +247,12 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
         title="Danh sách sản phẩm "
         content={
           isLoading ? (
-            <div className="mt-20 h-full w-full px-8">
+            <div className="w-full h-full px-8 mt-20">
               <LoadingSkeleton />
             </div>
           ) : (
             <>
-              <div className="mb-6 flex w-full items-center justify-between gap-y-2">
+              <div className="flex justify-between gap-y-2 w-full mb-6 items-center">
                 <div className="flex items-center">
                   <SelectComponent
                     optionSelected={currentStore}
@@ -222,8 +260,8 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                     name="currentStore"
                     label="Chọn cửa hàng"
                     onSelect={(store) => {
-                      if (store.id === 'all') {
-                        props.onChangeViewMode('tenant');
+                      if (store.id === "all") {
+                        props.onChangeViewMode("tenant");
                       } else {
                         setCurrentStore(store);
                       }
@@ -236,16 +274,17 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                     setOpenImportProductModal(true);
                     setSelectedItem(null);
                   }}
-                  className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
+                  className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
                 >
-                  <PlusIcon className="h-[20px] w-[20px] font-bold text-white" />
+                  <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
                   <p>Nhập sản phẩm</p>
                 </button>
               </div>
 
-              <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-                <div className="h-[700px] w-full">
+              <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
+                <div className="h-[700px] w-full ">
                   <DataGrid
+                    loading={isLoading}
                     rows={products}
                     paginationMode="server"
                     page={page}
@@ -261,7 +300,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                     selectionModel={selectionModel}
                     checkboxSelection={false}
                   />
-                  <div className="mt-4 flex flex-row-reverse gap-x-2">
+                  <div className="flex gap-x-2 mt-4 flex-row-reverse">
                     <Pagination
                       onChange={(event, changedPage) => setPage(changedPage)}
                       count={totalPage}
@@ -278,7 +317,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
 
       {openImportProductModal ? (
         <CustomDialog
-          title={'Nhập sản phẩm'}
+          title={"Nhập sản phẩm"}
           maxWidth="lg"
           open={openImportProductModal}
           onClose={() => setOpenImportProductModal(false)}

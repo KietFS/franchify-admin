@@ -62,6 +62,8 @@ const CategoryManagement = () => {
     item: IProductCategory,
     onSuccess: () => void
   ) => {
+
+    console.log('item', item);
     if (item.id !== null) {
       try {
         const response = await axios.put(

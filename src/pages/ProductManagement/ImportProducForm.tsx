@@ -96,6 +96,7 @@ const ImportProductForm: React.FC<IImportProductFormProps> = (props) => {
         setProducts([...filteredProducts]);
         setTotalPage(response?.data?.data?.totalPage);
       } else {
+        setLoading(false);
         setProducts([]);
       }
     } catch (error) {
@@ -154,6 +155,7 @@ const ImportProductForm: React.FC<IImportProductFormProps> = (props) => {
             </button>
           </div>
           <DataGrid
+            loading={loading}
             rows={products}
             paginationMode="server"
             page={page}

@@ -36,6 +36,7 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
 }) => {
   const [propertyValues, setPropertyValues] = useState<
     {
+      displayName: string;
       name: string;
       type: string;
       options?: string[];
@@ -55,6 +56,7 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
   }, [category?.name]);
 
   const nameInputRef = React.useRef(null);
+  const displayNameInputRef = React.useRef(null);
 
   const handleRemoveProperty = (index: number) => {
     let updatedProperties = [...propertyValues];
@@ -64,7 +66,12 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
 
   const handleAddProperty = () => {
     let updatedProperties = [...propertyValues];
-    updatedProperties.push({ name: " ", type: "string", options: [] });
+    updatedProperties.push({
+      name: " ",
+      displayName: "",
+      type: "string",
+      options: [],
+    });
     setPropertyValues(updatedProperties);
   };
 
@@ -129,22 +136,27 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
                       className="w-full flex gap-x-5 items-center px-4 py-2 rounded-t-lg bg-white border shadow-lg border-gray-300  justify-between"
                       key="header"
                     >
-                      <div className="w-1/4">
+                      <div className="w-1/5">
+                        <p className="font-semibold text-gray-600">
+                          Tên hiển thị
+                        </p>
+                      </div>
+                      <div className="w-1/5">
                         <p className="font-semibold text-gray-600">
                           Tên trường
                         </p>
                       </div>
-                      <div className="w-1/4">
+                      <div className="w-1/5">
                         <p className="font-semibold text-gray-600">
                           Kiểu dữ liệu
                         </p>
                       </div>
-                      <div className="w-1/4">
+                      <div className="w-1/5">
                         <p className="font-semibold text-gray-600">
                           Các options của trường
                         </p>
                       </div>
-                      <div className="w-1/4">
+                      <div className="w-1/5">
                         <p className="font-semibold text-gray-600">Hành động</p>
                       </div>
                     </div>
@@ -153,7 +165,27 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
                         propertyValues?.map((item: any, index: number) => (
                           <div>
                             <div className="w-full flex gap-x-5 items-center px-4 py-2 bg-white border-b border-l border-r border-gray-300  justify-between">
-                              <div className="w-1/4">
+                              <div className="w-1/5">
+                                <input
+                                  ref={displayNameInputRef}
+                                  value={propertyValues[index].displayName}
+                                  className="pl-4 py-1 border border-gray-300 rounded-lg"
+                                  onChange={(e) => {
+                                    const newValue = e.target.value;
+                                    setPropertyValues((prevValues) =>
+                                      prevValues.map((prevValue, idx) =>
+                                        idx === index
+                                          ? {
+                                              ...prevValue,
+                                              displayName: newValue,
+                                            }
+                                          : prevValue
+                                      )
+                                    );
+                                  }}
+                                />
+                              </div>
+                              <div className="w-1/5">
                                 <input
                                   ref={nameInputRef}
                                   value={propertyValues[index].name}
@@ -170,7 +202,7 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
                                   }}
                                 />
                               </div>
-                              <div className="w-1/4">
+                              <div className="w-1/5">
                                 <SelectCustomFieldComponent
                                   placeholder={`Chọn trường`}
                                   name={"type"}
@@ -186,7 +218,7 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
                                   }}
                                 />
                               </div>
-                              <div className="w-1/4 flex items-center">
+                              <div className="w-1/5 flex items-center">
                                 {!category.properties[index] ? (
                                   <></>
                                 ) : (
@@ -199,7 +231,7 @@ const PropertiesDialog: React.FC<IPropertiesDialogProps> = ({
                                 )}
                               </div>
 
-                              <div className="w-1/4 flex items-center">
+                              <div className="w-1/5 flex items-center">
                                 <IconButton
                                   title="Xem hoặc chỉnh sửa"
                                   onClick={() => handleRemoveProperty(index)}
