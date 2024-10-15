@@ -146,6 +146,14 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
       renderCell: (params: GridRenderCellParams<any>) => {
         const options = [
           {
+            id: "delete",
+            title: "Xóa sản phẩm",
+            onPress: () => {
+              deleteProduct(params.row?.id);
+            },
+            onActionSuccess: () => getAllProducts(),
+          },
+          {
             id: "update",
             title: "Cập nhật sản phẩm",
             onPress: () => {
@@ -194,6 +202,32 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
     }
   };
 
+  const deleteProduct = async (id: number) => {
+    try {
+      setActionLoading(true);
+      setSelectedRow(id);
+      const response = await axios.delete(`${apiURL}/products/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response?.data?.success) {
+        setActionLoading(false);
+        getAllProducts();
+        toast.success("Xóa sản phẩm thành công");
+      } else {
+        toast.error(
+          response?.data?.data ||
+            response?.data?.error ||
+            "Xóa sản phẩm thất bại"
+        );
+      }
+    } catch (error) {
+      setActionLoading(false);
+      console.log("Client Error", error);
+    }
+  };
+
   const createProduct = async (values: Omit<IProduct, "id">) => {
     try {
       setActionLoading(true);
@@ -225,64 +259,59 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (
       <MainLayout
         title="Danh sách sản phẩm "
         content={
-          isLoading ? (
-            <div className="w-full h-full px-8 mt-20">
-              <LoadingSkeleton />
+          <>
+            <div className="flex flex-row-reverse gap-y-2 gap-x-2 w-full mb-6">
+              <button
+                onClick={() => {
+                  setOpenUpdateModal(true);
+                  setSelectedItem(null);
+                }}
+                className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
+              >
+                <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
+                <p>Thêm sản phẩm</p>
+              </button>
+              <button
+                onClick={() => {
+                  props.onChangeViewMode("store");
+                }}
+                className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
+              >
+                <EyeIcon className="w-[20px] h-[20px] text-white font-bold mr-1" />
+                <p>Xem theo cửa hàng</p>
+              </button>
             </div>
-          ) : (
-            <>
-              <div className="flex flex-row-reverse gap-y-2 gap-x-2 w-full mb-6">
-                <button
-                  onClick={() => {
-                    setOpenUpdateModal(true);
-                    setSelectedItem(null);
-                  }}
-                  className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
-                >
-                  <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
-                  <p>Thêm sản phẩm</p>
-                </button>
-                <button
-                  onClick={() => {
-                    props.onChangeViewMode("store");
-                  }}
-                  className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
-                >
-                  <EyeIcon className="w-[20px] h-[20px] text-white font-bold mr-1" />
-                  <p>Xem theo cửa hàng</p>
-                </button>
-              </div>
 
-              <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-                <div className="h-[700px] w-full ">
-                  <DataGrid
-                    rows={products}
-                    paginationMode="server"
+            <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
+              <div className="h-[700px] w-full ">
+                <DataGrid
+                  loading={isLoading}
+                  rows={products}
+                  paginationMode="server"
+                  page={page}
+                  rowCount={totalPage}
+                  pageSize={10}
+                  columns={columns}
+                  hideFooterPagination
+                  disableSelectionOnClick
+                  onSelectionModelChange={(newSelectionModel) => {
+                    setDeleteDisable(!deleteDisable);
+                    setSelectionModel(newSelectionModel);
+                  }}
+                  selectionModel={selectionModel}
+                  checkboxSelection={false}
+                />
+                <div className="flex gap-x-2 mt-4 flex-row-reverse">
+                  <Pagination
+                    onChange={(event, changedPage) => setPage(changedPage)}
+                    count={totalPage}
+                    defaultPage={1}
                     page={page}
-                    rowCount={totalPage}
-                    pageSize={10}
-                    columns={columns}
-                    hideFooterPagination
-                    disableSelectionOnClick
-                    onSelectionModelChange={(newSelectionModel) => {
-                      setDeleteDisable(!deleteDisable);
-                      setSelectionModel(newSelectionModel);
-                    }}
-                    selectionModel={selectionModel}
-                    checkboxSelection={false}
                   />
-                  <div className="flex gap-x-2 mt-4 flex-row-reverse">
-                    <Pagination
-                      onChange={(event, changedPage) => setPage(changedPage)}
-                      count={totalPage}
-                      defaultPage={1}
-                      page={page}
-                    />
-                  </div>
                 </div>
               </div>
-            </>
-          )
+            </div>
+          </>
         }
       />
 

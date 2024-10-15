@@ -15,6 +15,8 @@ import SelectComponent from "../../components/Select";
 import { apiURL } from "../../config/constanst";
 import UploadWidget from "../../designs/UploadWidget";
 import UploadMultipleWidget from "../../designs/UploadMultipleWidget";
+import RadioButton from "../../designs/RadioButton";
+import { Radio } from "@mui/material";
 
 interface IFormValue extends Omit<IProduct, "id"> {}
 interface IProductFormProps {
@@ -50,12 +52,15 @@ const ProductForm: React.FC<IProductFormProps> = (props) => {
     });
 
   const handleSubmit = async (values: IFormValue) => {
+    console.log("submit", values);
+
     onConfirm({
       ...values,
       price: {
         ...values.price,
         price: Number(values.price.price),
       },
+      properties: values.properties || {},
       thumbnail: thumbnailSelected,
       images: images,
     });
@@ -160,6 +165,71 @@ const ProductForm: React.FC<IProductFormProps> = (props) => {
                     setFieldValue("category", option.id);
                   }}
                 />
+              </div>
+              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-x-2 gap-y-5 items-center justify-between">
+                {!!selectedCategory &&
+                  selectedCategory?.properties?.map(
+                    (property, propertiesIndex) => (
+                      <>
+                        {property?.type == "string" && (
+                          <BaseInput
+                            type={property?.type}
+                            mode={"text"}
+                            name={`properties.${property?.name}`}
+                            value={
+                              String(values?.properties?.[property?.name]) || ""
+                            }
+                            label={property?.displayName || ""}
+                            placeholder={`Nhập ${property?.displayName || ""}`}
+                          />
+                        )}
+
+                        {property?.type == "number" && (
+                          <BaseInput
+                            type={property?.type}
+                            mode={"text"}
+                            onChange={(e) => {
+                              setFieldValue(
+                                `properties.${property?.name}`,
+                                Number(e.target.value)
+                              );
+                            }}
+                            name={`properties.${property?.name}`}
+                            value={
+                              Number(values?.properties?.[property?.name]) || ""
+                            }
+                            label={property?.displayName || ""}
+                            placeholder={`Nhập ${property?.displayName || ""}`}
+                          />
+                        )}
+
+                        {property?.type == "boolean" && (
+                          <div className="flex items-center">
+                            <p className="text-md font-bold text-gray-700 mr-1">
+                              {property?.displayName || ""}?
+                            </p>
+                            <Radio
+                              checked={
+                                (values?.properties?.[
+                                  property?.name
+                                ] as boolean) || false
+                              }
+                              value={values?.properties?.[property?.name]}
+                              onChange={(e) => {
+                                setFieldValue(
+                                  `properties.${property?.name}`,
+                                  e.target.checked
+                                );
+                              }}
+                              placeholder={`Chọn ${
+                                property?.displayName || ""
+                              }`}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )
+                  )}
               </div>
 
               <RichTextInput

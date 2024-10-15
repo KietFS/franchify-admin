@@ -32,6 +32,7 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
 }) => {
   const [propertyValues, setPropertyValues] = useState<
     {
+      displayName: string;
       name: string;
       type: string;
       options?: string[];
@@ -49,7 +50,12 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
 
   const handleAddProperty = () => {
     let updatedProperties = [...propertyValues];
-    updatedProperties.push({ name: "", type: "string", options: [] });
+    updatedProperties.push({
+      displayName: "",
+      name: "",
+      type: "string",
+      options: [],
+    });
     setPropertyValues(updatedProperties);
   };
 
@@ -114,17 +120,22 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
                       className="w-full flex gap-x-5 items-center px-4 py-2 rounded-t-lg bg-white border shadow-lg border-gray-300  justify-between"
                       key="header"
                     >
-                      <div className="w-1/3">
+                      <div className="w-1/4">
+                        <p className="font-semibold text-gray-600">
+                          Tên hiển thị
+                        </p>
+                      </div>
+                      <div className="w-1/4">
                         <p className="font-semibold text-gray-600">
                           Tên trường
                         </p>
                       </div>
-                      <div className="w-1/3">
+                      <div className="w-1/4">
                         <p className="font-semibold text-gray-600">
                           Kiểu dữ liệu
                         </p>
                       </div>
-                      <div className="w-1/3">
+                      <div className="w-1/4">
                         <p className="font-semibold text-gray-600">Hành động</p>
                       </div>
                     </div>
@@ -133,7 +144,27 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
                         propertyValues?.map((item: any, index: number) => (
                           <div>
                             <div className="w-full flex gap-x-5 items-center px-4 py-2 bg-white border-b border-l border-r border-gray-300  justify-between">
-                              <div className="w-1/3">
+                              <div className="w-1/4">
+                                <input
+                                  ref={nameInputRef}
+                                  value={propertyValues[index].displayName}
+                                  className="pl-4 py-1 border border-gray-300 rounded-lg"
+                                  onChange={(e) => {
+                                    const newValue = e.target.value;
+                                    setPropertyValues((prevValues) =>
+                                      prevValues.map((prevValue, idx) =>
+                                        idx === index
+                                          ? {
+                                              ...prevValue,
+                                              displayName: newValue,
+                                            }
+                                          : prevValue
+                                      )
+                                    );
+                                  }}
+                                />
+                              </div>
+                              <div className="w-1/4">
                                 <input
                                   ref={nameInputRef}
                                   value={propertyValues[index].name}
@@ -150,7 +181,7 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
                                   }}
                                 />
                               </div>
-                              <div className="w-1/3">
+                              <div className="w-1/4">
                                 <SelectCustomFieldComponent
                                   placeholder={`Chọn trường`}
                                   name={"type"}
@@ -166,7 +197,7 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
                                   }}
                                 />
                               </div>
-                              <div className="w-1/3 flex items-center">
+                              <div className="w-1/4 flex items-center">
                                 <IconButton
                                   title="Xem hoặc chỉnh sửa"
                                   onClick={() => handleRemoveProperty(index)}

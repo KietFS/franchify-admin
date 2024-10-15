@@ -20,6 +20,8 @@ interface IProduct {
   category?: number;
   images?: string[];
   thumbnail?: string;
+  category?: IProductCategory;
+  properties?: { [key: string]: string | number | boolean };
 }
 
 interface IStoreProduct {
@@ -43,6 +45,7 @@ interface IProductCategory {
 }
 
 interface IProductCategoryProperty {
+  displayName: string;
   name: string;
   type: string;
   options?: string[];

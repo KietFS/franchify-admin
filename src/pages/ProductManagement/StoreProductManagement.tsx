@@ -51,6 +51,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
   const [currentStore, setCurrentStore] = React.useState<IStore | null>(null);
   const [listStore, setListStore] = React.useState<IStore[]>([]);
   const [openUpdateModal, setOpenUpdateModal] = React.useState<boolean>(false);
+  const [storeLoading, setStoreLoading] = React.useState<boolean>(false);
 
   const getAllProducts = async () => {
     try {
@@ -83,13 +84,14 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
 
   const getAllStores = async () => {
     try {
+      setStoreLoading(true);
       const response = await axios.get(`${apiURL}/store`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       if (response?.data?.success) {
-        console.log("response", response?.data);
+        setStoreLoading(false);
         if (user.role == "admin") {
           setListStore([
             ...response?.data?.data?.results,
@@ -100,10 +102,14 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
           ]);
         } else {
           setListStore(response?.data?.data?.results);
+          setStoreLoading(false);
         }
         setCurrentStore(response?.data?.data?.results?.[0]);
+      } else {
+        setStoreLoading(false);
       }
     } catch (error) {
+      setStoreLoading(false);
       console.log("GET STORE ERROR", error);
     }
   };
@@ -278,6 +284,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
               <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
                 <div className="h-[700px] w-full ">
                   <DataGrid
+                    loading={isLoading}
                     rows={products}
                     paginationMode="server"
                     page={page}
