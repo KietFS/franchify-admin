@@ -11,14 +11,12 @@ import StoreMangement from '../pages/StoreManagement';
 export default function RootApp() {
   const { accessToken } = useAppSelector((state: IRootState) => state.auth);
 
-  console.log('accessToken is', accessToken);
-
   return (
     <div>
       <Route
         path="/"
         render={() => {
-          return !accessToken ? <Redirect to="/login" /> : <Redirect to="/home" />;
+          return !accessToken ? <Redirect to="/login" /> : <Redirect to="/user-management" />;
         }}
       ></Route>
       <Route path="/home">

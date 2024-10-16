@@ -222,44 +222,39 @@ const UserManagement = () => {
     <MainLayout
       title="Quản lý người dùng"
       content={
-        loading ? (
-          <div className="w-full h-full px-8 mt-20">
-            <LoadingSkeleton />
-          </div>
-        ) : (
-          <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-            <div className="flex flex-row justify-between items-center">
-              <div></div>
-              <div className="flex flex-row gap-x-2">
-                <Pagination
-                  onChange={(event, changedPage) => setPage(changedPage)}
-                  count={totalPage}
-                  defaultPage={1}
-                  page={page}
-                />
-              </div>
-            </div>
-            <div className="h-[800px] w-full">
-              <DataGrid
-                rows={users}
-                paginationMode="server"
+        <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
+          <div className="flex flex-row justify-between items-center">
+            <div></div>
+            <div className="flex flex-row gap-x-2">
+              <Pagination
+                onChange={(event, changedPage) => setPage(changedPage)}
+                count={totalPage}
+                defaultPage={1}
                 page={page}
-                rowCount={totalPage}
-                pageSize={10}
-                columns={columns}
-                hideFooterPagination
-                disableSelectionOnClick
-                // onPageChange={(current) => setPage(current)}
-                onSelectionModelChange={(newSelectionModel) => {
-                  setDeleteDisable(!deleteDisable);
-                  setSelectionModel(newSelectionModel);
-                }}
-                selectionModel={selectionModel}
-                checkboxSelection={false}
               />
             </div>
           </div>
-        )
+          <div className="h-[800px] w-full">
+            <DataGrid
+              rows={users}
+              loading={loading}
+              paginationMode="server"
+              page={page}
+              rowCount={totalPage}
+              pageSize={10}
+              columns={columns}
+              hideFooterPagination
+              disableSelectionOnClick
+              // onPageChange={(current) => setPage(current)}
+              onSelectionModelChange={(newSelectionModel) => {
+                setDeleteDisable(!deleteDisable);
+                setSelectionModel(newSelectionModel);
+              }}
+              selectionModel={selectionModel}
+              checkboxSelection={false}
+            />
+          </div>
+        </div>
       }
     />
   );

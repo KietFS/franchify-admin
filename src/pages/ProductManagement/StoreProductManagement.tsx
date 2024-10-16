@@ -246,72 +246,66 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
       <MainLayout
         title="Danh sách sản phẩm "
         content={
-          isLoading ? (
-            <div className="w-full h-full px-8 mt-20">
-              <LoadingSkeleton />
-            </div>
-          ) : (
-            <>
-              <div className="flex justify-between gap-y-2 w-full mb-6 items-center">
-                <div className="flex items-center">
-                  <SelectComponent
-                    optionSelected={currentStore}
-                    options={listStore}
-                    name="currentStore"
-                    label="Chọn cửa hàng"
-                    onSelect={(store) => {
-                      if (store.id === "all") {
-                        props.onChangeViewMode("tenant");
-                      } else {
-                        setCurrentStore(store);
-                      }
-                    }}
-                    placeholder="Chọn cửa hàng"
-                  />
-                </div>
-                <button
-                  onClick={() => {
-                    setOpenImportProductModal(true);
-                    setSelectedItem(null);
+          <>
+            <div className="flex justify-between gap-y-2 w-full mb-6 items-center">
+              <div className="flex items-center">
+                <SelectComponent
+                  optionSelected={currentStore}
+                  options={listStore}
+                  name="currentStore"
+                  label="Chọn cửa hàng"
+                  onSelect={(store) => {
+                    if (store.id === "all") {
+                      props.onChangeViewMode("tenant");
+                    } else {
+                      setCurrentStore(store);
+                    }
                   }}
-                  className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
-                >
-                  <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
-                  <p>Nhập sản phẩm</p>
-                </button>
+                  placeholder="Chọn cửa hàng"
+                />
               </div>
+              <button
+                onClick={() => {
+                  setOpenImportProductModal(true);
+                  setSelectedItem(null);
+                }}
+                className="bg-gray-500 text-white  w-fit h-[40px] px-3 py-1 font-bold rounded-lg flex items-center hover:opacity-80"
+              >
+                <PlusIcon className="w-[20px] h-[20px] text-white font-bold" />
+                <p>Nhập sản phẩm</p>
+              </button>
+            </div>
 
-              <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-                <div className="h-[700px] w-full ">
-                  <DataGrid
-                    loading={isLoading}
-                    rows={products}
-                    paginationMode="server"
+            <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
+              <div className="h-[700px] w-full ">
+                <DataGrid
+                  loading={isLoading || storeLoading}
+                  rows={products}
+                  paginationMode="server"
+                  page={page}
+                  rowCount={totalPage}
+                  pageSize={10}
+                  columns={columns}
+                  hideFooterPagination
+                  disableSelectionOnClick
+                  onSelectionModelChange={(newSelectionModel) => {
+                    setDeleteDisable(!deleteDisable);
+                    setSelectionModel(newSelectionModel);
+                  }}
+                  selectionModel={selectionModel}
+                  checkboxSelection={false}
+                />
+                <div className="flex gap-x-2 mt-4 flex-row-reverse">
+                  <Pagination
+                    onChange={(event, changedPage) => setPage(changedPage)}
+                    count={totalPage}
+                    defaultPage={1}
                     page={page}
-                    rowCount={totalPage}
-                    pageSize={10}
-                    columns={columns}
-                    hideFooterPagination
-                    disableSelectionOnClick
-                    onSelectionModelChange={(newSelectionModel) => {
-                      setDeleteDisable(!deleteDisable);
-                      setSelectionModel(newSelectionModel);
-                    }}
-                    selectionModel={selectionModel}
-                    checkboxSelection={false}
                   />
-                  <div className="flex gap-x-2 mt-4 flex-row-reverse">
-                    <Pagination
-                      onChange={(event, changedPage) => setPage(changedPage)}
-                      count={totalPage}
-                      defaultPage={1}
-                      page={page}
-                    />
-                  </div>
                 </div>
               </div>
-            </>
-          )
+            </div>
+          </>
         }
       />
 
