@@ -1,5 +1,5 @@
-declare module "@heroicons/react/outline";
-declare module "styled-components";
+declare module '@heroicons/react/outline';
+declare module 'styled-components';
 
 interface ProductPrice {
   price: number;
@@ -32,10 +32,14 @@ interface IStoreProduct {
 
 interface IStore {
   id: number;
+  name: string;
   storeCode: number;
   supportPickup: boolean;
+  supportDelivery: boolean;
   openTime: number;
   closeTime: number;
+  lat: string;
+  lng: string;
 }
 
 interface IProductCategory {
