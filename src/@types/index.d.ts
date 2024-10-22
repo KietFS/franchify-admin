@@ -25,8 +25,8 @@ interface IProduct {
 }
 
 interface IStoreProduct {
-  product: IProduct;
-  price: ProductPrice;
+  product?: IProduct;
+  price?: ProductPrice;
   inventory: number;
 }
 
