@@ -29,7 +29,6 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
   const [initialValues, setInitialValues] = React.useState<IFormValue | null>(
     currentProduct || null,
   );
-  const [listCategory, setListCategory] = React.useState<IProductCategory[]>([]);
   const { accessToken } = useAppSelector((state) => state.auth);
   const [selectedCategory, setSelectedCategory] = React.useState<IProductCategory | null>(null);
   const [thumbnailSelected, setThumbnailSelected] = React.useState<string>('');
@@ -50,52 +49,25 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
   const handleSubmit = async (values: IFormValue) => {
     onConfirm({
       ...values,
-      product: {
-        ...(values.product as any),
-        thumbnail: thumbnailSelected,
-        images: images,
+      inventory: Number(values?.inventory),
+      price: {
+        ...values?.price,
+        displayPrice: (values?.price?.displayPrice ||
+          values?.product?.price?.displayPrice) as string,
+        displaySalePrice: (values?.price?.displaySalePrice ||
+          values?.product?.price?.displaySalePrice) as string,
+        price: Number(values?.price?.price) || Number(values?.product?.price?.price),
+        salePrice: Number(values?.price?.salePrice || Number(values?.product?.price?.salePrice)),
       },
     });
   };
 
-  const getAllCategories = async () => {
-    try {
-      const response = await axios.get(`${apiURL}/category`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (response?.data.success) {
-        setListCategory(response?.data?.data?.data);
-      }
-    } catch (error) {
-      console.log('GET PRODUCT CATEGORY ERROR', error);
-    } finally {
-    }
-  };
-
   useEffect(() => {
-    getAllCategories();
-  }, []);
-
-  useEffect(() => {
-    if (currentProduct?.product?.category) {
-      setInitialValues({
-        ...currentProduct,
-        product: {
-          ...currentProduct?.product,
-          category: (currentProduct?.product?.category as any)?.id,
-        },
-      });
-      setSelectedCategory(currentProduct?.product?.category as any);
-    }
     if (!!currentProduct) {
       setThumbnailSelected(currentProduct?.product?.thumbnail || '');
       setImagesSelected(currentProduct?.product?.images || []);
     }
   }, [currentProduct]);
-
-  console.log('currentProduct', currentProduct);
 
   return (
     <Formik
@@ -126,7 +98,6 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
                   placeholder="Nhập mã sản phẩm"
                 />
               </div>
-
               <div className="grid grid-cols-1 items-center justify-between gap-x-2 gap-y-5 tablet:grid-cols-2">
                 <BaseInput
                   type="number"
@@ -159,7 +130,6 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
                   placeholder="Nhập giá sale hiển thị sản phẩm"
                 />
               </div>
-
               <div>
                 <BaseInput
                   type="number"
@@ -169,7 +139,6 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
                   placeholder="Nhập số lượng hiện có"
                 />
               </div>
-
               <UploadWidget
                 thumbnailUploaded={thumbnailSelected}
                 setThumbnailUploaded={(image) => setThumbnailSelected(image)}
@@ -178,24 +147,10 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
                 thumbnailUploaded={images}
                 setThumbnailUploaded={(images) => setImagesSelected(images)}
               />
-              <div className="grid grid-cols-1 items-center justify-between gap-x-2 gap-y-5 tablet:grid-cols-2">
-                <SelectComponent
-                  name="product.category"
-                  label="Danh mục"
-                  placeholder="Chọn danh mục"
-                  optionSelected={selectedCategory}
-                  keyValue="id"
-                  keyLabel="name"
-                  options={listCategory}
-                  onSelect={(option) => {
-                    setSelectedCategory(option);
-                    setFieldValue('product.category', option.id);
-                  }}
-                />
-              </div>
 
               <RichTextInput
                 name="product.fullDescription"
+                disabled
                 value={values?.product?.fullDescription}
                 label="Mô tả"
                 placeholder="Mô tả sản phẩm"
@@ -210,7 +165,7 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
                   title="Xác nhận"
                   variant="primary"
                   className="ml-2"
-                  isLoading={loading}
+                  isLoading={props?.loading}
                   onClick={handleSubmit}
                 />
               </div>

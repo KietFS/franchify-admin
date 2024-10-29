@@ -66,7 +66,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
   const getAllStores = async () => {
     try {
       setStoreLoading(true);
-      const response = await axios.get(`${apiURL}/store`, {
+      const response = await axios.get(`${apiURL}/store?pageSize=30`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -172,25 +172,29 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
     },
   ];
 
-  const updateProduct = async (id: string | number, values: Omit<IProduct, 'id'>) => {
+  const updateStoreProduct = async (upc: string, values: Omit<IStoreProduct, 'id'>) => {
     try {
       setActionLoading(true);
-      setSelectedRow(id);
-      const response = await axios.put(`${apiURL}/products/${id}/`, values, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const response = await axios.put(
+        `${apiURL}/products/${currentStore?.id}/products/${upc}`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       if (response?.data?.success) {
         setActionLoading(false);
         getAllProducts();
         toast.success('Cập nhật sản phẩm thành công');
-        setOpenImportProductModal(false);
+        setOpenUpdateModal(false);
       } else {
         toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
       }
     } catch (error) {
       setActionLoading(false);
+      setOpenUpdateModal(false);
       console.log('Client Error', error);
     }
   };
@@ -293,7 +297,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
 
       {openUpdateModal && (
         <CustomDialog
-          title="Chỉnh sửa sản phẩm"
+          title={`Chỉnh sửa sản phẩm tại cửa hàng ${currentStore?.name}`}
           maxWidth="md"
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
@@ -302,9 +306,9 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
               onClose={() => setOpenImportProductModal(false)}
               loading={actionLoading}
               currentProduct={selectedItem}
-              onConfirm={(productValue) => {
+              onConfirm={(storeProductValue) => {
                 if (!!selectedItem) {
-                  // updateProduct(selectedItem?.id, productValue);
+                  updateStoreProduct(selectedItem?.product?.upc as string, storeProductValue);
                 }
               }}
             />

@@ -48,7 +48,7 @@ const StoreMangement = () => {
   const getAllStores = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${apiURL}/store?page=${page}&pageSize=10`, {
+      const response = await axios.get(`${apiURL}/store?page=${page}&pageSize=${30}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
