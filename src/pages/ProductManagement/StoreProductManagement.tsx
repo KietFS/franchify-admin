@@ -50,13 +50,9 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
         },
       );
 
-      if (response) {
-        console.log('GET PRODUCT RESPONSE', response);
-      }
-
       if (response?.data?.success) {
         setProducts(response?.data?.data?.results);
-        setTotalPage(response?.data?.data?.totalPage);
+        setTotalPage(Math.round(response?.data?.data?.total / 10));
       } else {
         setProducts([]);
       }

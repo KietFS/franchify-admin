@@ -64,10 +64,6 @@ const ImportProductForm: React.FC<IImportProductFormProps> = (props) => {
         },
       });
 
-      if (response) {
-        console.log('GET PRODUCT RESPONSE', response);
-      }
-
       if (response?.data?.success) {
         const filteredProducts = response?.data?.data?.results.filter((product: IProduct) => {
           return !props.currentStoreProduct.find(
@@ -82,7 +78,6 @@ const ImportProductForm: React.FC<IImportProductFormProps> = (props) => {
         setProducts([]);
       }
     } catch (error) {
-      console.log('GET PRODUCT RESPONSE', error);
     } finally {
       setLoading(false);
     }
