@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -8,21 +7,13 @@ import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import {
   BuildingStorefrontIcon,
   ChartBarSquareIcon,
-  CurrencyDollarIcon,
-  GiftIcon,
+  CubeIcon,
   InboxStackIcon,
   TagIcon,
   UserCircleIcon,
@@ -133,6 +124,7 @@ export default function MainLayout(props: ISideBarProps) {
     <TagIcon className="h-6 w-6 text-gray-500" />,
     <InboxStackIcon className="h-6 w-6 text-gray-500" />,
     <BuildingStorefrontIcon className="h-6 w-6 text-gray-500" />,
+    <CubeIcon className="h-6 w-6 text-gray-500" />,
   ];
 
   const activeIcons = [
@@ -141,6 +133,7 @@ export default function MainLayout(props: ISideBarProps) {
     <TagIcon className="h-6 w-6 font-semibold text-gray-500" />,
     <InboxStackIcon className="h-6 w-6 font-semibold text-gray-500" />,
     <BuildingStorefrontIcon className="h-6 w-6 font-semibold text-gray-500" />,
+    <CubeIcon className="h-6 w-6 font-semibold text-gray-500" />,
   ];
 
   const to = [
@@ -149,6 +142,7 @@ export default function MainLayout(props: ISideBarProps) {
     '/category-management',
     '/products-management',
     '/store-management',
+    '/tenant-management',
   ];
 
   return (
@@ -184,6 +178,7 @@ export default function MainLayout(props: ISideBarProps) {
             'Quản lý danh mục',
             'Quản lý sản phẩm',
             'Quản lý cửa hàng',
+            'Quản lý thương hiệu',
           ].map((text, index) => (
             <Link to={to[index]}>
               <ListItem key={text} disablePadding sx={{ display: 'block' }}>

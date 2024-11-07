@@ -1,20 +1,15 @@
-import * as React from "react";
-import {
-  DataGrid,
-  GridColDef,
-  GridRenderCellParams,
-  GridSelectionModel,
-} from "@mui/x-data-grid";
-import MainLayout from "../../components/SIdeBar";
-import { Button, Pagination, TablePagination } from "@mui/material";
-import axios from "axios";
-import { useAppSelector } from "../../hooks/useRedux";
-import { IRootState } from "../../redux";
-import { apiURL } from "../../config/constanst";
+import * as React from 'react';
+import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
+import MainLayout from '../../components/MainLayout';
+import { Button, Pagination, TablePagination } from '@mui/material';
+import axios from 'axios';
+import { useAppSelector } from '../../hooks/useRedux';
+import { IRootState } from '../../redux';
+import { apiURL } from '../../config/constanst';
 
-import ActionMenu from "./ActionMenu";
-import { toast } from "react-toastify";
-import LoadingSkeleton from "../../components/LoadingSkeleton";
+import ActionMenu from './ActionMenu';
+import { toast } from 'react-toastify';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
 interface IUser {
   id: string;
@@ -43,109 +38,100 @@ export interface IAddress {
 
 const UserManagement = () => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
-  const [selectionModel, setSelectionModel] =
-    React.useState<GridSelectionModel>([]);
+  const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
   const [users, setUsers] = React.useState<IUser[]>([]);
 
-  const { user, accessToken } = useAppSelector(
-    (state: IRootState) => state.auth
-  );
+  const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
 
   const columns: GridColDef[] = [
     {
-      field: "id",
-      headerName: "ID",
+      field: 'id',
+      headerName: 'ID',
       width: 70,
-      renderHeader: () => <div className="text-gray-800 font-bold">ID</div>,
+      renderHeader: () => <div className="font-bold text-gray-800">ID</div>,
     },
     {
-      field: "username",
-      headerName: "Tên người dùng",
+      field: 'username',
+      headerName: 'Tên người dùng',
       width: 250,
-      renderHeader: () => (
-        <div className="text-gray-800 font-bold">Tên người dùng</div>
-      ),
+      renderHeader: () => <div className="font-bold text-gray-800">Tên người dùng</div>,
     },
     {
-      field: "role",
-      headerName: "Vai trò",
+      field: 'role',
+      headerName: 'Vai trò',
       width: 250,
       renderCell: (params) => {
         switch (params.value) {
-          case "admin":
+          case 'admin':
             return (
-              <p className="px-2 py-1 text-yellow-800 bg-yellow-50 rounded-full text-xs font-bold">
+              <p className="rounded-full bg-yellow-50 px-2 py-1 text-xs font-bold text-yellow-800">
                 Quản trị viên
               </p>
             );
-          case "staff":
+          case 'staff':
             return (
-              <p className="px-2 py-1 text-blue-800 bg-blue-50 rounded-full text-xs font-bold">
+              <p className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-800">
                 Nhân viên
               </p>
             );
           default:
             return (
-              <p className="px-2 py-1 text-green-800 bg-green-50 rounded-full text-xs font-bold">
+              <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
                 Người dùng
               </p>
             );
         }
       },
     },
-    { field: "email", headerName: "Email", width: 250 },
-    { field: "phoneNumber", headerName: "Số điện thoại", width: 200 },
+    { field: 'email', headerName: 'Email', width: 250 },
+    { field: 'phoneNumber', headerName: 'Số điện thoại', width: 200 },
     {
-      field: "isActive",
-      headerName: "Trạng thái",
-      type: "string",
+      field: 'isActive',
+      headerName: 'Trạng thái',
+      type: 'string',
       width: 150,
-      headerAlign: "left",
-      align: "left",
+      headerAlign: 'left',
+      align: 'left',
       renderCell: (params: GridRenderCellParams<boolean>) =>
         params.value === true ? (
-          <p className="px-2 py-1 text-green-800 bg-green-50 rounded-full text-xs font-bold">
+          <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
             Đang hoạt động
           </p>
         ) : (
-          <p className="px-2 py-1 text-red-800 bg-red-50 rounded-full text-xs font-bold">
+          <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
             Đã bị khóa
           </p>
         ),
     },
     {
-      field: "actions",
-      headerName: "Hành động",
-      type: "string",
+      field: 'actions',
+      headerName: 'Hành động',
+      type: 'string',
       width: 300,
-      headerAlign: "left",
-      align: "left",
+      headerAlign: 'left',
+      align: 'left',
       renderCell: (params: GridRenderCellParams<any>) => {
         const handleDeactivateUser = async (id: string | number) => {
           try {
             const payload = {
               isActive: false,
             };
-            const response = await axios.put(
-              `${apiURL}/profiles/${id}`,
-              payload,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            );
+            const response = await axios.put(`${apiURL}/profiles/${id}`, payload, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
 
             if (response?.data?.success == true) {
-              toast.success("Vô hiệu hóa tài khoản thành công");
+              toast.success('Vô hiệu hóa tài khoản thành công');
               getAllUser({ addLoadingEffect: true });
             } else {
             }
           } catch (error) {
-            console.log("error");
+            console.log('error');
           }
         };
 
@@ -154,37 +140,33 @@ const UserManagement = () => {
             const payload = {
               isActive: true,
             };
-            const response = await axios.put(
-              `${apiURL}/profiles/${id}`,
-              payload,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            );
+            const response = await axios.put(`${apiURL}/profiles/${id}`, payload, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
 
             if (response?.data?.success == true) {
-              toast.success("Kích hoạt tài khoản thành công");
+              toast.success('Kích hoạt tài khoản thành công');
               getAllUser({ addLoadingEffect: false });
             } else {
             }
           } catch (error) {
-            console.log("error");
+            console.log('error');
           }
         };
 
         const options = [
           params?.row?.isActive == true
             ? {
-                id: "deactivate",
-                title: "Vô hiệu hóa tài khoản",
+                id: 'deactivate',
+                title: 'Vô hiệu hóa tài khoản',
                 onPress: () => handleDeactivateUser(params.row?.id),
                 onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
               }
             : {
-                id: "activate",
-                title: "Kích hoạt tài khoản",
+                id: 'activate',
+                title: 'Kích hoạt tài khoản',
                 onPress: () => handleActivateUser(params.row?.id),
                 onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
               },
@@ -208,7 +190,7 @@ const UserManagement = () => {
         setTotalPage(response?.data?._totalPage);
       }
     } catch (error) {
-      console.log("GET USER ERROR", error);
+      console.log('GET USER ERROR', error);
     } finally {
       addLoadingEffect && setLoading(false);
     }
@@ -222,8 +204,8 @@ const UserManagement = () => {
     <MainLayout
       title="Quản lý người dùng"
       content={
-        <div className="w-full flex flex-col gap-y-5 bg-white shadow-xl rounded-2xl">
-          <div className="flex flex-row justify-between items-center">
+        <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+          <div className="flex flex-row items-center justify-between">
             <div></div>
             <div className="flex flex-row gap-x-2">
               <Pagination

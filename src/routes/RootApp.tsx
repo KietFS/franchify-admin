@@ -7,6 +7,7 @@ import { useAppSelector } from '../hooks/useRedux';
 import { IRootState } from '../redux';
 import CategoryMangement from '../pages/CategoryManagement';
 import StoreMangement from '../pages/StoreManagement';
+import TenantManagement from '../pages/TenantMangement';
 
 export default function RootApp() {
   const { accessToken } = useAppSelector((state: IRootState) => state.auth);
@@ -33,6 +34,9 @@ export default function RootApp() {
       </Route>
       <Route path="/store-management">
         <StoreMangement />
+      </Route>
+      <Route path="/tenant-management">
+        <TenantManagement />
       </Route>
       <Route path="/login">
         <LoginPage />

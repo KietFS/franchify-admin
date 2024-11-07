@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
-import MainLayout from '../../components/SIdeBar';
+import MainLayout from '../../components/MainLayout';
 import axios from 'axios';
 import { useAppSelector } from '../../hooks/useRedux';
 import { IRootState } from '../../redux';
