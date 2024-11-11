@@ -1,16 +1,16 @@
-import * as React from "react";
-import Dialog from "@mui/material/Dialog";
-import { DialogContent } from "@mui/material";
-import * as yup from "yup";
-import { Formik } from "formik";
-import InputText from "../../designs/InputText";
-import Button from "../../designs/Button";
-import axios from "axios";
-import { toast } from "react-toastify";
-import SelectComponent from "../Select";
-import RichTextInput from "../../designs/RichTextInput";
-import GHNLogo from "../../assets/images/GHNLogo.png";
-import { apiURL } from "../../config/constanst";
+import * as React from 'react';
+import Dialog from '@mui/material/Dialog';
+import { DialogContent } from '@mui/material';
+import * as yup from 'yup';
+import { Formik } from 'formik';
+import InputText from '../../designs/InputText';
+import Button from '../../designs/Button';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import SelectComponent from '../Select';
+import RichTextInput from '../../designs/RichTextInput';
+import GHNLogo from '../../assets/images/GHNLogo.png';
+import { apiURL } from '../../config/constanst';
 
 interface IFormValue {
   name: string;
@@ -40,26 +40,25 @@ interface IWard {
 function OrderShippingInfoDialog(props: IOrderShippingInfoDialog) {
   const { open, onClose, product } = props;
   const [initialValues, setInitialValues] = React.useState<IFormValue>({
-    name: "",
-    phoneNumber: "",
-    ward: "",
-    district: "",
-    addressDetail: "",
+    name: '',
+    phoneNumber: '',
+    ward: '',
+    district: '',
+    addressDetail: '',
   });
   const [loading, setLoading] = React.useState<boolean>(false);
   const [initialLoading, setInitialLoading] = React.useState<boolean>(false);
   const [listDistrict, setListDistrict] = React.useState<IDistrict[]>([]);
-  const [districtSelected, setDistrictSelected] =
-    React.useState<IDistrict | null>(null);
+  const [districtSelected, setDistrictSelected] = React.useState<IDistrict | null>(null);
   const [listWard, setListWard] = React.useState<IWard[]>([]);
   const [wardSelected, setWardSelected] = React.useState<IWard | null>(null);
-  const [districtError, setDistrictError] = React.useState<string>("");
-  const [wardError, setWardError] = React.useState<string>("");
+  const [districtError, setDistrictError] = React.useState<string>('');
+  const [wardError, setWardError] = React.useState<string>('');
 
   const clients = [
     {
-      id: "giao-hang-nhanh",
-      name: "Giao hàng nhanh",
+      id: 'giao-hang-nhanh',
+      name: 'Giao hàng nhanh',
       logo: GHNLogo,
     },
   ];
@@ -69,30 +68,25 @@ function OrderShippingInfoDialog(props: IOrderShippingInfoDialog) {
     logo: any;
   }>(clients?.[0]);
 
-  const validationSchema = yup
-    .object()
-    .shape<{ [k in keyof IFormValue]: any }>({
-      name: yup.string().required("Vui lòng điền tên của bạn"),
-      phoneNumber: yup.string().required("Vui lòng nhập số điện thoại của bạn"),
-      addressDetail: yup
-        .string()
-        .required("Vui lòng nhập địa chỉ cụ thể của bạn"),
-    });
+  const validationSchema = yup.object().shape<{ [k in keyof IFormValue]: any }>({
+    name: yup.string().required('Vui lòng điền tên của bạn'),
+    phoneNumber: yup.string().required('Vui lòng nhập số điện thoại của bạn'),
+    addressDetail: yup.string().required('Vui lòng nhập địa chỉ cụ thể của bạn'),
+  });
 
   const handleSubmit = async (values: IFormValue) => {
     try {
       if (districtSelected === null) {
-        setDistrictError("Vui lòng chọn quận");
+        setDistrictError('Vui lòng chọn quận');
       } else {
-        setDistrictError("");
+        setDistrictError('');
       }
       if (wardSelected === null) {
-        setWardError("Vui lòng chọn phường");
+        setWardError('Vui lòng chọn phường');
       } else {
-        setWardError("");
+        setWardError('');
       }
       setLoading(true);
-      console.log("VALUES HERE", values);
     } catch (error) {
       console.log(error);
     } finally {
@@ -136,13 +130,7 @@ function OrderShippingInfoDialog(props: IOrderShippingInfoDialog) {
   }, [districtSelected]);
 
   return (
-    <Dialog
-      onClose={onClose}
-      open={open}
-      className="rounded-lg"
-      maxWidth="sm"
-      fullWidth={true}
-    >
+    <Dialog onClose={onClose} open={open} className="rounded-lg" maxWidth="sm" fullWidth={true}>
       <DialogContent>
         <Formik
           initialValues={initialValues}
@@ -154,12 +142,12 @@ function OrderShippingInfoDialog(props: IOrderShippingInfoDialog) {
             return (
               <div className="flex flex-col space-y-10">
                 <div className="flex flex-col space-y-5">
-                  <div className="w-full flex items-center">
-                    <h1 className="text-gray-600 font-bold text-2xl mb-2">
+                  <div className="flex w-full items-center">
+                    <h1 className="mb-2 text-2xl font-bold text-gray-600">
                       Nhập thông tin địa chỉ giao hàng của bạn
                     </h1>
                   </div>
-                  <div className="grid grid-cols-1 tablet:grid-cols-2 gap-x-2 gap-y-5 items-center justify-between">
+                  <div className="grid grid-cols-1 items-center justify-between gap-x-2 gap-y-5 tablet:grid-cols-2">
                     <InputText
                       name="name"
                       value={initialValues?.name}
@@ -209,7 +197,7 @@ function OrderShippingInfoDialog(props: IOrderShippingInfoDialog) {
                       renderOption={(options) => {
                         return options.map((option) => (
                           <div
-                            className="w-full flex items-center justify-between px-4 cursor-pointer hover:opacity-80 hover:bg-gray-100"
+                            className="flex w-full cursor-pointer items-center justify-between px-4 hover:bg-gray-100 hover:opacity-80"
                             onClick={() => setClientSelected(option)}
                           >
                             <p>{option.name}</p>
@@ -220,14 +208,10 @@ function OrderShippingInfoDialog(props: IOrderShippingInfoDialog) {
                     />
                   </div>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <div></div>
                   <div className="flex items-center">
-                    <Button
-                      variant="secondary"
-                      onClick={() => onClose()}
-                      title="Đóng"
-                    />
+                    <Button variant="secondary" onClick={() => onClose()} title="Đóng" />
                     <Button
                       type="submit"
                       title="Xác nhận"

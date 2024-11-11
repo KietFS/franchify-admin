@@ -50,7 +50,6 @@ const CategoryManagement = () => {
   };
 
   const updateCurrentCategory = async (item: IProductCategory, onSuccess: () => void) => {
-    console.log('item', item);
     if (item.id !== null) {
       try {
         const response = await axios.put(`${apiURL}/category/${item.id}`, item, {

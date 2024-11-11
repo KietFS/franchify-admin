@@ -170,7 +170,6 @@ export default function DashBoard() {
   }, [dimension]);
 
   const getStatisticData = async () => {
-    console.log('bearer token is', `Bearer ${accessToken}`);
     try {
       const res = await axios.get(`${apiURL}/statistics`, {
         headers: {

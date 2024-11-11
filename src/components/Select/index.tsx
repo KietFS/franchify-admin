@@ -1,6 +1,6 @@
-import { SelectChangeEvent, Select, MenuItem } from "@mui/material";
-import { useField } from "formik";
-import React, { ReactNode, useEffect, useRef } from "react";
+import { SelectChangeEvent, Select, MenuItem } from '@mui/material';
+import { useField } from 'formik';
+import React, { ReactNode, useEffect, useRef } from 'react';
 
 interface ISelectProps<T = any> {
   name: string;
@@ -25,49 +25,45 @@ const MenuProps = {
 };
 
 const SelectComponent: React.FC<ISelectProps> = (props) => {
-  console.log("optionSelected", props.optionSelected);
-
   const ref = useRef();
   const {
     name,
     label,
-    placeholder = "",
+    placeholder = '',
     options,
     optionSelected,
-    keyValue = "id",
-    keyLabel = "name",
+    keyValue = 'id',
+    keyLabel = 'name',
     onSelect,
     renderOption,
-    error = "",
+    error = '',
   } = props;
 
   return (
     <div className="flex flex-col gap-y-1">
-      <p className="text-sm font-bold text-gray-600 mb-1 mr-1">{label}</p>
+      <p className="mb-1 mr-1 text-sm font-bold text-gray-600">{label}</p>
       <Select
         ref={ref}
         name={name}
         placeholder={placeholder}
         value={optionSelected}
         style={{
-          width: "100%",
+          width: '100%',
           height: 40,
           borderWidth: 0,
-          borderColor: "transparent",
-          background: "#f3f4f6",
+          borderColor: 'transparent',
+          background: 'white',
           borderRadius: 7,
           maxHeight: 100,
         }}
         renderValue={(value) => (
           <div className="flex h-full items-center">
-            <p className="text-gray-900 text-sm items-center  ">
-              {optionSelected[keyLabel]}
-            </p>
+            <p className="items-center text-sm text-gray-900">{optionSelected[keyLabel]}</p>
           </div>
         )}
         sx={{
-          boxShadow: "none",
-          ".MuiOutlinedInput-notchedOutline": { border: 0 },
+          boxShadow: 'none',
+          '.MuiOutlinedInput-notchedOutline': { border: 0 },
         }}
       >
         {renderOption
@@ -82,9 +78,7 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
               </MenuItem>
             ))}
       </Select>
-      {error && (
-        <p className="text-red-500 text-xs font-semibold mt-1">{error}</p>
-      )}
+      {error && <p className="mt-1 text-xs font-semibold text-red-500">{error}</p>}
     </div>
   );
 };

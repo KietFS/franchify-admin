@@ -55,14 +55,6 @@ interface IProductCategoryProperty {
   options?: string[];
 }
 
-interface IProductHomePageResponse {
-  id: string;
-  name: string;
-  startPrice: number;
-  imagePath: string;
-  username: string;
-}
-
 declare interface String {
   truncate: (num: number) => string;
 }
