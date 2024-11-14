@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
-import { Button, Pagination, TablePagination } from '@mui/material';
+import { Pagination, TablePagination } from '@mui/material';
 import axios from 'axios';
 import { useAppSelector } from '../../hooks/useRedux';
-import { IRootState } from '../../redux';
+import { IRootState, store } from '../../redux';
 import { apiURL } from '../../config/constanst';
 
 import ActionMenu from './ActionMenu';
 import { toast } from 'react-toastify';
 import LoadingSkeleton from '../../components/LoadingSkeleton';
+import CreateAccountForm from './CreateAccount';
+import Button from '../../designs/Button';
 
 interface IUser {
   id: string;
@@ -45,6 +47,7 @@ const UserManagement = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
+  const [openCreateDialog, setOpenCreateDialog] = React.useState<boolean>(false);
 
   const columns: GridColDef[] = [
     {
@@ -118,8 +121,9 @@ const UserManagement = () => {
           try {
             const payload = {
               isActive: false,
+              store: 8,
             };
-            const response = await axios.put(`${apiURL}/profiles/${id}`, payload, {
+            const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
@@ -139,8 +143,9 @@ const UserManagement = () => {
           try {
             const payload = {
               isActive: true,
+              store: 8,
             };
-            const response = await axios.put(`${apiURL}/profiles/${id}`, payload, {
+            const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
@@ -170,6 +175,12 @@ const UserManagement = () => {
                 onPress: () => handleActivateUser(params.row?.id),
                 onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
               },
+          {
+            id: 'create-account',
+            title: 'Tạo tài khoản người dùng',
+            onPress: () => setOpenCreateDialog(true),
+            onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
+          },
         ];
         return <ActionMenu options={options} />;
       },
@@ -201,44 +212,52 @@ const UserManagement = () => {
   }, [page]);
 
   return (
-    <MainLayout
-      title="Quản lý người dùng"
-      content={
-        <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-          <div className="flex flex-row items-center justify-between">
-            <div></div>
-            <div className="flex flex-row gap-x-2">
-              <Pagination
-                onChange={(event, changedPage) => setPage(changedPage)}
-                count={totalPage}
-                defaultPage={1}
+    <>
+      <MainLayout
+        title="Quản lý người dùng"
+        content={
+          <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+            <div className="flex flex-row items-center justify-between">
+              <div className="flex flex-row gap-x-2">
+                <Pagination
+                  onChange={(event, changedPage) => setPage(changedPage)}
+                  count={totalPage}
+                  defaultPage={1}
+                  page={page}
+                />
+              </div>
+              <div>
+                <Button title="Tạo người dùng" onClick={() => setOpenCreateDialog(true)} />
+              </div>
+            </div>
+            <div className="h-[800px] w-full">
+              <DataGrid
+                rows={users}
+                loading={loading}
+                paginationMode="server"
                 page={page}
+                rowCount={totalPage}
+                pageSize={10}
+                columns={columns}
+                hideFooterPagination
+                disableSelectionOnClick
+                // onPageChange={(current) => setPage(current)}
+                onSelectionModelChange={(newSelectionModel) => {
+                  setDeleteDisable(!deleteDisable);
+                  setSelectionModel(newSelectionModel);
+                }}
+                selectionModel={selectionModel}
+                checkboxSelection={false}
               />
             </div>
           </div>
-          <div className="h-[800px] w-full">
-            <DataGrid
-              rows={users}
-              loading={loading}
-              paginationMode="server"
-              page={page}
-              rowCount={totalPage}
-              pageSize={10}
-              columns={columns}
-              hideFooterPagination
-              disableSelectionOnClick
-              // onPageChange={(current) => setPage(current)}
-              onSelectionModelChange={(newSelectionModel) => {
-                setDeleteDisable(!deleteDisable);
-                setSelectionModel(newSelectionModel);
-              }}
-              selectionModel={selectionModel}
-              checkboxSelection={false}
-            />
-          </div>
-        </div>
-      }
-    />
+        }
+      />
+
+      {openCreateDialog && (
+        <CreateAccountForm isOpen={openCreateDialog} onClose={() => setOpenCreateDialog(false)} />
+      )}
+    </>
   );
 };
 

@@ -10,7 +10,57 @@ import StoreMangement from '../pages/StoreManagement';
 import TenantManagement from '../pages/TenantMangement';
 
 export default function RootApp() {
-  const { accessToken } = useAppSelector((state: IRootState) => state.auth);
+  const { accessToken, user } = useAppSelector((state: IRootState) => state.auth);
+
+  const renderAdminRoutes = () => {
+    return (
+      <>
+        <Route path="/home">
+          <DashBoard />
+        </Route>
+        <Route path="/user-management">
+          <UserManagement />
+        </Route>
+        <Route path="/category-management">
+          <CategoryMangement />
+        </Route>
+        <Route path="/products-management">
+          <ProductManagement />
+        </Route>
+        <Route path="/store-management">
+          <StoreMangement />
+        </Route>
+        <Route path="/tenant-management">
+          <TenantManagement />
+        </Route>
+        <Route path="/login">
+          <LoginPage />
+        </Route>
+      </>
+    );
+  };
+
+  const renderStaffRoutes = () => {
+    return (
+      <>
+        <Route path="/home">
+          <DashBoard />
+        </Route>
+        <Route path="/user-management">
+          <UserManagement />
+        </Route>
+        <Route path="/products-management">
+          <ProductManagement />
+        </Route>
+        <Route path="/store-management">
+          <StoreMangement />
+        </Route>
+        <Route path="/login">
+          <LoginPage />
+        </Route>
+      </>
+    );
+  };
 
   return (
     <div>
@@ -20,27 +70,8 @@ export default function RootApp() {
           return !accessToken ? <Redirect to="/login" /> : <Redirect to="/user-management" />;
         }}
       ></Route>
-      <Route path="/home">
-        <DashBoard />
-      </Route>
-      <Route path="/user-management">
-        <UserManagement />
-      </Route>
-      <Route path="/category-management">
-        <CategoryMangement />
-      </Route>
-      <Route path="/products-management">
-        <ProductManagement />
-      </Route>
-      <Route path="/store-management">
-        <StoreMangement />
-      </Route>
-      <Route path="/tenant-management">
-        <TenantManagement />
-      </Route>
-      <Route path="/login">
-        <LoginPage />
-      </Route>
+
+      {user?.role === 'admin' ? renderAdminRoutes() : renderStaffRoutes()}
     </div>
   );
 }

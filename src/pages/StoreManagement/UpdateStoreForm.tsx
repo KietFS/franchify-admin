@@ -12,6 +12,7 @@ import { apiURL } from '../../config/constanst';
 import BaseInput from '../../components/BaseInput';
 import { toast } from 'react-toastify';
 import StoreMap from './StoreMap'; // Import the dialog
+
 interface IStoreFormValue {
   id: number | null;
   name: string;
