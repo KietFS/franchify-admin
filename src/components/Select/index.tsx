@@ -52,7 +52,7 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
           height: 40,
           borderWidth: 0,
           borderColor: 'transparent',
-          background: 'white',
+          background: '#f3f4f6',
           borderRadius: 7,
           maxHeight: 100,
         }}

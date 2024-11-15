@@ -15,16 +15,22 @@ interface IUserFormValue {
   lastName: string;
   phoneNumber: string;
   email?: string;
-  password: string;
+  password?: string;
 }
 
 interface ICreateStaffFormProps {
   onClose: () => void;
   onSuccess?: () => void;
   isOpen: boolean;
+  currentUser?: any;
 }
 
-const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({ onClose, isOpen, onSuccess }) => {
+const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({
+  onClose,
+  isOpen,
+  onSuccess,
+  currentUser,
+}) => {
   const [initialValues, setInitialValues] = useState<IUserFormValue>({
     username: '',
     firstName: '',
@@ -33,40 +39,73 @@ const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({ onClose, isOpen, o
     email: '',
     password: '',
   });
-  const [loading, setLoading] = useState<boolean>(false);
   const [stores, setStores] = useState<IStore[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [storeSelected, setStoreSelected] = useState<any | null>(null);
   const { accessToken } = useAuth();
+  const [actionLoading, setActionLoading] = useState<boolean>(false);
+  const listRole = [
+    {
+      id: 'staff',
+      name: 'Nhân viên',
+    },
+    {
+      id: 'manager',
+      name: 'Cửa hàng trưởng',
+    },
+  ];
+  const [roleSelected, setRoleSelected] = useState<any>(listRole[0]);
 
   const handleSubmit = async (values: IUserFormValue) => {
     try {
-      // Call the API
-      const response = await axios.post(
-        `${apiURL}/tenant/create-staff`,
-        {
-          username: values.username,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          phoneNumber: values.phoneNumber, // Ensure this is in the correct format (e.g., 8 for 8 AM)
-          email: values.email, // Ensure this is in the correct format (e.g., 21 for 9 PM)
-          password: values?.password,
-          store: storeSelected?.id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
+      setActionLoading(true);
+      const payload = currentUser
+        ? {
+            username: values.username,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            phoneNumber: values.phoneNumber,
+            email: values.email,
+            store: storeSelected?.id,
+            role: roleSelected?.id,
+          }
+        : {
+            username: values.username,
+            role: roleSelected?.id,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            phoneNumber: values.phoneNumber,
+            email: values.email,
+            password: values?.password,
+            store: storeSelected?.id,
+          };
+      const response = currentUser
+        ? await axios.put(`${apiURL}/tenant/users/${currentUser?.id}`, payload, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+        : await axios.post(`${apiURL}/tenant/create-staff`, payload, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
       if (response?.data?.success) {
         onClose();
-        toast.success('Tạo người dùng thành công');
+        setActionLoading(false);
+        currentUser
+          ? toast.success('Cập nhật người dùng thành công')
+          : toast.success('Tạo người dùng thành công');
         onSuccess && onSuccess?.();
       }
     } catch (error) {
-      toast.error('Tạo người dùng thất bại');
+      console.log('ERROR', error);
+      currentUser
+        ? toast.error((error as any)?.response?.data?.message || 'Cập nhật người dùng thất bại')
+        : toast.error((error as any)?.response?.data?.message || 'Tạo người dùng thất bại');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -90,6 +129,14 @@ const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({ onClose, isOpen, o
   useEffect(() => {
     getAllStores();
   }, []);
+
+  useEffect(() => {
+    if (currentUser && stores.length > 0) {
+      setInitialValues(currentUser);
+      setStoreSelected(stores.find((store) => store.id === currentUser?.store?.id));
+      setRoleSelected(listRole.find((role) => role.id === currentUser?.role));
+    }
+  }, [stores]);
 
   return (
     <>
@@ -149,14 +196,27 @@ const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({ onClose, isOpen, o
                       onChange={(e) => setFieldValue('email', e.target.value)}
                     />
 
-                    <BaseInput
-                      type="password"
-                      name="password"
-                      mode="password"
-                      value={values.password}
-                      label="Mật khẩu"
-                      placeholder="Nhập mật khẩu người dùng"
-                      onChange={(e) => setFieldValue('password', e.target.value)}
+                    {currentUser ? null : (
+                      <BaseInput
+                        type="password"
+                        name="password"
+                        mode="password"
+                        value={values.password}
+                        label="Mật khẩu"
+                        placeholder="Nhập mật khẩu người dùng"
+                        onChange={(e) => setFieldValue('password', e.target.value)}
+                      />
+                    )}
+
+                    <SelectComponent
+                      options={listRole}
+                      name="role"
+                      placeholder="Chọn vai trò cho user"
+                      label="Chọn vai trò"
+                      optionSelected={roleSelected}
+                      keyLabel="name"
+                      keyValue="id"
+                      onSelect={(role) => setRoleSelected(role)}
                     />
 
                     <SelectComponent
@@ -177,7 +237,7 @@ const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({ onClose, isOpen, o
                       type="button" // Changed to button
                       title="Xác nhận"
                       variant="primary"
-                      isLoading={loading}
+                      isLoading={actionLoading}
                       onClick={handleSubmit} // Directly calling submitForm
                     />
                     <Button variant="secondary" onClick={onClose} title="Đóng" />

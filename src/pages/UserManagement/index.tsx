@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
-import { Pagination, TablePagination } from '@mui/material';
+import { Pagination } from '@mui/material';
 import axios from 'axios';
 import { useAppSelector } from '../../hooks/useRedux';
 import { IRootState, store } from '../../redux';
@@ -9,7 +9,6 @@ import { apiURL } from '../../config/constanst';
 
 import ActionMenu from './ActionMenu';
 import { toast } from 'react-toastify';
-import LoadingSkeleton from '../../components/LoadingSkeleton';
 import CreateAccountForm from './CreateAccount';
 import Button from '../../designs/Button';
 
@@ -47,7 +46,8 @@ const UserManagement = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
-  const [openCreateDialog, setOpenCreateDialog] = React.useState<boolean>(false);
+  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+  const [userNeedToUpdate, setUserNeedToUpdate] = React.useState<IUser | null>(null);
 
   const columns: GridColDef[] = [
     {
@@ -72,6 +72,13 @@ const UserManagement = () => {
             return (
               <p className="rounded-full bg-yellow-50 px-2 py-1 text-xs font-bold text-yellow-800">
                 Quản trị viên
+              </p>
+            );
+
+          case 'manager':
+            return (
+              <p className="rounded-full bg-purple-50 px-2 py-1 text-xs font-bold text-purple-800">
+                Cửa hàng trưởng
               </p>
             );
           case 'staff':
@@ -165,20 +172,23 @@ const UserManagement = () => {
           params?.row?.isActive == true
             ? {
                 id: 'deactivate',
-                title: 'Vô hiệu hóa tài khoản',
+                title: 'Khóa',
                 onPress: () => handleDeactivateUser(params.row?.id),
                 onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
               }
             : {
                 id: 'activate',
-                title: 'Kích hoạt tài khoản',
+                title: 'Cập nhật',
                 onPress: () => handleActivateUser(params.row?.id),
                 onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
               },
           {
-            id: 'create-account',
-            title: 'Tạo tài khoản người dùng',
-            onPress: () => setOpenCreateDialog(true),
+            id: 'update-account',
+            title: 'Cập nhật',
+            onPress: () => {
+              setOpenDialog(true);
+              setUserNeedToUpdate(params.row);
+            },
             onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
           },
         ];
@@ -227,7 +237,13 @@ const UserManagement = () => {
                 />
               </div>
               <div>
-                <Button title="Tạo người dùng" onClick={() => setOpenCreateDialog(true)} />
+                <Button
+                  title="Tạo người dùng"
+                  onClick={() => {
+                    setUserNeedToUpdate(null);
+                    setOpenDialog(true);
+                  }}
+                />
               </div>
             </div>
             <div className="h-[800px] w-full">
@@ -254,8 +270,22 @@ const UserManagement = () => {
         }
       />
 
-      {openCreateDialog && (
-        <CreateAccountForm isOpen={openCreateDialog} onClose={() => setOpenCreateDialog(false)} />
+      {openDialog && (
+        <>
+          {userNeedToUpdate ? (
+            <CreateAccountForm
+              currentUser={userNeedToUpdate as any}
+              isOpen={openDialog}
+              onClose={() => setOpenDialog(false)}
+            />
+          ) : (
+            <CreateAccountForm
+              onSuccess={() => getAllUser({ addLoadingEffect: true })}
+              isOpen={openDialog}
+              onClose={() => setOpenDialog(false)}
+            />
+          )}
+        </>
       )}
     </>
   );

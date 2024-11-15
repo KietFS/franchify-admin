@@ -160,89 +160,84 @@ const StoreMangement = () => {
     <MainLayout
       title="Danh sách cửa hàng"
       content={
-        isLoading ? (
-          <div className="mt-20 h-full w-full px-8">
-            <LoadingSkeleton />
+        <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+          <div className="flex flex-row items-center justify-between">
+            <div></div>
+            <div className="flex flex-row gap-x-2">
+              <button
+                onClick={() => {
+                  setSelectedItem(null); // Clear selected item for adding a new store
+                  setOpenCreateModal(true); // Open the modal for adding
+                }}
+                className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
+              >
+                <PlusIcon className="h-[20px] w-[20px] font-bold text-white" />
+                <p>Thêm cửa hàng</p>
+              </button>
+            </div>
           </div>
-        ) : (
-          <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-            <div className="flex flex-row items-center justify-between">
-              <div></div>
-              <div className="flex flex-row gap-x-2">
-                <button
-                  onClick={() => {
-                    setSelectedItem(null); // Clear selected item for adding a new store
-                    setOpenCreateModal(true); // Open the modal for adding
-                  }}
-                  className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
-                >
-                  <PlusIcon className="h-[20px] w-[20px] font-bold text-white" />
-                  <p>Thêm cửa hàng</p>
-                </button>
-              </div>
-            </div>
-            <div className="h-[800px] w-full">
-              <DataGrid
-                rows={stores}
-                getRowId={(row) => row.id}
-                paginationMode="server"
-                page={page}
-                rowCount={totalPage * 10} // Adjusted for rowCount
-                pageSize={10}
-                columns={columns}
-                hideFooterPagination
-                disableSelectionOnClick
-                onSelectionModelChange={(newSelectionModel) => setSelectionModel(newSelectionModel)}
-                selectionModel={selectionModel}
-                checkboxSelection={false}
-              />
-            </div>
-            <Pagination
-              onChange={(event, changedPage) => setPage(changedPage)}
-              count={totalPage}
+          <div className="h-[800px] w-full">
+            <DataGrid
+              loading={isLoading}
+              rows={stores}
+              getRowId={(row) => row.id}
+              paginationMode="server"
               page={page}
+              rowCount={totalPage * 10} // Adjusted for rowCount
+              pageSize={10}
+              columns={columns}
+              hideFooterPagination
+              disableSelectionOnClick
+              onSelectionModelChange={(newSelectionModel) => setSelectionModel(newSelectionModel)}
+              selectionModel={selectionModel}
+              checkboxSelection={false}
             />
-
-            {/* Modal for Adding or Updating Store */}
-            {openUpdateModal && (
-              <CustomDialog
-                title={'Cập nhật cửa hàng'}
-                open={openUpdateModal}
-                onClose={() => setOpenUpdateModal(false)}
-              >
-                <UpdateStoreForm
-                  onClose={() => setOpenUpdateModal(false)}
-                  onConfirm={() => {
-                    setOpenUpdateModal(false);
-                    getAllStores(); // Refresh the store list
-                    toast.success('Cập nhật cửa hàng thành công');
-                  }}
-                  // @ts-ignore
-                  currentStore={selectedItem}
-                  loading={isLoading}
-                />
-              </CustomDialog>
-            )}
-
-            {openCreateModal && (
-              <CustomDialog
-                title={'Thêm cửa hàng'}
-                open={openCreateModal}
-                onClose={() => setOpenCreateModal(false)}
-              >
-                <CreateStoreForm
-                  onClose={() => setOpenCreateModal(false)}
-                  onConfirm={() => {
-                    setOpenCreateModal(false);
-                    getAllStores(); // Refresh the store list
-                    toast.success('Tạo cửa hàng thành công');
-                  }}
-                  loading={isLoading}
-                />
-              </CustomDialog>
-            )}
           </div>
-        )
+          <Pagination
+            onChange={(event, changedPage) => setPage(changedPage)}
+            count={totalPage}
+            page={page}
+          />
+
+          {/* Modal for Adding or Updating Store */}
+          {openUpdateModal && (
+            <CustomDialog
+              title={'Cập nhật cửa hàng'}
+              open={openUpdateModal}
+              onClose={() => setOpenUpdateModal(false)}
+            >
+              <UpdateStoreForm
+                onClose={() => setOpenUpdateModal(false)}
+                onConfirm={() => {
+                  setOpenUpdateModal(false);
+                  getAllStores(); // Refresh the store list
+                  toast.success('Cập nhật cửa hàng thành công');
+                }}
+                // @ts-ignore
+                currentStore={selectedItem}
+                loading={isLoading}
+              />
+            </CustomDialog>
+          )}
+
+          {openCreateModal && (
+            <CustomDialog
+              title={'Thêm cửa hàng'}
+              open={openCreateModal}
+              onClose={() => setOpenCreateModal(false)}
+            >
+              <CreateStoreForm
+                onClose={() => setOpenCreateModal(false)}
+                onConfirm={() => {
+                  setOpenCreateModal(false);
+                  getAllStores(); // Refresh the store list
+                  toast.success('Tạo cửa hàng thành công');
+                }}
+                loading={isLoading}
+              />
+            </CustomDialog>
+          )}
+        </div>
       }
     />
   );
