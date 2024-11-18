@@ -8,6 +8,7 @@ import { IRootState } from '../redux';
 import CategoryMangement from '../pages/CategoryManagement';
 import StoreMangement from '../pages/StoreManagement';
 import TenantManagement from '../pages/TenantMangement';
+import OrdersManagement from '../pages/OrdersManagement';
 
 export default function RootApp() {
   const { accessToken, user } = useAppSelector((state: IRootState) => state.auth);
@@ -52,8 +53,8 @@ export default function RootApp() {
         <Route path="/products-management">
           <ProductManagement />
         </Route>
-        <Route path="/store-management">
-          <StoreMangement />
+        <Route path="/orders-management">
+          <OrdersManagement />
         </Route>
         <Route path="/login">
           <LoginPage />
@@ -67,7 +68,7 @@ export default function RootApp() {
       <Route
         path="/"
         render={() => {
-          return !accessToken ? <Redirect to="/login" /> : <Redirect to="/user-management" />;
+          return !accessToken ? <Redirect to="/login" /> : <Redirect to="/home" />;
         }}
       ></Route>
 

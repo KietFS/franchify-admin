@@ -62,6 +62,7 @@ declare interface String {
 declare interface String {
   prettyMoney: () => string;
   prettyDate: () => string;
+  prettyDateTime: () => string;
 }
 
 declare interface Array<T> {

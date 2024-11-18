@@ -11,6 +11,7 @@ import ActionMenu from './ActionMenu';
 import { toast } from 'react-toastify';
 import CreateAccountForm from './CreateAccount';
 import Button from '../../designs/Button';
+import { useAuth } from '../../hooks/useAuth';
 
 interface IUser {
   id: string;
@@ -41,13 +42,13 @@ const UserManagement = () => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
   const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
   const [users, setUsers] = React.useState<IUser[]>([]);
-
-  const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
   const [totalPage, setTotalPage] = React.useState<number>(0);
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
   const [userNeedToUpdate, setUserNeedToUpdate] = React.useState<IUser | null>(null);
+
+  const { user, accessToken, isAuthorizedForAdmin, isAuthorizedForManager } = useAuth();
 
   const columns: GridColDef[] = [
     {
@@ -124,75 +125,81 @@ const UserManagement = () => {
       headerAlign: 'left',
       align: 'left',
       renderCell: (params: GridRenderCellParams<any>) => {
-        const handleDeactivateUser = async (id: string | number) => {
-          try {
-            const payload = {
-              isActive: false,
-              store: 8,
-            };
-            const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
-
-            if (response?.data?.success == true) {
-              toast.success('Vô hiệu hóa tài khoản thành công');
-              getAllUser({ addLoadingEffect: true });
-            } else {
-            }
-          } catch (error) {
-            console.log('error');
-          }
-        };
-
-        const handleActivateUser = async (id: string | number) => {
-          try {
-            const payload = {
-              isActive: true,
-              store: 8,
-            };
-            const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
-
-            if (response?.data?.success == true) {
-              toast.success('Kích hoạt tài khoản thành công');
-              getAllUser({ addLoadingEffect: false });
-            } else {
-            }
-          } catch (error) {
-            console.log('error');
-          }
-        };
-
-        const options = [
-          params?.row?.isActive == true
-            ? {
-                id: 'deactivate',
-                title: 'Khóa',
-                onPress: () => handleDeactivateUser(params.row?.id),
-                onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
-              }
-            : {
-                id: 'activate',
-                title: 'Cập nhật',
-                onPress: () => handleActivateUser(params.row?.id),
-                onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
-              },
+        if (isAuthorizedForManager) {
           {
-            id: 'update-account',
-            title: 'Cập nhật',
-            onPress: () => {
-              setOpenDialog(true);
-              setUserNeedToUpdate(params.row);
-            },
-            onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
-          },
-        ];
-        return <ActionMenu options={options} />;
+            const handleDeactivateUser = async (id: string | number) => {
+              try {
+                const payload = {
+                  isActive: false,
+                  store: 8,
+                };
+                const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
+                  headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                  },
+                });
+
+                if (response?.data?.success == true) {
+                  toast.success('Vô hiệu hóa tài khoản thành công');
+                  getAllUser({ addLoadingEffect: true });
+                } else {
+                }
+              } catch (error) {
+                console.log('error');
+              }
+            };
+
+            const handleActivateUser = async (id: string | number) => {
+              try {
+                const payload = {
+                  isActive: true,
+                  store: 8,
+                };
+                const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
+                  headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                  },
+                });
+
+                if (response?.data?.success == true) {
+                  toast.success('Kích hoạt tài khoản thành công');
+                  getAllUser({ addLoadingEffect: false });
+                } else {
+                }
+              } catch (error) {
+                console.log('error');
+              }
+            };
+
+            const options = [
+              params?.row?.isActive == true
+                ? {
+                    id: 'deactivate',
+                    title: 'Khóa',
+                    onPress: () => handleDeactivateUser(params.row?.id),
+                    onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
+                  }
+                : {
+                    id: 'activate',
+                    title: 'Cập nhật',
+                    onPress: () => handleActivateUser(params.row?.id),
+                    onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
+                  },
+              {
+                id: 'update-account',
+                title: 'Cập nhật',
+                onPress: () => {
+                  setOpenDialog(true);
+                  setUserNeedToUpdate(params.row);
+                },
+                onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
+              },
+            ];
+            return <ActionMenu options={options} />;
+          }
+        } else {
+          return <></>;
+        }
       },
     },
   ];
@@ -201,7 +208,12 @@ const UserManagement = () => {
     const { addLoadingEffect } = params || {};
     try {
       addLoadingEffect && setLoading(true);
-      const response = await axios.get(`http://localhost:4000/tenant/users`, {
+
+      const requestURl = isAuthorizedForAdmin
+        ? `${apiURL}/tenant/users`
+        : `${apiURL}/tenant/staffs/${user?.store?.id}`;
+
+      const response = await axios.get(`${requestURl}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -221,6 +233,8 @@ const UserManagement = () => {
     getAllUser({ addLoadingEffect: true });
   }, [page]);
 
+  console.log('users', user);
+
   return (
     <>
       <MainLayout
@@ -237,13 +251,15 @@ const UserManagement = () => {
                 />
               </div>
               <div>
-                <Button
-                  title="Tạo người dùng"
-                  onClick={() => {
-                    setUserNeedToUpdate(null);
-                    setOpenDialog(true);
-                  }}
-                />
+                {isAuthorizedForManager && (
+                  <Button
+                    title="Tạo người dùng"
+                    onClick={() => {
+                      setUserNeedToUpdate(null);
+                      setOpenDialog(true);
+                    }}
+                  />
+                )}
               </div>
             </div>
             <div className="h-[800px] w-full">
@@ -277,10 +293,11 @@ const UserManagement = () => {
               currentUser={userNeedToUpdate as any}
               isOpen={openDialog}
               onClose={() => setOpenDialog(false)}
+              onSuccess={() => getAllUser({ addLoadingEffect: false })}
             />
           ) : (
             <CreateAccountForm
-              onSuccess={() => getAllUser({ addLoadingEffect: true })}
+              onSuccess={() => getAllUser({ addLoadingEffect: false })}
               isOpen={openDialog}
               onClose={() => setOpenDialog(false)}
             />

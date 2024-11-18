@@ -14,6 +14,7 @@ import {
   BuildingStorefrontIcon,
   ChartBarSquareIcon,
   CubeIcon,
+  DocumentIcon,
   InboxStackIcon,
   TagIcon,
   UserCircleIcon,
@@ -24,6 +25,7 @@ import { useAppSelector } from '../../hooks/useRedux';
 import { IRootState } from '../../redux';
 import { useDispatch } from 'react-redux';
 import { setOpenSideBar } from '../../redux/slices/auth';
+import { useAuth } from '../../hooks/useAuth';
 
 const drawerWidth = 300;
 
@@ -104,6 +106,7 @@ interface ISideBarProps {
 export default function MainLayout(props: ISideBarProps) {
   const theme = useTheme();
   const { path } = useRouteMatch();
+  const { user } = useAuth();
 
   const { content, title } = props;
   const { openSideBar: open } = useAppSelector((state: IRootState) => state.auth);
@@ -118,32 +121,85 @@ export default function MainLayout(props: ISideBarProps) {
     dispatch(setOpenSideBar(false));
   };
 
-  const icons = [
-    <ChartBarSquareIcon className="h-6 w-6 text-gray-500" />,
-    <UserCircleIcon className="h-6 w-6 text-gray-500" />,
-    <TagIcon className="h-6 w-6 text-gray-500" />,
-    <InboxStackIcon className="h-6 w-6 text-gray-500" />,
-    <BuildingStorefrontIcon className="h-6 w-6 text-gray-500" />,
-    <CubeIcon className="h-6 w-6 text-gray-500" />,
+  const adminRoutes = [
+    {
+      id: '1',
+      name: 'Tổng quan',
+      to: '/home',
+      activeIcon: <ChartBarSquareIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <ChartBarSquareIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '2',
+      name: 'Quản lý người dùng',
+      to: '/user-management',
+      activeIcon: <UserCircleIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <UserCircleIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '3',
+      name: 'Quản lý danh mục',
+      to: '/category-management',
+      activeIcon: <TagIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <TagIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '4',
+      name: 'Quản lý sản phẩm',
+      to: '/products-management',
+      activeIcon: <InboxStackIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <InboxStackIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '5',
+      name: 'Quản lý cửa hàng',
+      to: '/store-management',
+      activeIcon: <BuildingStorefrontIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <BuildingStorefrontIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '6',
+      name: 'Quản lý thương hiệu',
+      to: '/tenant-management',
+      activeIcon: <CubeIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <CubeIcon className="h-6 w-6 text-gray-500" />,
+    },
   ];
 
-  const activeIcons = [
-    <ChartBarSquareIcon className="h-6 w-6 font-semibold text-gray-500" />,
-    <UserCircleIcon className="h-6 w-6 font-semibold text-gray-500" />,
-    <TagIcon className="h-6 w-6 font-semibold text-gray-500" />,
-    <InboxStackIcon className="h-6 w-6 font-semibold text-gray-500" />,
-    <BuildingStorefrontIcon className="h-6 w-6 font-semibold text-gray-500" />,
-    <CubeIcon className="h-6 w-6 font-semibold text-gray-500" />,
+  const mangerRoutes = [
+    {
+      id: '1',
+      name: 'Quản lý doanh thu',
+      to: '/home',
+      activeIcon: <ChartBarSquareIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <ChartBarSquareIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '2',
+      name: 'Quản lý người dùng',
+      to: '/user-management',
+      activeIcon: <UserCircleIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <UserCircleIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '4',
+      name: 'Quản lý sản phẩm',
+      to: '/products-management',
+      activeIcon: <InboxStackIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <InboxStackIcon className="h-6 w-6 text-gray-500" />,
+    },
+    {
+      id: '5',
+      name: 'Quản lý đơn hàng',
+      to: '/orders-management',
+      activeIcon: <DocumentIcon className="h-6 w-6 font-semibold text-gray-500" />,
+      icon: <DocumentIcon className="h-6 w-6 text-gray-500" />,
+    },
   ];
 
-  const to = [
-    '/home',
-    '/user-management',
-    '/category-management',
-    '/products-management',
-    '/store-management',
-    '/tenant-management',
-  ];
+  console.log('user', user);
+
+  const routes = user?.role == 'admin' ? adminRoutes : mangerRoutes;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -172,16 +228,9 @@ export default function MainLayout(props: ISideBarProps) {
         </DrawerHeader>
         <Divider />
         <List>
-          {[
-            'Tổng quan',
-            'Quản lý người dùng',
-            'Quản lý danh mục',
-            'Quản lý sản phẩm',
-            'Quản lý cửa hàng',
-            'Quản lý thương hiệu',
-          ].map((text, index) => (
-            <Link to={to[index]}>
-              <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {routes.map((route, index) => (
+            <Link to={route.to}>
+              <ListItem key={route.id} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -194,18 +243,18 @@ export default function MainLayout(props: ISideBarProps) {
                     sx={{
                       minWidth: 0,
                       mr: 3,
-                      color: path == to[index] ? 'primary' : 'black',
+                      color: path == route.to ? 'primary' : 'black',
                     }}
-                    color={path == to[index] ? 'blue' : 'black'}
+                    color={path == route.to ? 'blue' : 'black'}
                   >
-                    {path == to[index] ? activeIcons[index] : icons[index]}
+                    {path == route.to ? route.activeIcon : route.icon}
                   </ListItemIcon>
                   <p
                     className={`text-sm ${
-                      path == to[index] ? 'font-semibold text-gray-500' : 'text-gray-500'
+                      path == route.to ? 'font-semibold text-gray-500' : 'text-gray-500'
                     }`}
                   >
-                    {text}
+                    {route.name}
                   </p>
                 </ListItemButton>
               </ListItem>

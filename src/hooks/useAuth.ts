@@ -20,6 +20,10 @@ export const useAuth = () => {
 
   const dispatch = useDispatch();
 
+  const isAuthorizedForAdmin = user?.role === 'admin';
+  const isAuthorizedForManager = user?.role === 'manager' || isAuthorizedForAdmin;
+  const isAuthorizedForStaff = user?.role === 'staff' || isAuthorizedForManager;
+
   const login = async (phoneNumber: string, password: string) => {
     try {
       setLoginLoading(true);
@@ -59,5 +63,8 @@ export const useAuth = () => {
     loginError,
     loginLoading,
     user,
+    isAuthorizedForAdmin,
+    isAuthorizedForManager,
+    isAuthorizedForStaff,
   };
 };
