@@ -181,23 +181,15 @@ const StoreMangement = () => {
               loading={isLoading}
               rows={stores}
               getRowId={(row) => row.id}
-              paginationMode="server"
-              page={page}
-              rowCount={totalPage * 10} // Adjusted for rowCount
+              paginationMode="client"
               pageSize={10}
               columns={columns}
-              hideFooterPagination
               disableSelectionOnClick
               onSelectionModelChange={(newSelectionModel) => setSelectionModel(newSelectionModel)}
               selectionModel={selectionModel}
               checkboxSelection={false}
             />
           </div>
-          <Pagination
-            onChange={(event, changedPage) => setPage(changedPage)}
-            count={totalPage}
-            page={page}
-          />
 
           {/* Modal for Adding or Updating Store */}
           {openUpdateModal && (

@@ -6,7 +6,9 @@ import StoreProductManagement from './StoreProductManagement';
 
 const ProductManagement = () => {
   const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
-  const [viewMode, setViewMode] = React.useState<'tenant' | 'store'>('store');
+  const [viewMode, setViewMode] = React.useState<'tenant' | 'store'>(
+    user?.role == 'admin' ? 'tenant' : 'store',
+  );
 
   return (
     <>

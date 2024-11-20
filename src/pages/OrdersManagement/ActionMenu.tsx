@@ -13,9 +13,11 @@ interface IActionMenuProps {
     onClick: () => void;
     onActionSuccess: () => void;
   };
+
+  onViewDetail: () => void;
 }
 
-const OrderActionMenu: React.FC<IActionMenuProps> = ({ option }) => {
+const OrderActionMenu: React.FC<IActionMenuProps> = ({ option, onViewDetail }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -48,7 +50,7 @@ const OrderActionMenu: React.FC<IActionMenuProps> = ({ option }) => {
         PaperProps={{
           style: {
             maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch',
+            width: 'fit-content',
           },
         }}
       >
@@ -60,6 +62,16 @@ const OrderActionMenu: React.FC<IActionMenuProps> = ({ option }) => {
           }}
         >
           {option?.actionLabel}
+        </MenuItem>
+
+        <MenuItem
+          key={option?.id}
+          onClick={() => {
+            handleClose();
+            onViewDetail();
+          }}
+        >
+          Xem chi tiết
         </MenuItem>
       </Menu>
     </div>

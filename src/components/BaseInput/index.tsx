@@ -111,7 +111,7 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
         )}
       </div>
       <div
-        className={`flex w-full border ${
+        className={`mt-2 flex w-full border ${
           focus && !isError
             ? 'border-2 border-gray-500'
             : isError

@@ -8,6 +8,15 @@ interface ProductPrice {
   displaySalePrice?: string;
 }
 
+enum OrderStatus {
+  PENDING = 'pending',
+  RECEIVED = 'received',
+  PROCESSING = 'processing',
+  SHIPPING = 'shipping',
+  DELIVERED = 'delivered',
+  CANCELLED = 'cancelled',
+}
+
 interface IProduct {
   id: string;
   upc: string;
@@ -53,6 +62,35 @@ interface IProductCategoryProperty {
   name: string;
   type: string;
   options?: string[];
+}
+
+enum OrderStatus {
+  PENDING = 'pending',
+  RECEIVED = 'received',
+  PROCESSING = 'processing',
+  SHIPPING = 'shipping',
+  DELIVERED = 'delivered',
+  CANCELLED = 'cancelled',
+}
+
+interface IOrder {
+  id: number;
+  user?: IUser;
+  status?: OrderStatus;
+  createdAt?: string;
+  updatedAt?: string;
+  orderAddress?: IOrderAddress;
+  orderUserInfo?: IOrderUserInfo | null;
+  store?: IStore;
+  orderDetails?: OrderDetail[];
+  isApplyUserSavePoints?: boolean;
+  totalAmount?: number;
+}
+
+interface IOrderDetail {
+  id: number;
+  product: IProduct;
+  quantity: number;
 }
 
 declare interface String {

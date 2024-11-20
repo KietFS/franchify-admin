@@ -85,7 +85,9 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
           setListStore(response?.data?.data?.results);
           setStoreLoading(false);
         }
-        setCurrentStore(response?.data?.data?.results?.[0]);
+        setCurrentStore(
+          response?.data?.data?.results?.find((store: IStore) => store.id == user.store.id),
+        );
       } else {
         setStoreLoading(false);
       }
@@ -102,7 +104,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
       headerName: 'Mã sản phẩm',
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return <div className="">{params.row.product?.upc}</div>;
+        return <div className="text-sm font-bold text-gray-600">{params.row.product?.upc}</div>;
       },
     },
     {
@@ -209,6 +211,8 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
     getAllStores();
   }, []);
 
+  console.log('user', user);
+
   return (
     <>
       <MainLayout
@@ -221,7 +225,8 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                   optionSelected={currentStore}
                   options={listStore}
                   name="currentStore"
-                  label="Chọn cửa hàng"
+                  disabled={user.role == 'admin' ? false : true}
+                  label={user.role == 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
                   onSelect={(store) => {
                     if (store.id === 'all') {
                       props.onChangeViewMode('tenant');
@@ -229,7 +234,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                       setCurrentStore(store);
                     }
                   }}
-                  placeholder="Chọn cửa hàng"
+                  placeholder={user.role == 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
                 />
               </div>
               <button

@@ -23,7 +23,7 @@ const validationSchema = yup.object().shape<{ [k in keyof IFormValue]: any }>({
     .required('Vui lòng nhập mật khẩu của bạn'),
 });
 const LoginPage: React.FC<ILoginPageProps> = () => {
-  const { login, loginLoading, loginError } = useAuth();
+  const { login, loginLoading } = useAuth();
   const [initialValues, setInitialValues] = useState<IFormValue>({
     phoneNumber: '',
     password: '',
@@ -61,7 +61,6 @@ const LoginPage: React.FC<ILoginPageProps> = () => {
                       </p>
                     </div>
                     <div className="space-y-5">
-                      {loginError && <p className="text-gray-500">Something wrong happens</p>}
                       <BaseInput
                         mode="phoneNumber"
                         name="phoneNumber"

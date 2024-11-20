@@ -8,6 +8,7 @@ interface ISelectProps<T = any> {
   placeholder: string;
   options: T[];
   optionSelected: T;
+  disabled?: boolean;
   onSelect: (option: T) => void;
   keyValue?: string;
   keyLabel?: string;
@@ -32,6 +33,7 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
     placeholder = '',
     options,
     optionSelected,
+    disabled = false,
     keyValue = 'id',
     keyLabel = 'name',
     onSelect,
@@ -45,6 +47,7 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
       <Select
         ref={ref}
         name={name}
+        disabled={disabled}
         placeholder={placeholder}
         value={optionSelected}
         style={{

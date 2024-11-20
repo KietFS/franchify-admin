@@ -52,78 +52,10 @@ const UserManagement = () => {
 
   const columns: GridColDef[] = [
     {
-      field: 'id',
-      headerName: 'ID',
-      width: 70,
-      renderHeader: () => <div className="font-bold text-gray-800">ID</div>,
-    },
-    {
-      field: 'username',
-      headerName: 'Tên người dùng',
-      width: 250,
-      renderHeader: () => <div className="font-bold text-gray-800">Tên người dùng</div>,
-    },
-    {
-      field: 'role',
-      headerName: 'Vai trò',
-      width: 250,
-      renderCell: (params) => {
-        switch (params.value) {
-          case 'admin':
-            return (
-              <p className="rounded-full bg-yellow-50 px-2 py-1 text-xs font-bold text-yellow-800">
-                Quản trị viên
-              </p>
-            );
-
-          case 'manager':
-            return (
-              <p className="rounded-full bg-purple-50 px-2 py-1 text-xs font-bold text-purple-800">
-                Cửa hàng trưởng
-              </p>
-            );
-          case 'staff':
-            return (
-              <p className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-800">
-                Nhân viên
-              </p>
-            );
-          default:
-            return (
-              <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
-                Người dùng
-              </p>
-            );
-        }
-      },
-    },
-    { field: 'email', headerName: 'Email', width: 250 },
-    { field: 'phoneNumber', headerName: 'Số điện thoại', width: 200 },
-    {
-      field: 'isActive',
-      headerName: 'Trạng thái',
-      type: 'string',
-      width: 150,
-      headerAlign: 'left',
-      align: 'left',
-      renderCell: (params: GridRenderCellParams<boolean>) =>
-        params.value === true ? (
-          <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
-            Đang hoạt động
-          </p>
-        ) : (
-          <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
-            Đã bị khóa
-          </p>
-        ),
-    },
-    {
       field: 'actions',
       headerName: 'Hành động',
       type: 'string',
-      width: 300,
-      headerAlign: 'left',
-      align: 'left',
+      width: 100,
       renderCell: (params: GridRenderCellParams<any>) => {
         if (isAuthorizedForManager) {
           {
@@ -202,6 +134,87 @@ const UserManagement = () => {
         }
       },
     },
+    {
+      field: 'id',
+      headerName: 'ID',
+      width: 70,
+      renderHeader: () => <div className="font-bold text-gray-800">ID</div>,
+    },
+    {
+      field: 'username',
+      headerName: 'Tên người dùng',
+      width: 250,
+      renderHeader: () => <div className="font-bold text-gray-800">Tên người dùng</div>,
+      renderCell: (params) => (
+        <p className="text-sm font-semibold text-gray-600">
+          {params?.row?.firstName} {params?.row?.lastName}
+        </p>
+      ),
+    },
+    {
+      field: 'store',
+      headerName: 'Cửa hàng',
+      width: 250,
+      renderCell: (params) => (
+        <p className="font-regular text-sm text-gray-600">
+          {params?.row?.store?.name || 'Không có'}
+        </p>
+      ),
+    },
+    {
+      field: 'role',
+      headerName: 'Vai trò',
+      width: 250,
+      renderCell: (params) => {
+        switch (params.value) {
+          case 'admin':
+            return (
+              <p className="rounded-full bg-yellow-50 px-2 py-1 text-xs font-bold text-yellow-800">
+                Quản trị viên
+              </p>
+            );
+
+          case 'manager':
+            return (
+              <p className="rounded-full bg-purple-50 px-2 py-1 text-xs font-bold text-purple-800">
+                Cửa hàng trưởng
+              </p>
+            );
+          case 'staff':
+            return (
+              <p className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-800">
+                Nhân viên
+              </p>
+            );
+          default:
+            return (
+              <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
+                Người dùng
+              </p>
+            );
+        }
+      },
+    },
+    { field: 'email', headerName: 'Email', width: 250 },
+    { field: 'phoneNumber', headerName: 'Số điện thoại', width: 200 },
+    {
+      field: 'isActive',
+      headerName: 'Trạng thái',
+      type: 'string',
+      width: 150,
+      headerAlign: 'left',
+      align: 'left',
+      renderCell: (params: GridRenderCellParams<boolean>) =>
+        params.value === true ? (
+          <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
+            Đang hoạt động
+          </p>
+        ) : (
+          <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
+            Đã bị khóa
+          </p>
+        ),
+    },
   ];
 
   const getAllUser = async (params?: { addLoadingEffect?: boolean }) => {
@@ -233,23 +246,13 @@ const UserManagement = () => {
     getAllUser({ addLoadingEffect: true });
   }, [page]);
 
-  console.log('users', user);
-
   return (
     <>
       <MainLayout
         title="Quản lý người dùng"
         content={
           <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-            <div className="flex flex-row items-center justify-between">
-              <div className="flex flex-row gap-x-2">
-                <Pagination
-                  onChange={(event, changedPage) => setPage(changedPage)}
-                  count={totalPage}
-                  defaultPage={1}
-                  page={page}
-                />
-              </div>
+            <div className="flex flex-row-reverse items-center justify-between">
               <div>
                 {isAuthorizedForManager && (
                   <Button
@@ -266,14 +269,10 @@ const UserManagement = () => {
               <DataGrid
                 rows={users}
                 loading={loading}
-                paginationMode="server"
-                page={page}
-                rowCount={totalPage}
-                pageSize={10}
+                paginationMode="client"
                 columns={columns}
-                hideFooterPagination
                 disableSelectionOnClick
-                // onPageChange={(current) => setPage(current)}
+                pageSize={12}
                 onSelectionModelChange={(newSelectionModel) => {
                   setDeleteDisable(!deleteDisable);
                   setSelectionModel(newSelectionModel);

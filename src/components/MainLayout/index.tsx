@@ -197,8 +197,6 @@ export default function MainLayout(props: ISideBarProps) {
     },
   ];
 
-  console.log('user', user);
-
   const routes = user?.role == 'admin' ? adminRoutes : mangerRoutes;
 
   return (

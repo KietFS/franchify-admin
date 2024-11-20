@@ -80,7 +80,7 @@ const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({
             lastName: values.lastName,
             phoneNumber: values.phoneNumber,
             email: values.email,
-            store: isAuthorizedForAdmin ? storeSelected?.id : currentUser?.store?.id,
+            store: isAuthorizedForAdmin ? storeSelected?.id : user?.store?.id,
             role: roleSelected?.id,
           }
         : {
@@ -91,7 +91,7 @@ const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({
             phoneNumber: values.phoneNumber,
             email: values.email,
             password: values?.password,
-            store: isAuthorizedForAdmin ? storeSelected?.id : currentUser?.store?.id,
+            store: isAuthorizedForAdmin ? storeSelected?.id : user?.store?.id,
           };
       const response = currentUser
         ? await axios.put(`${apiURL}/tenant/users/${currentUser?.id}`, payload, {
@@ -159,7 +159,7 @@ const CreateAccountForm: React.FC<ICreateStaffFormProps> = ({
     <>
       {isOpen ? (
         <CustomDialog
-          title="Tạo tài khoản người dùng"
+          title={!!currentUser ? 'Cập nhật người dùng' : 'Tạo người dùng'}
           open={isOpen}
           onClose={onClose}
           children={

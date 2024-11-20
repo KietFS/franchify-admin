@@ -8,6 +8,7 @@ import RichTextInput from '../../designs/RichTextInput';
 import Button from '../../designs/Button';
 import { apiURL } from '../../config/constanst';
 import UploadWidget from '../../designs/UploadWidget';
+import { CircularProgress } from '@mui/material';
 
 interface IFormValue {
   name: string;
@@ -28,6 +29,7 @@ const TenantManagement = () => {
     companyLegalName: '',
   });
   const [logoSelected, setLogoSelected] = React.useState<any | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   const validationSchema = yup.object().shape<{ [k in keyof IFormValue]: any }>({
     name: yup.string().required('Vui lòng nhập tên thương hiệu'),
@@ -38,12 +40,17 @@ const TenantManagement = () => {
 
   const getTenantConfig = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${apiURL}/tenant/config`);
       if (response?.data?.success) {
+        setLoading(false);
         setInitalValues(response.data?.data);
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,95 +81,103 @@ const TenantManagement = () => {
     <MainLayout
       title="Quản lý thương hiệu"
       content={
-        <Formik
-          initialValues={initialValues || ({} as any)}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-        >
-          {({ submitForm, values, handleSubmit, setValues, setFieldValue }) => {
-            return (
-              <div className="flex flex-col space-y-10 px-10">
-                <div className="flex flex-col space-y-5">
-                  <div className="grid grid-cols-1 items-center justify-between gap-x-8 gap-y-5 tablet:grid-cols-2">
-                    <BaseInput
-                      type="text"
-                      disabled={true}
-                      name="name"
-                      value={values?.name}
-                      label="Tên thương hiệu"
-                      placeholder="Nhập tên thương hiệu"
-                    />
-                    <BaseInput
-                      type="text"
-                      disabled={true}
-                      name="email"
-                      value={values?.email}
-                      label="Email công ty"
-                      placeholder="Nhập email của công ty"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 items-center justify-between gap-x-8 gap-y-5 tablet:grid-cols-2">
-                    <BaseInput
-                      mode="text"
-                      name="companyLegalName"
-                      value={values?.companyLegalName}
-                      label="Tên pháp lý công ty"
-                      placeholder=""
-                    />
-                    <BaseInput
-                      type="phoneNumber"
-                      name="companyPhoneNumber"
-                      value={values?.companyPhoneNumber}
-                      label="Số điện thoại công ty"
-                      placeholder="Nhập số điện thoại công ty"
-                    />
-                    <BaseInput
-                      type="text"
-                      name="slogan"
-                      value={values?.slogan}
-                      label="Slogan"
-                      placeholder="Nhập slogan của công ty"
-                    />
-                    <BaseInput
-                      type="text"
-                      name="primaryColorScheme"
-                      value={values?.primaryColorScheme}
-                      label="Màu chủ đạo"
-                      placeholder="Màu chủ đạo"
-                    />
-                  </div>
+        <>
+          {loading ? (
+            <div className="flex h-full min-h-[300px] w-full items-center justify-center">
+              <CircularProgress size={50} sx={{ color: 'black' }} />
+            </div>
+          ) : (
+            <Formik
+              initialValues={initialValues || ({} as any)}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              enableReinitialize
+            >
+              {({ submitForm, values, handleSubmit, setValues, setFieldValue }) => {
+                return (
+                  <div className="flex flex-col space-y-10 px-10">
+                    <div className="flex flex-col space-y-5">
+                      <div className="grid grid-cols-1 items-center justify-between gap-x-8 gap-y-5 tablet:grid-cols-2">
+                        <BaseInput
+                          type="text"
+                          disabled={true}
+                          name="name"
+                          value={values?.name}
+                          label="Tên thương hiệu"
+                          placeholder="Nhập tên thương hiệu"
+                        />
+                        <BaseInput
+                          type="text"
+                          disabled={true}
+                          name="email"
+                          value={values?.email}
+                          label="Email công ty"
+                          placeholder="Nhập email của công ty"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 items-center justify-between gap-x-8 gap-y-5 tablet:grid-cols-2">
+                        <BaseInput
+                          mode="text"
+                          name="companyLegalName"
+                          value={values?.companyLegalName}
+                          label="Tên pháp lý công ty"
+                          placeholder=""
+                        />
+                        <BaseInput
+                          type="phoneNumber"
+                          name="companyPhoneNumber"
+                          value={values?.companyPhoneNumber}
+                          label="Số điện thoại công ty"
+                          placeholder="Nhập số điện thoại công ty"
+                        />
+                        <BaseInput
+                          type="text"
+                          name="slogan"
+                          value={values?.slogan}
+                          label="Slogan"
+                          placeholder="Nhập slogan của công ty"
+                        />
+                        <BaseInput
+                          type="text"
+                          name="primaryColorScheme"
+                          value={values?.primaryColorScheme}
+                          label="Màu chủ đạo"
+                          placeholder="Màu chủ đạo"
+                        />
+                      </div>
 
-                  <RichTextInput
-                    name="fullDescription"
-                    value={values?.fullDescription}
-                    label="Mô tả đày đủ của công ty"
-                    placeholder="Mô tả đầy đủ của công ty"
-                  />
+                      <RichTextInput
+                        name="fullDescription"
+                        value={values?.fullDescription}
+                        label="Mô tả đày đủ của công ty"
+                        placeholder="Mô tả đầy đủ của công ty"
+                      />
 
-                  <UploadWidget
-                    thumbnailUploaded={logoSelected}
-                    setThumbnailUploaded={(image) => setLogoSelected(image)}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div></div>
-                  <div className="flex items-center">
-                    <Button variant="secondary" onClick={() => {}} title="Hủy bỏ" />
-                    <Button
-                      type="submit"
-                      title="Xác nhận"
-                      variant="primary"
-                      className="ml-2"
-                      isLoading={false}
-                      onClick={handleSubmit}
-                    />
+                      <UploadWidget
+                        thumbnailUploaded={logoSelected}
+                        setThumbnailUploaded={(image) => setLogoSelected(image)}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div></div>
+                      <div className="flex items-center">
+                        <Button variant="secondary" onClick={() => {}} title="Hủy bỏ" />
+                        <Button
+                          type="submit"
+                          title="Xác nhận"
+                          variant="primary"
+                          className="ml-2"
+                          isLoading={false}
+                          onClick={handleSubmit}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          }}
-        </Formik>
+                );
+              }}
+            </Formik>
+          )}
+        </>
       }
     />
   );

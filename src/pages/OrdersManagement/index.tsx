@@ -3,14 +3,15 @@ import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '
 import MainLayout from '../../components/MainLayout';
 import { Pagination } from '@mui/material';
 import axios from 'axios';
-import { useAppSelector } from '../../hooks/useRedux';
-import { IRootState, store } from '../../redux';
 import { apiURL } from '../../config/constanst';
 
 import OrderActionMenu from './ActionMenu';
 import { toast } from 'react-toastify';
 import Button from '../../designs/Button';
 import { useAuth } from '../../hooks/useAuth';
+import CustomDialog from '../../components/CustomDialog';
+import OrderForm from './OrderForm';
+import SelectComponent from '../../components/Select';
 
 interface IUser {
   id: string;
@@ -38,22 +39,41 @@ export interface IAddress {
 }
 
 const OrdersManagement = () => {
+  const statusList = [
+    {
+      id: 'pending',
+      label: 'Chờ xác nhận',
+    },
+    {
+      id: 'received',
+      label: 'Đã nhận đơn',
+    },
+    {
+      id: 'processing',
+      label: 'Đang xử lý',
+    },
+    {
+      id: 'shipping',
+      label: 'Đang giao hàng',
+    },
+    {
+      id: 'delivered',
+      label: 'Đã giao hàng',
+    },
+    {
+      id: 'completed',
+      label: 'Hoàn thành',
+    },
+  ];
+
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
   const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
-  const [users, setUsers] = React.useState<IUser[]>([]);
+  const [orders, setOrders] = React.useState<IOrder[]>([]);
+  const [showOrders, setShowOrders] = React.useState<IOrder[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [page, setPage] = React.useState<number>(1);
-  const [totalPage, setTotalPage] = React.useState<number>(0);
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
-
-  enum OrderStatus {
-    PENDING = 'pending',
-    RECEIVED = 'received',
-    PROCESSING = 'processing',
-    SHIPPING = 'shipping',
-    DELIVERED = 'delivered',
-    CANCELLED = 'cancelled',
-  }
+  const [orderSelected, setOrderSelected] = React.useState<any | null>(null);
+  const [statusSelected, setStatusSelected] = React.useState<any>(statusList[0]);
 
   const status = {
     pending: {
@@ -118,6 +138,34 @@ const OrdersManagement = () => {
 
   const columns: GridColDef[] = [
     {
+      field: 'actions',
+      headerName: 'Hành động',
+      type: 'string',
+      width: 100,
+      renderCell: (params: GridRenderCellParams<any>) => {
+        if (isAuthorizedForManager) {
+          {
+            //@ts-ignore
+            const option = status?.[params.row.status as any] as any;
+            return (
+              <OrderActionMenu
+                onViewDetail={() => {
+                  setOrderSelected(params.row);
+                  setOpenDialog(true);
+                }}
+                option={{
+                  ...option,
+                  onClick: () => handleUpdateOrderStatus(params.row.id, option?.status),
+                }}
+              />
+            );
+          }
+        } else {
+          return <></>;
+        }
+      },
+    },
+    {
       field: 'id',
       headerName: 'ID',
       width: 70,
@@ -174,57 +222,6 @@ const OrdersManagement = () => {
         </div>
       ),
     },
-    {
-      field: 'actions',
-      headerName: 'Hành động',
-      type: 'string',
-      width: 300,
-      headerAlign: 'left',
-      align: 'left',
-      renderCell: (params: GridRenderCellParams<any>) => {
-        if (isAuthorizedForManager) {
-          {
-            const handleUpdateOrderStatus = async (status: string) => {
-              try {
-                setLoading(true);
-                const payload = {
-                  status: status,
-                };
-                const response = await axios.put(`${apiURL}/orders/${params.row.id}`, payload, {
-                  headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                  },
-                });
-
-                if (response?.data?.success == true) {
-                  setLoading(false);
-                  toast.success('Cập nhật đơn hàng thành công');
-                  getAllOrderByStore({ addLoadingEffect: true });
-                } else {
-                  setLoading(false);
-                }
-              } catch (error) {
-                setLoading(false);
-                console.log('error');
-              } finally {
-                setLoading(false);
-              }
-            };
-
-            //@ts-ignore
-            const option = status?.[params.row.status as any] as any;
-
-            return (
-              <OrderActionMenu
-                option={{ ...option, onClick: () => handleUpdateOrderStatus(option?.status) }}
-              />
-            );
-          }
-        } else {
-          return <></>;
-        }
-      },
-    },
   ];
 
   const getAllOrderByStore = async (params?: { addLoadingEffect?: boolean }) => {
@@ -234,21 +231,14 @@ const OrdersManagement = () => {
 
       const requestURl = `${apiURL}/orders/store/${user?.store?.id}`;
 
-      console.log('requestURl', requestURl);
-
       const response = await axios.get(`${requestURl}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      if (!!response) {
-        console.log('response', response);
-      }
-
       if (response?.data?.success == true) {
-        setUsers(response?.data?.data);
-        setTotalPage(response?.data?._totalPage);
+        setOrders(response?.data?.data);
       }
     } catch (error) {
       console.log('GET USER ERROR', error);
@@ -257,51 +247,105 @@ const OrdersManagement = () => {
     }
   };
 
+  const handleUpdateOrderStatus = async (id: number, status: string) => {
+    try {
+      setLoading(true);
+      const payload = {
+        status: status,
+      };
+      const response = await axios.put(`${apiURL}/orders/${id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response?.data?.success == true) {
+        setLoading(false);
+        toast.success('Cập nhật đơn hàng thành công');
+        getAllOrderByStore({ addLoadingEffect: true });
+      } else {
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log('error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   React.useEffect(() => {
     getAllOrderByStore({ addLoadingEffect: true });
-  }, [page]);
+  }, []);
 
-  console.log('users', user);
+  React.useEffect(() => {
+    if (statusSelected) {
+      const filterOrders = orders.filter((order) => order.status == statusSelected?.id);
+      setShowOrders([...filterOrders]);
+    }
+  }, [statusSelected, orders]);
 
   return (
     <>
       <MainLayout
         title="Quản lý đơn hàng"
         content={
-          <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-            <div className="flex flex-row items-center justify-between">
-              <div className="flex flex-row gap-x-2">
-                <Pagination
-                  onChange={(event, changedPage) => setPage(changedPage)}
-                  count={totalPage}
-                  defaultPage={1}
-                  page={page}
+          <>
+            <div className="mb-8 w-[250px]">
+              <SelectComponent
+                optionSelected={statusSelected}
+                options={statusList}
+                keyLabel="label"
+                keyValue="id"
+                onSelect={(value) => setStatusSelected(value)}
+                name="status"
+                placeholder="Chọn trạng thái"
+                label="Trạng thái đơn hàng"
+              />
+            </div>
+            <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+              <div className="h-[800px] w-full">
+                <DataGrid
+                  rows={showOrders || orders}
+                  loading={loading}
+                  paginationMode="client"
+                  pageSize={12}
+                  columns={columns}
+                  disableSelectionOnClick
+                  onSelectionModelChange={(newSelectionModel) => {
+                    setDeleteDisable(!deleteDisable);
+                    setSelectionModel(newSelectionModel);
+                  }}
+                  selectionModel={selectionModel}
+                  checkboxSelection={false}
                 />
               </div>
             </div>
-            <div className="h-[800px] w-full">
-              <DataGrid
-                rows={users}
-                loading={loading}
-                paginationMode="server"
-                page={page}
-                rowCount={totalPage}
-                pageSize={10}
-                columns={columns}
-                hideFooterPagination
-                disableSelectionOnClick
-                // onPageChange={(current) => setPage(current)}
-                onSelectionModelChange={(newSelectionModel) => {
-                  setDeleteDisable(!deleteDisable);
-                  setSelectionModel(newSelectionModel);
-                }}
-                selectionModel={selectionModel}
-                checkboxSelection={false}
-              />
-            </div>
-          </div>
+          </>
         }
       />
+
+      {openDialog ? (
+        <CustomDialog
+          title="Chi tiết đơn hàng"
+          open={openDialog}
+          maxWidth="lg"
+          onClose={() => {
+            setOpenDialog(false);
+            setOrderSelected(null);
+          }}
+          children={
+            <OrderForm
+              currentOrder={orderSelected}
+              onConfirm={(values) => {
+                handleUpdateOrderStatus(orderSelected?.id, values?.status as string);
+                setOpenDialog(false);
+                setOrderSelected(null);
+              }}
+            />
+          }
+        />
+      ) : null}
     </>
   );
 };

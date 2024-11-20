@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { auth } from '../common/config/firebase';
 import { IRootState } from '../redux';
 import { setAccessToken, setUser } from '../redux/slices/auth';
 import { useAppSelector } from './useRedux';
@@ -12,7 +10,7 @@ import { apiURL } from '../config/constanst';
 
 export const useAuth = () => {
   //login
-  const [loginError, setLoginError] = useState<string>();
+
   const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
   const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
@@ -50,7 +48,11 @@ export const useAuth = () => {
       }
     } catch (error) {
       console.log(error);
-      setLoginError(error as string);
+      toast.error('Phone number or password in incorrect', {
+        position: 'top-right',
+        theme: 'colored',
+        hideProgressBar: true,
+      });
     } finally {
       setLoginLoading(false);
     }
@@ -60,7 +62,6 @@ export const useAuth = () => {
     isAuth: !!accessToken,
     login,
     accessToken,
-    loginError,
     loginLoading,
     user,
     isAuthorizedForAdmin,
