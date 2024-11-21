@@ -58,6 +58,38 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
   };
 
   const columns: GridColDef[] = [
+    {
+      field: 'actions',
+      headerName: 'Hành động',
+      type: 'string',
+      width: 100,
+      renderCell: (params: GridRenderCellParams<any>) => {
+        const options = [
+          {
+            id: 'delete',
+            title: 'Xóa sản phẩm',
+            onPress: () => {
+              deleteProduct(params.row?.id);
+            },
+            onActionSuccess: () => getAllProducts(),
+          },
+          {
+            id: 'update',
+            title: 'Cập nhật sản phẩm',
+            onPress: () => {
+              setSelectedItem(params.row as IProduct);
+              setOpenUpdateModal(true);
+            },
+            onActionSuccess: () => getAllProducts(),
+          },
+        ];
+        return actionLoading && selectedRow == params.row?.id ? (
+          <Spinner size={20} />
+        ) : (
+          <ActionMenu options={options} />
+        );
+      },
+    },
     { field: 'id', headerName: 'ID', width: 70 },
     {
       field: 'upc',
@@ -100,40 +132,6 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
         return <div>{(params.value as string).prettyDate()}</div>;
-      },
-    },
-    {
-      field: 'actions',
-      headerName: 'Hành động',
-      type: 'string',
-      width: 300,
-      headerAlign: 'left',
-      align: 'left',
-      renderCell: (params: GridRenderCellParams<any>) => {
-        const options = [
-          {
-            id: 'delete',
-            title: 'Xóa sản phẩm',
-            onPress: () => {
-              deleteProduct(params.row?.id);
-            },
-            onActionSuccess: () => getAllProducts(),
-          },
-          {
-            id: 'update',
-            title: 'Cập nhật sản phẩm',
-            onPress: () => {
-              setSelectedItem(params.row as IProduct);
-              setOpenUpdateModal(true);
-            },
-            onActionSuccess: () => getAllProducts(),
-          },
-        ];
-        return actionLoading && selectedRow == params.row?.id ? (
-          <Spinner size={20} />
-        ) : (
-          <ActionMenu options={options} />
-        );
       },
     },
   ];
