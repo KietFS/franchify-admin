@@ -1,310 +1,236 @@
 import * as React from 'react';
-import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
+import {DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel} from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
-import { Pagination } from '@mui/material';
-import axios from 'axios';
-import { useAppSelector } from '../../hooks/useRedux';
-import { IRootState, store } from '../../redux';
-import { apiURL } from '../../config/constanst';
 
 import ActionMenu from './ActionMenu';
-import { toast } from 'react-toastify';
 import CreateAccountForm from './CreateAccount';
 import Button from '../../designs/Button';
-import { useAuth } from '../../hooks/useAuth';
+import {useAuth} from '../../hooks/useAuth';
+import useUserManagement from "../../hooks/useUserManagement";
 
 interface IUser {
-  id: string;
-  username: string;
-  email: string;
-  isActive: boolean;
-  address?: IAddress;
+    id: string;
+    username: string;
+    email: string;
+    isActive: boolean;
+    address?: IAddress;
+
+    [key: string]: any;
 }
 
 export interface IAddress {
-  addressId: number;
-  homeNumber: string;
-  city: {
-    id: number;
-    name: string;
-  };
-  district: {
-    id: number;
-    name: string;
-  };
-  ward: {
-    id: number;
-    name: string;
-  };
+    addressId: number;
+    homeNumber: string;
+    city: {
+        id: number;
+        name: string;
+    };
+    district: {
+        id: number;
+        name: string;
+    };
+    ward: {
+        id: number;
+        name: string;
+    };
 }
 
 const UserManagement = () => {
-  const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
-  const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
-  const [users, setUsers] = React.useState<IUser[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [page, setPage] = React.useState<number>(1);
-  const [totalPage, setTotalPage] = React.useState<number>(0);
-  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
-  const [userNeedToUpdate, setUserNeedToUpdate] = React.useState<IUser | null>(null);
+    const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
+    const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
+    const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+    const [userNeedToUpdate, setUserNeedToUpdate] = React.useState<IUser | null>(null);
+    const {users, getAllUser, loading, handleDeactivateUser, handleActivateUser} = useUserManagement();
 
-  const { user, accessToken, isAuthorizedForAdmin, isAuthorizedForManager } = useAuth();
+    const {isAuthorizedForManager,} = useAuth();
 
-  const columns: GridColDef[] = [
-    {
-      field: 'actions',
-      headerName: 'Hành động',
-      type: 'string',
-      width: 100,
-      renderCell: (params: GridRenderCellParams<any>) => {
-        if (isAuthorizedForManager) {
-          {
-            const handleDeactivateUser = async (id: string | number) => {
-              try {
-                const payload = {
-                  isActive: false,
-                  store: 8,
-                };
-                const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
-                  headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                  },
-                });
-
-                if (response?.data?.success == true) {
-                  toast.success('Vô hiệu hóa tài khoản thành công');
-                  getAllUser({ addLoadingEffect: true });
+    const columns: GridColDef[] = [
+        {
+            field: 'actions',
+            headerName: 'Hành động',
+            type: 'string',
+            width: 100,
+            renderCell: (params: GridRenderCellParams<any>) => {
+                if (isAuthorizedForManager) {
+                    {
+                        const options = [
+                            params?.row?.isActive == true
+                                ? {
+                                    id: 'deactivate',
+                                    title: 'Khóa',
+                                    onPress: () => handleDeactivateUser(params.row?.id),
+                                    onActionSuccess: () => getAllUser({addLoadingEffect: false}),
+                                }
+                                : {
+                                    id: 'activate',
+                                    title: 'Cập nhật',
+                                    onPress: () => handleActivateUser(params.row?.id),
+                                    onActionSuccess: () => getAllUser({addLoadingEffect: false}),
+                                },
+                            {
+                                id: 'update-account',
+                                title: 'Cập nhật',
+                                onPress: () => {
+                                    setOpenDialog(true);
+                                    setUserNeedToUpdate(params.row);
+                                },
+                                onActionSuccess: () => getAllUser({addLoadingEffect: false}),
+                            },
+                        ];
+                        return <ActionMenu options={options}/>;
+                    }
                 } else {
+                    return <></>;
                 }
-              } catch (error) {
-                console.log('error');
-              }
-            };
-
-            const handleActivateUser = async (id: string | number) => {
-              try {
-                const payload = {
-                  isActive: true,
-                  store: 8,
-                };
-                const response = await axios.put(`${apiURL}/tenant/users/${id}`, payload, {
-                  headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                  },
-                });
-
-                if (response?.data?.success == true) {
-                  toast.success('Kích hoạt tài khoản thành công');
-                  getAllUser({ addLoadingEffect: false });
-                } else {
-                }
-              } catch (error) {
-                console.log('error');
-              }
-            };
-
-            const options = [
-              params?.row?.isActive == true
-                ? {
-                    id: 'deactivate',
-                    title: 'Khóa',
-                    onPress: () => handleDeactivateUser(params.row?.id),
-                    onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
-                  }
-                : {
-                    id: 'activate',
-                    title: 'Cập nhật',
-                    onPress: () => handleActivateUser(params.row?.id),
-                    onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
-                  },
-              {
-                id: 'update-account',
-                title: 'Cập nhật',
-                onPress: () => {
-                  setOpenDialog(true);
-                  setUserNeedToUpdate(params.row);
-                },
-                onActionSuccess: () => getAllUser({ addLoadingEffect: false }),
-              },
-            ];
-            return <ActionMenu options={options} />;
-          }
-        } else {
-          return <></>;
-        }
-      },
-    },
-    {
-      field: 'id',
-      headerName: 'ID',
-      width: 70,
-      renderHeader: () => <div className="font-bold text-gray-800">ID</div>,
-    },
-    {
-      field: 'username',
-      headerName: 'Tên người dùng',
-      width: 250,
-      renderHeader: () => <div className="font-bold text-gray-800">Tên người dùng</div>,
-      renderCell: (params) => (
-        <p className="text-sm font-semibold text-gray-600">
-          {params?.row?.firstName} {params?.row?.lastName}
-        </p>
-      ),
-    },
-    {
-      field: 'store',
-      headerName: 'Cửa hàng',
-      width: 250,
-      renderCell: (params) => (
-        <p className="font-regular text-sm text-gray-600">
-          {params?.row?.store?.name || 'Không có'}
-        </p>
-      ),
-    },
-    {
-      field: 'role',
-      headerName: 'Vai trò',
-      width: 250,
-      renderCell: (params) => {
-        switch (params.value) {
-          case 'admin':
-            return (
-              <p className="rounded-full bg-yellow-50 px-2 py-1 text-xs font-bold text-yellow-800">
-                Quản trị viên
-              </p>
-            );
-
-          case 'manager':
-            return (
-              <p className="rounded-full bg-purple-50 px-2 py-1 text-xs font-bold text-purple-800">
-                Cửa hàng trưởng
-              </p>
-            );
-          case 'staff':
-            return (
-              <p className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-800">
-                Nhân viên
-              </p>
-            );
-          default:
-            return (
-              <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
-                Người dùng
-              </p>
-            );
-        }
-      },
-    },
-    { field: 'email', headerName: 'Email', width: 250 },
-    { field: 'phoneNumber', headerName: 'Số điện thoại', width: 200 },
-    {
-      field: 'isActive',
-      headerName: 'Trạng thái',
-      type: 'string',
-      width: 150,
-      headerAlign: 'left',
-      align: 'left',
-      renderCell: (params: GridRenderCellParams<boolean>) =>
-        params.value === true ? (
-          <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
-            Đang hoạt động
-          </p>
-        ) : (
-          <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
-            Đã bị khóa
-          </p>
-        ),
-    },
-  ];
-
-  const getAllUser = async (params?: { addLoadingEffect?: boolean }) => {
-    const { addLoadingEffect } = params || {};
-    try {
-      addLoadingEffect && setLoading(true);
-
-      const requestURl = isAuthorizedForAdmin
-        ? `${apiURL}/tenant/users`
-        : `${apiURL}/tenant/staffs/${user?.store?.id}`;
-
-      const response = await axios.get(`${requestURl}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+            },
         },
-      });
-      if (response?.data?.success == true) {
-        setUsers(response?.data?.data);
-        setTotalPage(response?.data?._totalPage);
-      }
-    } catch (error) {
-      console.log('GET USER ERROR', error);
-    } finally {
-      addLoadingEffect && setLoading(false);
-    }
-  };
+        {
+            field: 'id',
+            headerName: 'ID',
+            width: 70,
+            renderHeader: () => <div className="font-bold text-gray-800">ID</div>,
+        },
+        {
+            field: 'username',
+            headerName: 'Tên người dùng',
+            width: 250,
+            renderHeader: () => <div className="font-bold text-gray-800">Tên người dùng</div>,
+            renderCell: (params) => (
+                <p className="text-sm font-semibold text-gray-600">
+                    {params?.row?.firstName} {params?.row?.lastName}
+                </p>
+            ),
+        },
+        {
+            field: 'store',
+            headerName: 'Cửa hàng',
+            width: 250,
+            renderCell: (params) => (
+                <p className="font-regular text-sm text-gray-600">
+                    {params?.row?.store?.name || 'Không có'}
+                </p>
+            ),
+        },
+        {
+            field: 'role',
+            headerName: 'Vai trò',
+            width: 250,
+            renderCell: (params) => {
+                switch (params.value) {
+                    case 'admin':
+                        return (
+                            <p className="rounded-full bg-yellow-50 px-2 py-1 text-xs font-bold text-yellow-800">
+                                Quản trị viên
+                            </p>
+                        );
 
-  React.useEffect(() => {
-    getAllUser({ addLoadingEffect: true });
-  }, [page]);
+                    case 'manager':
+                        return (
+                            <p className="rounded-full bg-purple-50 px-2 py-1 text-xs font-bold text-purple-800">
+                                Cửa hàng trưởng
+                            </p>
+                        );
+                    case 'staff':
+                        return (
+                            <p className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-800">
+                                Nhân viên
+                            </p>
+                        );
+                    default:
+                        return (
+                            <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
+                                Người dùng
+                            </p>
+                        );
+                }
+            },
+        },
+        {field: 'email', headerName: 'Email', width: 250},
+        {field: 'phoneNumber', headerName: 'Số điện thoại', width: 200},
+        {
+            field: 'isActive',
+            headerName: 'Trạng thái',
+            type: 'string',
+            width: 150,
+            headerAlign: 'left',
+            align: 'left',
+            renderCell: (params: GridRenderCellParams<boolean>) =>
+                params.value === true ? (
+                    <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
+                        Đang hoạt động
+                    </p>
+                ) : (
+                    <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
+                        Đã bị khóa
+                    </p>
+                ),
+        },
+    ];
 
-  return (
-    <>
-      <MainLayout
-        title="Quản lý người dùng"
-        content={
-          <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-            <div className="flex flex-row-reverse items-center justify-between">
-              <div>
-                {isAuthorizedForManager && (
-                  <Button
-                    title="Tạo người dùng"
-                    onClick={() => {
-                      setUserNeedToUpdate(null);
-                      setOpenDialog(true);
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-            <div className="h-[800px] w-full">
-              <DataGrid
-                rows={users}
-                loading={loading}
-                paginationMode="client"
-                columns={columns}
-                disableSelectionOnClick
-                pageSize={12}
-                onSelectionModelChange={(newSelectionModel) => {
-                  setDeleteDisable(!deleteDisable);
-                  setSelectionModel(newSelectionModel);
-                }}
-                selectionModel={selectionModel}
-                checkboxSelection={false}
-              />
-            </div>
-          </div>
-        }
-      />
 
-      {openDialog && (
+    React.useEffect(() => {
+        getAllUser({addLoadingEffect: true});
+    }, []);
+
+    return (
         <>
-          {userNeedToUpdate ? (
-            <CreateAccountForm
-              currentUser={userNeedToUpdate as any}
-              isOpen={openDialog}
-              onClose={() => setOpenDialog(false)}
-              onSuccess={() => getAllUser({ addLoadingEffect: false })}
+            <MainLayout
+                title="Quản lý người dùng"
+                content={
+                    <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+                        <div className="flex flex-row-reverse items-center justify-between">
+                            <div>
+                                {isAuthorizedForManager && (
+                                    <Button
+                                        title="Tạo người dùng"
+                                        onClick={() => {
+                                            setUserNeedToUpdate(null);
+                                            setOpenDialog(true);
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                        <div className="h-[800px] w-full">
+                            <DataGrid
+                                rows={users}
+                                loading={loading}
+                                paginationMode="client"
+                                columns={columns}
+                                disableSelectionOnClick
+                                pageSize={12}
+                                onSelectionModelChange={(newSelectionModel) => {
+                                    setDeleteDisable(!deleteDisable);
+                                    setSelectionModel(newSelectionModel);
+                                }}
+                                selectionModel={selectionModel}
+                                checkboxSelection={false}
+                            />
+                        </div>
+                    </div>
+                }
             />
-          ) : (
-            <CreateAccountForm
-              onSuccess={() => getAllUser({ addLoadingEffect: false })}
-              isOpen={openDialog}
-              onClose={() => setOpenDialog(false)}
-            />
-          )}
+
+            {openDialog && (
+                <>
+                    {userNeedToUpdate ? (
+                        <CreateAccountForm
+                            currentUser={userNeedToUpdate as IUser}
+                            isOpen={openDialog}
+                            onClose={() => setOpenDialog(false)}
+                            onSuccess={() => getAllUser({addLoadingEffect: false})}
+                        />
+                    ) : (
+                        <CreateAccountForm
+                            onSuccess={() => getAllUser({addLoadingEffect: false})}
+                            isOpen={openDialog}
+                            onClose={() => setOpenDialog(false)}
+                        />
+                    )}
+                </>
+            )}
         </>
-      )}
-    </>
-  );
+    );
 };
 
 export default UserManagement;
