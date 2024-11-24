@@ -45,8 +45,55 @@ const useStoreManagement = () => {
         }
     };
 
+    const createStore = async (values: any, onSuccess?: () => void) => {
+        try {
+            const response = await axios.post(`${apiURL}/store`, {
+                name: values.name,
+                supportPickup: values.supportPickup,
+                supportDelivery: values.supportDelivery,
+                openTime: values.openTime,
+                closeTime: values.closeTime,
+                storeCode: Number(values.storeCode),
+                lat: values.lat,
+                lng: values.lng,
+            });
+
+            if (response?.data?.success) {
+                onSuccess && onSuccess();
+                return response;
+            } else {
+                throw new Error(response?.data?.error || 'Error when creating store')
+            }
+        } catch (error) {
+            console.log('CREATE STORE ERROR', error);
+        }
+    }
+
+    const updateStore = async (currentStore: any, values: any, onSuccess?: () => void) => {
+        try {
+            const response = await axios.patch(`${apiURL}/store/${currentStore?.id}`, {
+                name: values.name,
+                supportPickup: values.supportPickup,
+                supportDelivery: values.supportDelivery,
+                openTime: values.openTime,
+                closeTime: values.closeTime,
+                storeCode: Number(values.storeCode),
+            });
+            if (response?.data?.success) {
+                onSuccess && onSuccess();
+                return response;
+            } else {
+                throw new Error(response?.data?.error || 'Error when updating store')
+            }
+        } catch (error) {
+            console.log('UPDATE STORE ERROR', error);
+        }
+    }
+
     return {
         getAllStores,
+        createStore,
+        updateStore,
         loading,
         listStore,
     }

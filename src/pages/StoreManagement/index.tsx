@@ -174,7 +174,7 @@ const StoreMangement = () => {
                         >
                             <UpdateStoreForm
                                 onClose={() => setOpenUpdateModal(false)}
-                                onConfirm={() => {
+                                onSuccess={() => {
                                     setOpenUpdateModal(false);
                                     getAllStores();
                                     toast.success('Cập nhật cửa hàng thành công');
@@ -194,7 +194,7 @@ const StoreMangement = () => {
                         >
                             <CreateStoreForm
                                 onClose={() => setOpenCreateModal(false)}
-                                onConfirm={() => {
+                                onSuccess={() => {
                                     setOpenCreateModal(false);
                                     getAllStores();
                                     toast.success('Tạo cửa hàng thành công');
