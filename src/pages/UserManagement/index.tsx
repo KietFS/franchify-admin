@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import {DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel} from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
 
@@ -188,8 +189,11 @@ const UserManagement = () => {
 
     React.useEffect(() => {
         getAllUser({addLoadingEffect: true});
-        setUserTableData(users)
     }, []);
+
+    useEffect(() => {
+        setUserTableData(users);
+    }, [users]);
 
     return (
         <>
