@@ -229,8 +229,8 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
                         <div className="mb-6 flex w-full flex-row gap-x-2 gap-y-2 items-center justify-between">
                             <div className="flex flex-col space-y-2">
                                 <label className="font-bold text-gray-600 text-sm">Tìm kiếm sản phẩm</label>
-                                <input className="w-[300px] px-4 py-2 border border-gray-200 rounded-xl"
-                                       placeholder="John Doe"
+                                <input className="w-[300px] px-4 py-2 text-sm border border-gray-200 rounded-xl"
+                                       placeholder="Trà sữa"
                                        onChange={handleSearch}
                                        name="search-user"/>
                             </div>
@@ -260,6 +260,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
                         <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
                             <div className="h-[700px] w-full">
                                 <DataGrid
+                                    sx={{borderRadius: '8px'}}
                                     loading={isLoading}
                                     rows={productTableData || products}
                                     paginationMode="client"

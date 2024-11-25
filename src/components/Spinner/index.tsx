@@ -3,15 +3,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 
 interface ISpinnerProps {
-  size?: number;
+    size?: number;
 }
 
 const Spinner: React.FC<ISpinnerProps> = (props) => {
-  return (
-    <Box sx={{ display: "flex" }}>
-      <CircularProgress size={props.size || 40} />
-    </Box>
-  );
+    return (
+        <Box sx={{display: "flex"}}>
+            <CircularProgress size={props.size || 40} sx={{color: 'black'}}/>
+        </Box>
+    );
 };
 
 export default Spinner;

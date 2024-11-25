@@ -1,7 +1,6 @@
 import React, {lazy, Suspense} from 'react';
 import {Redirect, Route, Switch} from 'react-router-dom';
-import {useAppSelector} from '../hooks/useRedux';
-import {IRootState} from '../redux';
+import {useAuth} from "../hooks/useAuth";
 
 // Lazy load components
 const DashBoard = lazy(() => import('../pages/DashBoard'));
@@ -14,7 +13,7 @@ const OrdersManagement = lazy(() => import('../pages/OrdersManagement'));
 const UserManagement = lazy(() => import('../pages/UserManagement'));
 
 export default function RootApp() {
-    const {accessToken, user} = useAppSelector((state: IRootState) => state.auth);
+    const {accessToken, user} = useAuth();
 
     const renderAdminRoutes = () => {
         return (

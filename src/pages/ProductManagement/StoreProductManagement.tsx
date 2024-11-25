@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import {DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel} from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
 import {Pagination} from '@mui/material';
@@ -179,6 +180,13 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
         getAllStores()
     }, []);
 
+    useEffect(() => {
+        const currentStore = listStore.find((store) => store.id == user.store.id);
+        if (currentStore) {
+            setCurrentStore(currentStore);
+        }
+    }, [listStore]);
+
 
     return (
         <>
@@ -216,9 +224,10 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                             </button>
                         </div>
 
-                        <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+                        <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white">
                             <div className="h-[700px] w-full">
                                 <DataGrid
+                                    sx={{borderRadius: "8px"}}
                                     loading={isLoading || storeLoading}
                                     rows={products}
                                     paginationMode="server"

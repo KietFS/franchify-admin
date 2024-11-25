@@ -9,32 +9,6 @@ import Button from '../../designs/Button';
 import {useAuth} from '../../hooks/useAuth';
 import useUserManagement from "../../hooks/useUserManagement";
 
-interface IUser {
-    id: string;
-    username: string;
-    email: string;
-    isActive: boolean;
-    address?: IAddress;
-
-    [key: string]: any;
-}
-
-export interface IAddress {
-    addressId: number;
-    homeNumber: string;
-    city: {
-        id: number;
-        name: string;
-    };
-    district: {
-        id: number;
-        name: string;
-    };
-    ward: {
-        id: number;
-        name: string;
-    };
-}
 
 const UserManagement = () => {
     const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
@@ -191,6 +165,7 @@ const UserManagement = () => {
         getAllUser({addLoadingEffect: true});
     }, []);
 
+
     useEffect(() => {
         setUserTableData(users);
     }, [users]);
@@ -204,7 +179,7 @@ const UserManagement = () => {
                         <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-col space-y-2">
                                 <label className="font-bold text-gray-600 text-sm">Tìm kiếm người dùng</label>
-                                <input className="w-[300px] px-4 py-2 border border-gray-200 rounded-xl"
+                                <input className="w-[300px] px-4 py-2 border text-sm border-gray-200 rounded-xl"
                                        placeholder="John Doe"
                                        onChange={handleSearch}
                                        name="search-user"/>
@@ -224,6 +199,7 @@ const UserManagement = () => {
                         </div>
                         <div className="h-[700px] w-full">
                             <DataGrid
+                                sx={{borderRadius: '8px'}}
                                 rows={userTableData}
                                 loading={loading}
                                 paginationMode="client"

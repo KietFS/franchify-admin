@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect} from 'react'; // Import the dialog
 import {DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel} from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
 import {PlusIcon} from '@heroicons/react/24/outline';
@@ -9,7 +10,7 @@ import UpdateStoreForm from './UpdateStoreForm';
 import useStoreManagement from "../../hooks/useStoreManagement";
 import {useAuth} from "../../hooks/useAuth";
 import Spinner from "../../components/Spinner";
-import ActionMenu from "../../components/ActionMenu"; // Import the dialog
+import ActionMenu from "../../components/ActionMenu";
 
 interface IStoreProps {
     id: number;
@@ -35,7 +36,8 @@ const StoreMangement = () => {
     const [selectedItem, setSelectedItem] = React.useState<IStoreProps | null>(null);
     const [openUpdateModal, setOpenUpdateModal] = React.useState<boolean>(false); // Use
     const [openCreateModal, setOpenCreateModal] = React.useState<boolean>(false); // Use // openUpdateModal
-    const {getAllStores, listStore, loading} = useStoreManagement()
+    const {getAllStores, listStore, loading} = useStoreManagement();
+    const [storeTableData, setStoreTableData] = React.useState<IStore[]>([]);
 
 
     const columns: GridColDef[] = [
@@ -131,13 +133,39 @@ const StoreMangement = () => {
         }
     }, [user]);
 
+    useEffect(() => {
+        if (listStore) {
+            setStoreTableData(listStore)
+        }
+    }, [listStore]);
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value?.length > 0) {
+            const filteredData = listStore.filter((category: any) => {
+                if (category?.name.toLowerCase().includes(value.toLowerCase())) {
+                    return true
+                }
+            });
+            setStoreTableData([...filteredData]);
+        } else {
+            setStoreTableData(listStore)
+        }
+    }
+
     return (
         <MainLayout
             title="Danh sách cửa hàng"
             content={
-                <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
+                <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white">
                     <div className="flex flex-row items-center justify-between">
-                        <div></div>
+                        <div className="flex flex-col space-y-2">
+                            <label className="font-bold text-gray-600 text-sm">Tìm kiếm cửa hàng</label>
+                            <input className="w-[300px] px-4 py-2 border text-sm border-gray-200 rounded-xl"
+                                   placeholder="Cửa hàng x"
+                                   onChange={handleSearch}
+                                   name="search-category"/>
+                        </div>
                         <div className="flex flex-row gap-x-2">
                             <button
                                 onClick={() => {
@@ -153,8 +181,9 @@ const StoreMangement = () => {
                     </div>
                     <div className="h-[800px] w-full">
                         <DataGrid
+                            sx={{borderRadius: '8px'}}
                             loading={loading}
-                            rows={listStore}
+                            rows={storeTableData}
                             getRowId={(row) => row.id}
                             paginationMode="client"
                             pageSize={10}
