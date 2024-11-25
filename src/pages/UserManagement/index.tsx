@@ -40,7 +40,8 @@ const UserManagement = () => {
     const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
     const [openDialog, setOpenDialog] = React.useState<boolean>(false);
     const [userNeedToUpdate, setUserNeedToUpdate] = React.useState<IUser | null>(null);
-    const {users, getAllUser, loading, handleDeactivateUser, handleActivateUser} = useUserManagement();
+    const {users, getAllUser, loading, handleDeactivateUser, handleActivateUser, setUsers} = useUserManagement();
+    const [userTableData, setUserTableData] = React.useState<IUser[]>([]);
 
     const {isAuthorizedForManager,} = useAuth();
 
@@ -167,9 +168,27 @@ const UserManagement = () => {
         },
     ];
 
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value?.length > 0) {
+            const filteredData = users.filter((user: any) => {
+                if (user?.username.toLowerCase().includes(value.toLowerCase())) {
+                    return true
+                } else {
+                    let fullName = `${user?.firstName} ${user?.lastName}`;
+                    return fullName.toLowerCase().includes(value.toLowerCase());
+                }
+            });
+            setUserTableData([...filteredData]);
+        } else {
+            setUserTableData(users)
+        }
+    }
+
 
     React.useEffect(() => {
         getAllUser({addLoadingEffect: true});
+        setUserTableData(users)
     }, []);
 
     return (
@@ -177,8 +196,16 @@ const UserManagement = () => {
             <MainLayout
                 title="Quản lý người dùng"
                 content={
-                    <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-                        <div className="flex flex-row-reverse items-center justify-between">
+                    <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white rounded-xl">
+                        <div className="flex flex-row items-center justify-between">
+                            <div className="flex flex-col space-y-2">
+                                <label className="font-bold text-gray-600 text-sm">Tìm kiếm người dùng</label>
+                                <input className="w-[300px] px-4 py-2 border border-gray-200 rounded-xl"
+                                       placeholder="John Doe"
+                                       onChange={handleSearch}
+                                       name="search-user"/>
+                            </div>
+
                             <div>
                                 {isAuthorizedForManager && (
                                     <Button
@@ -191,14 +218,14 @@ const UserManagement = () => {
                                 )}
                             </div>
                         </div>
-                        <div className="h-[800px] w-full">
+                        <div className="h-[700px] w-full">
                             <DataGrid
-                                rows={users}
+                                rows={userTableData}
                                 loading={loading}
                                 paginationMode="client"
                                 columns={columns}
                                 disableSelectionOnClick
-                                pageSize={12}
+                                pageSize={10}
                                 onSelectionModelChange={(newSelectionModel) => {
                                     setDeleteDisable(!deleteDisable);
                                     setSelectionModel(newSelectionModel);

@@ -100,10 +100,12 @@ const useUserManagement = () => {
         handleActivateUser,
         updateUser,
         createUser,
+        setUsers,
 
         totalPage,
         loading,
-        users
+        users,
+
     }
 }
 
