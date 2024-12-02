@@ -308,7 +308,7 @@ const OrdersManagement = () => {
                             />
                         </div>
                         <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white">
-                            <div className="h-[800px] w-full">
+                            <div className="h-[700px] w-full">
                                 <DataGrid
                                     components={{
                                         NoRowsOverlay:

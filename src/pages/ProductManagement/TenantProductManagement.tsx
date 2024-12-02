@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
-import axios from 'axios';
-import { useAppSelector } from '../../hooks/useRedux';
-import { IRootState } from '../../redux';
 import Spinner from '../../components/Spinner';
-import { apiURL } from '../../config/constanst';
 import ActionMenu from '../../components/ActionMenu';
-import { toast } from 'react-toastify';
 import CustomDialog from '../../components/CustomDialog';
 import ProductForm from './ProductForm';
 import { EyeIcon, PlusIcon } from '@heroicons/react/24/outline';
+import SpinnerWrapper from '../../components/SpinnerWrapper';
 import useProductManagement from '../../hooks/useProductMangement';
 
 interface ITenantProductManagementProps {
@@ -20,13 +16,19 @@ interface ITenantProductManagementProps {
 const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props) => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
   const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
-  const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
-  const [actionLoading, setActionLoading] = React.useState<boolean>(false);
   const [selectedRow, setSelectedRow] = React.useState<string | number>('');
   const [selectedItem, setSelectedItem] = React.useState<IProduct | null>(null);
   const [openUpdateModal, setOpenUpdateModal] = React.useState<boolean>(false);
-  const { getAllProducts, createProduct, productTableData, loading, handleSearch } =
-    useProductManagement();
+  const {
+    getAllProducts,
+    deleteProduct,
+    actionLoading,
+    handleSearch,
+    products,
+    loading,
+    createProduct,
+    updateProduct,
+  } = useProductManagement();
 
   const columns: GridColDef[] = [
     {
@@ -39,8 +41,9 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
           {
             id: 'delete',
             title: 'Xóa sản phẩm',
-            onPress: () => {
-              deleteProduct(params.row?.id);
+            onPress: async () => {
+              setSelectedRow(params.row?.id);
+              await deleteProduct(params.row?.id);
             },
             onActionSuccess: () => getAllProducts(),
           },
@@ -67,7 +70,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
       headerName: 'Mã sản phẩm',
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return <div className="text-sm font-semibold text-gray-800">{params.value}</div>;
+        return <p className="text-sm font-semibold text-gray-800">{params.value}</p>;
       },
     },
     { field: 'name', headerName: 'Tên sản phẩm', width: 250 },
@@ -76,7 +79,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
       headerName: 'Danh mục',
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return <div className="text-sm font-semibold text-yellow-600">{params.value?.name}</div>;
+        return <p className="text-sm font-semibold text-yellow-600">{params.value?.name}</p>;
       },
     },
     {
@@ -84,9 +87,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
       headerName: 'Giá bán',
       width: 200,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return (
-          <div className="text-sm font-semibold text-green-800">{params.value?.displayPrice}</div>
-        );
+        return <p className="text-sm font-semibold text-green-800">{params.value?.displayPrice}</p>;
       },
     },
     {
@@ -94,7 +95,9 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
       headerName: 'Ngày tạo',
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return <div>{(params.value as string).prettyDate()}</div>;
+        return (
+          <p className="font-semibold text-gray-600">{(params.value as string).prettyDate()}</p>
+        );
       },
     },
     {
@@ -102,55 +105,12 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
       headerName: 'Ngày cập nhật',
       width: 150,
       renderCell: (params: GridRenderCellParams<any>) => {
-        return <div>{(params.value as string).prettyDate()}</div>;
+        return (
+          <p className="font-semibold text-gray-600">{(params.value as string).prettyDate()}</p>
+        );
       },
     },
   ];
-
-  const updateProduct = async (id: string | number, values: Omit<IProduct, 'id'>) => {
-    try {
-      setActionLoading(true);
-      setSelectedRow(id);
-      const response = await axios.put(`${apiURL}/products/${id}/`, values, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (response?.data?.success) {
-        setActionLoading(false);
-        getAllProducts();
-        toast.success('Cập nhật sản phẩm thành công');
-        setOpenUpdateModal(false);
-      } else {
-        toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
-      }
-    } catch (error) {
-      setActionLoading(false);
-      console.log('Client Error', error);
-    }
-  };
-
-  const deleteProduct = async (id: number) => {
-    try {
-      setActionLoading(true);
-      setSelectedRow(id);
-      const response = await axios.delete(`${apiURL}/products/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (response?.data?.success) {
-        setActionLoading(false);
-        getAllProducts();
-        toast.success('Xóa sản phẩm thành công');
-      } else {
-        toast.error(response?.data?.data || response?.data?.error || 'Xóa sản phẩm thất bại');
-      }
-    } catch (error) {
-      setActionLoading(false);
-      console.log('Client Error', error);
-    }
-  };
 
   React.useEffect(() => {
     getAllProducts();
@@ -159,7 +119,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
   return (
     <>
       <MainLayout
-        title="Danh sách sản phẩm "
+        title="Quản lý sản phẩm "
         content={
           <>
             <div className="mb-6 flex w-full flex-row items-center justify-between gap-x-2 gap-y-2">
@@ -199,8 +159,11 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
               <div className="h-[700px] w-full">
                 <DataGrid
                   sx={{ borderRadius: '8px' }}
+                  components={{
+                    LoadingOverlay: SpinnerWrapper,
+                  }}
                   loading={loading}
-                  rows={productTableData}
+                  rows={products}
                   paginationMode="client"
                   pageSize={10}
                   columns={columns}
@@ -223,26 +186,28 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
           title={!!selectedItem ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'}
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
-          children={
-            <ProductForm
-              onClose={() => setOpenUpdateModal(false)}
-              loading={actionLoading}
-              currentProduct={selectedItem}
-              onConfirm={(productValue) => {
-                if (!!selectedItem) {
-                  updateProduct(selectedItem?.id, productValue);
-                } else {
-                  createProduct(
-                    {
-                      ...productValue,
-                    },
-                    () => setOpenUpdateModal(false),
-                  );
-                }
-              }}
-            />
-          }
-        />
+        >
+          <ProductForm
+            onClose={() => setOpenUpdateModal(false)}
+            loading={actionLoading}
+            currentProduct={selectedItem}
+            onConfirm={async (productValue) => {
+              if (!!selectedItem) {
+                setSelectedRow(selectedItem?.id);
+                await updateProduct(selectedItem?.id, productValue, () =>
+                  setOpenUpdateModal(false),
+                );
+              } else {
+                await createProduct(
+                  {
+                    ...productValue,
+                  },
+                  () => setOpenUpdateModal(false),
+                );
+              }
+            }}
+          />
+        </CustomDialog>
       ) : null}
     </>
   );

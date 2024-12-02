@@ -3,33 +3,41 @@ import axios from "axios";
 import {useAuth} from "./useAuth";
 import {apiURL} from "../config/constanst";
 import {toast} from "react-toastify";
+import {useAppSelector} from "./useRedux";
+import {setUsers} from "../redux/slices/user";
+import {useDispatch} from "react-redux";
 
 const useUserManagement = () => {
     const {user, accessToken, isAuthorizedForAdmin, isAuthorizedForManager} = useAuth();
-    const [users, setUsers] = useState([]);
+    const {users} = useAppSelector((state) => state.users);
     const [totalPage, setTotalPage] = useState(0);
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch()
 
-    const getAllUser = async (params?: { addLoadingEffect?: boolean }) => {
-        const {addLoadingEffect} = params || {};
-        try {
-            addLoadingEffect && setLoading(true);
-            const requestURl = isAuthorizedForAdmin
-                ? `${apiURL}/tenant/users`
-                : `${apiURL}/tenant/staffs/${user?.store?.id}`;
-            const response = await axios.get(`${requestURl}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                } as any,
-            });
-            if (response?.data?.success == true) {
-                setUsers(response?.data?.data);
-                setTotalPage(response?.data?._totalPage);
+    const getAllUser = async (params?: { addLoadingEffect?: boolean, overrideCache?: boolean }) => {
+        const {addLoadingEffect, overrideCache} = params || {};
+        if (users?.length == 0 || overrideCache == true) {
+            try {
+                addLoadingEffect && setLoading(true);
+                const requestURl = isAuthorizedForAdmin
+                    ? `${apiURL}/tenant/users`
+                    : `${apiURL}/tenant/staffs/${user?.store?.id}`;
+                const response = await axios.get(`${requestURl}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    } as any,
+                });
+                if (response?.data?.success == true) {
+                    dispatch(setUsers(response?.data?.data));
+                    setTotalPage(response?.data?._totalPage);
+                }
+            } catch (error) {
+                console.log('GET USER ERROR', error);
+            } finally {
+                addLoadingEffect && setLoading(false);
             }
-        } catch (error) {
-            console.log('GET USER ERROR', error);
-        } finally {
-            addLoadingEffect && setLoading(false);
+        } else {
+            return Promise.resolve()
         }
     };
 

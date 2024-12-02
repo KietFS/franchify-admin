@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
-import { Pagination } from '@mui/material';
 import axios from 'axios';
 import { useAppSelector } from '../../hooks/useRedux';
 import { IRootState } from '../../redux';
@@ -16,6 +15,8 @@ import SelectComponent from '../../components/Select';
 import ImportProductForm from './ImportProducForm';
 import StoreProductForm from './StoreProductForm';
 import useStoreManagement from '../../hooks/useStoreManagement';
+import SpinnerWrapper from '../../components/SpinnerWrapper';
+import useProductManagement from '../../hooks/useProductMangement';
 
 interface IStoreManagementProps {
   onChangeViewMode: (mode: 'tenant' | 'store') => void;
@@ -25,44 +26,16 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
   const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
   const { user, accessToken } = useAppSelector((state: IRootState) => state.auth);
-  const [products, setProducts] = React.useState<any[]>([]);
-  const [isLoading, setLoading] = React.useState<boolean>(false);
-  const [page, setPage] = React.useState<number>(1);
-  const [totalPage, setTotalPage] = React.useState<number>(0);
+
   const [actionLoading, setActionLoading] = React.useState<boolean>(false);
   const [selectedRow, setSelectedRow] = React.useState<string | number>('');
   const [selectedItem, setSelectedItem] = React.useState<IStoreProduct | null>(null);
   const [openImportProductModal, setOpenImportProductModal] = React.useState<boolean>(false);
   const [currentStore, setCurrentStore] = React.useState<IStore | null>(null);
   const [openUpdateModal, setOpenUpdateModal] = React.useState<boolean>(false);
-  const [storeLoading, setStoreLoading] = React.useState<boolean>(false);
 
-  const { getAllStores, listStore } = useStoreManagement();
-
-  const getAllProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${apiURL}/products/by-store?storeId=${currentStore?.id}&page=${page}&pageSize=1000`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-
-      if (response?.data?.success) {
-        setProducts(response?.data?.data?.results);
-        setTotalPage(Math.round(response?.data?.data?.total / 10));
-      } else {
-        setProducts([]);
-      }
-    } catch (error) {
-      console.log('GET PRODUCT RESPONSE', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { getAllStores, listStore, loading: storeLoading } = useStoreManagement();
+  const { getAllStoreProducts, storeProducts, storeProductLoading } = useProductManagement();
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -129,7 +102,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
               setSelectedItem(params.row as IStoreProduct);
               setOpenUpdateModal(true);
             },
-            onActionSuccess: () => getAllProducts(),
+            onActionSuccess: () => getAllStoreProducts(),
           },
         ];
         return actionLoading && selectedRow == params.row?.id ? (
@@ -155,9 +128,9 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
       );
       if (response?.data?.success) {
         setActionLoading(false);
-        getAllProducts();
         toast.success('Cập nhật sản phẩm thành công');
         setOpenUpdateModal(false);
+        await getAllStoreProducts();
       } else {
         toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
       }
@@ -170,9 +143,9 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
 
   React.useEffect(() => {
     if (!!currentStore) {
-      getAllProducts();
+      getAllStoreProducts();
     }
-  }, [page, currentStore]);
+  }, [currentStore]);
 
   React.useEffect(() => {
     getAllStores();
@@ -188,7 +161,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
   return (
     <>
       <MainLayout
-        title="Danh sách sản phẩm "
+        title="Quản lý sản phẩm "
         content={
           <>
             <div className="mb-6 flex w-full items-center justify-between gap-y-2">
@@ -225,12 +198,14 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
               <div className="h-[700px] w-full">
                 <DataGrid
                   sx={{ borderRadius: '8px' }}
-                  loading={isLoading || storeLoading}
-                  rows={products}
+                  loading={false}
+                  components={{
+                    LoadingOverlay: SpinnerWrapper,
+                  }}
+                  rows={storeProducts}
                   paginationMode="client"
-                  pageSize={12}
+                  pageSize={10}
                   columns={columns}
-                  hideFooterPagination={false}
                   disableSelectionOnClick
                   onSelectionModelChange={(newSelectionModel) => {
                     setDeleteDisable(!deleteDisable);
@@ -244,24 +219,6 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
           </>
         }
       />
-
-      {openImportProductModal ? (
-        <CustomDialog
-          title={'Nhập sản phẩm'}
-          maxWidth="lg"
-          open={openImportProductModal}
-          onClose={() => setOpenImportProductModal(false)}
-          children={
-            <ImportProductForm
-              onImportSuccess={() => getAllProducts()}
-              storeId={currentStore?.id as number}
-              currentStoreProduct={products}
-              open={openImportProductModal}
-              onClose={() => setOpenImportProductModal(false)}
-            />
-          }
-        />
-      ) : null}
 
       {openUpdateModal && (
         <CustomDialog

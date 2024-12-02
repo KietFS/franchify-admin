@@ -14,6 +14,7 @@ interface IUser {
     email: string;
     isActive: boolean;
     address?: IAddress;
+    store?: any;
 
     [key: string]: any;
 }

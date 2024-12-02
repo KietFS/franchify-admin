@@ -4,9 +4,7 @@ import MainLayout from '../../components/MainLayout';
 import axios from 'axios';
 import {useAppSelector} from '../../hooks/useRedux';
 import {IRootState} from '../../redux';
-import Spinner from '../../components/Spinner';
 import {apiURL} from '../../config/constanst';
-import ActionMenu from '../../components/ActionMenu';
 import {toast} from 'react-toastify';
 import PropertiesDialog from './PropertiesDialog';
 import CustomFieldDialog from './CustomFieldsDialog';
@@ -15,6 +13,9 @@ import {useHistory} from 'react-router-dom';
 import CreateCategoryDialog from './CreateCategoryDialog';
 import {useDispatch} from 'react-redux';
 import {setListCategory} from '../../redux/slices/category';
+import SpinnerWrapper from "../../components/SpinnerWrapper";
+import Spinner from "../../components/Spinner";
+import ActionMenu from "../../components/ActionMenu";
 
 const CategoryManagement = () => {
     const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
@@ -121,6 +122,27 @@ const CategoryManagement = () => {
     }, []);
 
     const columns: GridColDef[] = [
+        {
+            field: 'actions',
+            headerName: 'Hành động',
+            type: 'string',
+            width: 100,
+            renderCell: (params: GridRenderCellParams<any>) => {
+                const options = [
+                    {
+                        id: 'delete',
+                        title: 'Xóa danh mục',
+                        onPress: () => removeCategory(params.row?.id),
+                        onActionSuccess: () => fetchCategories(),
+                    },
+                ];
+                return actionLoading && selectedRow === params.row?.id ? (
+                    <Spinner size={20}/>
+                ) : (
+                    <ActionMenu options={options}/>
+                );
+            },
+        },
         {field: 'id', headerName: 'ID', width: 70},
         {
             field: 'name',
@@ -155,29 +177,6 @@ const CategoryManagement = () => {
             ),
             width: 200,
         },
-        {
-            field: 'actions',
-            headerName: 'Hành động',
-            type: 'string',
-            width: 300,
-            headerAlign: 'left',
-            align: 'left',
-            renderCell: (params: GridRenderCellParams<any>) => {
-                const options = [
-                    {
-                        id: 'delete',
-                        title: 'Xóa danh mục',
-                        onPress: () => removeCategory(params.row?.id),
-                        onActionSuccess: () => fetchCategories(),
-                    },
-                ];
-                return actionLoading && selectedRow === params.row?.id ? (
-                    <Spinner size={20}/>
-                ) : (
-                    <ActionMenu options={options}/>
-                );
-            },
-        },
     ];
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,7 +197,7 @@ const CategoryManagement = () => {
     return (
         <>
             <MainLayout
-                title="Danh sách các danh mục"
+                title="Quản lý các danh mục"
                 content={
                     <div className="flex flex-col gap-y-5 rounded-2xl bg-white">
                         <div className="flex justify-between items-center">
@@ -220,6 +219,9 @@ const CategoryManagement = () => {
                         <div className="h-[700px] w-full rounded-xl">
                             <DataGrid
                                 sx={{borderRadius: '8px'}}
+                                components={{
+                                    LoadingOverlay: SpinnerWrapper,
+                                }}
                                 loading={isLoading}
                                 rows={categoryTableData}
                                 columns={columns}

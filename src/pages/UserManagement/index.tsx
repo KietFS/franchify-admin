@@ -8,6 +8,7 @@ import CreateAccountForm from './CreateAccount';
 import Button from '../../designs/Button';
 import {useAuth} from '../../hooks/useAuth';
 import useUserManagement from "../../hooks/useUserManagement";
+import SpinnerWrapper from "../../components/SpinnerWrapper";
 
 
 const UserManagement = () => {
@@ -179,10 +180,11 @@ const UserManagement = () => {
                         <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-col space-y-2">
                                 <label className="font-bold text-gray-600 text-sm">Tìm kiếm người dùng</label>
-                                <input className="w-[300px] px-4 py-2 border text-sm border-gray-200 rounded-xl"
-                                       placeholder="John Doe"
-                                       onChange={handleSearch}
-                                       name="search-user"/>
+                                <input
+                                    className="w-[300px] text-gray-600 bg-gray-100 px-4 py-2 border text-sm border-gray-200 rounded-xl"
+                                    placeholder="John Doe"
+                                    onChange={handleSearch}
+                                    name="search-user"/>
                             </div>
 
                             <div>
@@ -201,6 +203,9 @@ const UserManagement = () => {
                             <DataGrid
                                 sx={{borderRadius: '8px'}}
                                 rows={userTableData}
+                                components={{
+                                    LoadingOverlay: SpinnerWrapper,
+                                }}
                                 loading={loading}
                                 paginationMode="client"
                                 columns={columns}
@@ -225,11 +230,11 @@ const UserManagement = () => {
                             currentUser={userNeedToUpdate as IUser}
                             isOpen={openDialog}
                             onClose={() => setOpenDialog(false)}
-                            onSuccess={() => getAllUser({addLoadingEffect: false})}
+                            onSuccess={() => getAllUser({addLoadingEffect: false, overrideCache: true})}
                         />
                     ) : (
                         <CreateAccountForm
-                            onSuccess={() => getAllUser({addLoadingEffect: false})}
+                            onSuccess={() => getAllUser({addLoadingEffect: false, overrideCache: true})}
                             isOpen={openDialog}
                             onClose={() => setOpenDialog(false)}
                         />

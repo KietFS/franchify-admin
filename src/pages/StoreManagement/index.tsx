@@ -11,6 +11,7 @@ import useStoreManagement from "../../hooks/useStoreManagement";
 import {useAuth} from "../../hooks/useAuth";
 import Spinner from "../../components/Spinner";
 import ActionMenu from "../../components/ActionMenu";
+import SpinnerWrapper from "../../components/SpinnerWrapper";
 
 interface IStoreProps {
     id: number;
@@ -155,7 +156,7 @@ const StoreMangement = () => {
 
     return (
         <MainLayout
-            title="Danh sách cửa hàng"
+            title="Quản lý cửa hàng"
             content={
                 <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white">
                     <div className="flex flex-row items-center justify-between">
@@ -179,9 +180,12 @@ const StoreMangement = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="h-[800px] w-full">
+                    <div className="h-[700px] w-full">
                         <DataGrid
                             sx={{borderRadius: '8px'}}
+                            components={{
+                                LoadingOverlay: SpinnerWrapper,
+                            }}
                             loading={loading}
                             rows={storeTableData}
                             getRowId={(row) => row.id}

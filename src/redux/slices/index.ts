@@ -1,8 +1,14 @@
-import { combineReducers } from "@reduxjs/toolkit";
-import auth from "./auth";
-import categories from "./category";
+import {combineReducers} from "@reduxjs/toolkit";
+import auth from "./auth"
+import categories from "./category"
+import users from "./user"
+import products from "./product"
 
-export const reducer = combineReducers({
-  auth,
-  categories,
-});
+const rootReducer = combineReducers({
+    auth: auth,
+    categories: categories,
+    users: users,
+    products: products
+}) as any;
+
+export default rootReducer;

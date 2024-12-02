@@ -1,4 +1,4 @@
-import {CSSObject, styled, Theme, useTheme} from '@mui/material/styles';
+import {CSSObject, styled, Theme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
@@ -30,10 +30,6 @@ import {
 
 import UserMenu from '../UserMenu';
 import {Link, useRouteMatch} from 'react-router-dom';
-import {useAppSelector} from '../../hooks/useRedux';
-import {IRootState} from '../../redux';
-import {useDispatch} from 'react-redux';
-import {setOpenSideBar} from '../../redux/slices/auth';
 import {useAuth} from '../../hooks/useAuth';
 
 const drawerWidth = 300;
@@ -113,22 +109,11 @@ interface ISideBarProps {
 }
 
 export default function MainLayout(props: ISideBarProps) {
-    const theme = useTheme();
     const {path} = useRouteMatch();
     const {user} = useAuth();
 
     const {content, title} = props;
-    const {openSideBar: open} = useAppSelector((state: IRootState) => state.auth);
 
-    const dispatch = useDispatch();
-
-    const handleDrawerOpen = () => {
-        dispatch(setOpenSideBar(true));
-    };
-
-    const handleDrawerClose = () => {
-        dispatch(setOpenSideBar(false));
-    };
 
     const adminRoutes = [
         {
@@ -211,7 +196,7 @@ export default function MainLayout(props: ISideBarProps) {
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <AppBar position="fixed" open={true} sx={{backgroundColor: '#4b5563'}}>
+            <AppBar className="shadow-xl" position="fixed" open={true} sx={{backgroundColor: '#4b5563'}}>
                 <Toolbar>
                     <Box
                         sx={{
@@ -220,23 +205,25 @@ export default function MainLayout(props: ISideBarProps) {
                             width: '100%',
                         }}
                     >
-                        <Typography variant="h6" noWrap component="div">
+                        <Typography sx={{fontWeight: 'bold'}} variant="h6" noWrap
+                                    component="div">
                             {title}
                         </Typography>
                         <UserMenu/>
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={true}>
-                <DrawerHeader sx={{pl: 4}} style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <p className="w-1/3 cursor-pointer text-center text-2xl font-bold text-gray-500 laptop:w-fit">
-                        Market Floor
-                    </p>
+            <Drawer className="shadow-xl" variant="permanent" open={true}>
+                <DrawerHeader sx={{pl: 4}}
+                              style={{display: 'flex', justifyContent: 'space-between'}}>
+                    {/*<p className="w-1/3 cursor-pointer text-center text-2xl font-bold text-gray-700 laptop:w-fit">*/}
+                    {/*    Market Floor*/}
+                    {/*</p>*/}
                 </DrawerHeader>
                 <Divider/>
                 <List>
                     {routes.map((route, index) => (
-                        <Link to={route.to}>
+                        <Link key={`route-to-${route.to}`} to={route.to}>
                             <ListItem key={route.id} disablePadding sx={{display: 'block'}}>
                                 <ListItemButton
                                     sx={{
