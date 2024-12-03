@@ -145,7 +145,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
                 </button>
                 <button
                   onClick={() => {
-                    props.onChangeViewMode('store');
+                    props.onChangeViewMode?.('store');
                   }}
                   className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
                 >
@@ -186,28 +186,29 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
           title={!!selectedItem ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'}
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
-        >
-          <ProductForm
-            onClose={() => setOpenUpdateModal(false)}
-            loading={actionLoading}
-            currentProduct={selectedItem}
-            onConfirm={async (productValue) => {
-              if (!!selectedItem) {
-                setSelectedRow(selectedItem?.id);
-                await updateProduct(selectedItem?.id, productValue, () =>
-                  setOpenUpdateModal(false),
-                );
-              } else {
-                await createProduct(
-                  {
-                    ...productValue,
-                  },
-                  () => setOpenUpdateModal(false),
-                );
-              }
-            }}
-          />
-        </CustomDialog>
+          children={
+            <ProductForm
+              onClose={() => setOpenUpdateModal(false)}
+              loading={actionLoading}
+              currentProduct={selectedItem}
+              onConfirm={async (productValue) => {
+                if (!!selectedItem) {
+                  setSelectedRow(selectedItem?.id);
+                  await updateProduct(selectedItem?.id, productValue, () =>
+                    setOpenUpdateModal(false),
+                  );
+                } else {
+                  await createProduct(
+                    {
+                      ...productValue,
+                    },
+                    () => setOpenUpdateModal(false),
+                  );
+                }
+              }}
+            />
+          }
+        />
       ) : null}
     </>
   );

@@ -100,7 +100,6 @@ const TenantManagement = () => {
                       <div className="grid grid-cols-1 items-center justify-between gap-x-8 gap-y-5 tablet:grid-cols-2">
                         <BaseInput
                           type="text"
-                          disabled={true}
                           name="name"
                           value={values?.name}
                           label="Tên thương hiệu"
@@ -108,7 +107,6 @@ const TenantManagement = () => {
                         />
                         <BaseInput
                           type="text"
-                          disabled={true}
                           name="email"
                           value={values?.email}
                           label="Email công ty"

@@ -1,6 +1,6 @@
-import React, {lazy, Suspense} from 'react';
-import {Redirect, Route, Switch} from 'react-router-dom';
-import {useAuth} from "../hooks/useAuth";
+import React, { lazy, Suspense } from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 // Lazy load components
 const DashBoard = lazy(() => import('../pages/DashBoard'));
@@ -13,43 +13,43 @@ const OrdersManagement = lazy(() => import('../pages/OrdersManagement'));
 const UserManagement = lazy(() => import('../pages/UserManagement'));
 
 export default function RootApp() {
-    const {accessToken, user} = useAuth();
+  const { accessToken, user } = useAuth();
 
-    const renderAdminRoutes = () => {
-        return (
-            <>
-                <Route path="/home" component={DashBoard}/>
-                <Route path="/user-management" component={UserManagement}/>
-                <Route path="/category-management" component={CategoryMangement}/>
-                <Route path="/products-management" component={ProductManagement}/>
-                <Route path="/store-management" component={StoreMangement}/>
-                <Route path="/tenant-management" component={TenantManagement}/>
-            </>
-        );
-    };
-
-    const renderStaffRoutes = () => {
-        return (
-            <>
-                <Route path="/home" component={DashBoard}/>
-                <Route path="/user-management" component={UserManagement}/>
-                <Route path="/products-management" component={ProductManagement}/>
-                <Route path="/orders-management" component={OrdersManagement}/>
-            </>
-        );
-    };
-
+  const renderAdminRoutes = () => {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <Switch>
-                <Route
-                    path="/"
-                    exact
-                    render={() => (!accessToken ? <Redirect to="/login"/> : <Redirect to="/home"/>)}
-                />
-                <Route path="/login" component={LoginPage}/>
-                {user?.role === 'admin' ? renderAdminRoutes() : renderStaffRoutes()}
-            </Switch>
-        </Suspense>
+      <>
+        <Route path="/home" component={DashBoard} />
+        <Route path="/user-management" component={UserManagement} />
+        <Route path="/category-management" component={CategoryMangement} />
+        <Route path="/products-management" component={ProductManagement} />
+        <Route path="/store-management" component={StoreMangement} />
+        <Route path="/tenant-management" component={TenantManagement} />
+      </>
     );
+  };
+
+  const renderStaffRoutes = () => {
+    return (
+      <>
+        <Route path="/home" component={DashBoard} />
+        <Route path="/user-management" component={UserManagement} />
+        <Route path="/products-management" component={ProductManagement} />
+        <Route path="/orders-management" component={OrdersManagement} />
+      </>
+    );
+  };
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={() => (!accessToken ? <Redirect to="/login" /> : <Redirect to="/home" />)}
+        />
+        <Route path="/login" component={LoginPage} />
+        {user?.role === 'admin' ? renderAdminRoutes() : renderStaffRoutes()}
+      </Switch>
+    </Suspense>
+  );
 }

@@ -220,6 +220,24 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
         }
       />
 
+      {openImportProductModal ? (
+        <CustomDialog
+          title={'Nhập sản phẩm'}
+          maxWidth="lg"
+          open={openImportProductModal}
+          onClose={() => setOpenImportProductModal(false)}
+          children={
+            <ImportProductForm
+              onImportSuccess={() => getAllStoreProducts()}
+              storeId={currentStore?.id as number}
+              currentStoreProduct={storeProducts}
+              open={openImportProductModal}
+              onClose={() => setOpenImportProductModal(false)}
+            />
+          }
+        />
+      ) : null}
+
       {openUpdateModal && (
         <CustomDialog
           title={`Chỉnh sửa sản phẩm tại cửa hàng ${currentStore?.name}`}
