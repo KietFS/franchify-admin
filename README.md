@@ -2,6 +2,28 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+
+## Project Description
+Market Floor is an multi-tenant application using multi-tenant logic. Every tenant manage their own resources, data, ensuring stable and security for their customer. This project is written with various tech stacks like: NextJS14, React, NestJS, TailwindCSS, Redux, Redux-Persist, ElasticSearch, Redis cache,...
+Advisor: Mr Nguyen Huu Trung, HCMUTE.
+
+![image](https://github.com/user-attachments/assets/041edc01-67a0-40b6-9293-a7a57d938112)
+
+
+## Key Features
+* Tenant Managment
+* Store Management
+* Product Management
+* Order Management
+* User Management
+* Elastic service.
+* Tracking order service using mailer notification.
+
+## Applications:
+* User front page: https://github.com/KietFS/market-floor-user-dev
+* User admin page: This repo
+* Back-end REST API: https://github.com/kietute/market-floor-be-dev
+
 ## Available Scripts
 
 In the project directory, you can run:

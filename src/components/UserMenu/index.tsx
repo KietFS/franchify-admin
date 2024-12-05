@@ -1,15 +1,10 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -40,6 +35,7 @@ export default function UserMenu() {
         hideProgressBar: true,
         theme: 'colored',
       });
+      window.location.href = '/login';
     } catch (error) {
       console.log(error);
     }
@@ -58,8 +54,8 @@ export default function UserMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <p className="mr-2 font-normal text-white">Xin chào</p>
-            <button className="font-bold text-white">{user?.username}</button>
+            <p className="mr-2 font-normal text-gray-800">Xin chào</p>
+            <button className="font-bold text-gray-800">{user?.username}</button>
           </IconButton>
         </Tooltip>
       </Box>
