@@ -54,8 +54,8 @@ export default function UserMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <p className="mr-2 font-normal text-white">Xin chào</p>
-            <button className="font-bold text-white">{user?.username}</button>
+            <p className="mr-2 font-normal text-gray-800">Xin chào</p>
+            <button className="font-bold text-gray-800">{user?.username}</button>
           </IconButton>
         </Tooltip>
       </Box>

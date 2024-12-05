@@ -8,8 +8,8 @@ import {
   PhoneIcon,
   UserCircleIcon,
   CheckBadgeIcon,
-  PencilIcon,
-} from '@heroicons/react/20/solid';
+} from '@heroicons/react/24/outline';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
 type IInputMode = 'email' | 'password' | 'confirmPassword' | 'text' | 'phoneNumber' | 'name';
 
@@ -69,7 +69,7 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
       placeholder: '+84 809 211 211',
     },
     text: {
-      icon: <PencilIcon width={20} height={20} color="gray" />,
+      icon: <PencilSquareIcon width={20} height={20} color="gray" />,
       placeholder: 'Your text here',
     },
   };
@@ -96,7 +96,7 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
     <div className={`w-full rounded-sm ${isError ? 'text-gray-500' : 'text-neutral-300'} `}>
       <div className="flex items-center justify-between">
         <div className="flex">
-          <p className="text-md mr-1 font-bold text-gray-700">{label}</p>
+          <p className="mr-1 text-sm font-bold text-gray-700">{label}</p>
           {isRequired && <p className="font-bold text-gray-500">*</p>}
         </div>
         {hasEvent && (
@@ -118,13 +118,14 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
               ? 'border-2 border-red-500'
               : 'border-gray-200'
         } items-center ${
-          focus && !isError ? 'bg-gray-50' : isError ? 'bg-red-50' : 'bg-gray-100'
+          focus && !isError ? 'bg-gray-50' : isError ? 'bg-red-50' : 'bg-white'
         } h-10 rounded-lg px-2 py-1 ${className}`}
       >
         <div className="border-r border-gray-500 pr-2">
           <>{(objectTypes as any)?.[mode]?.icon}</>
         </div>
         <input
+          autoComplete="off"
           disabled={disabled}
           placeholder={placeholder || (objectTypes as any)?.[mode]?.placeholder || ''}
           {...field}
@@ -132,8 +133,8 @@ const BaseInput: React.FC<IBaseInputProps> = (props) => {
           type={mode === 'password' || mode == 'confirmPassword' ? 'password' : 'text'}
           onFocus={handleOnFocus}
           onChange={(e) => onValueChange(e.target.value)}
-          className={`px-2 py-1 ${
-            focus && !isError ? 'bg-gray-50' : isError ? 'bg-red-50' : 'bg-gray-100'
+          className={`px-2 py-1 ring-inset ring-transparent autofill:shadow-[inset_0_0_0px_1000px_rgb(255,255,255)] ${
+            focus && !isError ? 'bg-gray-50' : isError ? 'bg-red-50' : 'bg-white'
           } h-8 w-80 rounded-lg border-transparent text-sm text-gray-700 outline-none ring-0 focus:border-transparent focus:outline-transparent focus:ring-0`}
         />
       </div>

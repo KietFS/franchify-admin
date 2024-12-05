@@ -1,8 +1,8 @@
-import { CircularProgress } from "@mui/material";
-import React from "react";
+import { CircularProgress } from '@mui/material';
+import React from 'react';
 
-type IButtonVariant = "primary" | "secondary" | "red";
-type IButtonType = "button" | "submit";
+type IButtonVariant = 'primary' | 'secondary' | 'red';
+type IButtonType = 'button' | 'submit';
 
 interface IButtonProps {
   onClick?: () => void;
@@ -16,32 +16,28 @@ interface IButtonProps {
 const Button: React.FC<IButtonProps> = (props) => {
   const {
     onClick,
-    variant = "primary",
+    variant = 'primary',
     className,
-    type = "submit",
-    title = "",
+    type = 'submit',
+    title = '',
     isLoading = false,
   } = props;
 
   return (
     <button
-      className={`items-center min-w-[200px] justify-center rounded-lg px-4 py-2 text-center w-fit flex hover:opacity-50 ${className} ${
-        variant === "primary" && "bg-gray-500"
-      } ${variant === "secondary" && "bg-white"}
-      ${variant === "red" && "bg-red-500"} ${
-        variant === "secondary" ? "text-gray-500" : "text-white"
+      className={`flex w-fit min-w-[200px] items-center justify-center rounded-2xl px-4 py-2 text-center hover:opacity-50 ${className} ${
+        variant === 'primary' && 'bg-gray-700'
+      } ${variant === 'secondary' && 'bg-white'} ${variant === 'red' && 'bg-red-500'} ${
+        variant === 'secondary' ? 'text-gray-500' : 'text-white'
       } border ${
-        variant === "secondary" ? "border-gray-500" : "border-transparent"
-      } font-semibold text-lg`}
+        variant === 'secondary' ? 'border-gray-500' : 'border-transparent'
+      } text-lg font-semibold`}
       onClick={() => onClick?.()}
       type={type}
     >
       {isLoading ? (
         <>
-          <CircularProgress
-            size="md"
-            sx={{ color: "white", width: 28, height: 28 }}
-          />
+          <CircularProgress size="md" sx={{ color: 'white', width: 28, height: 28 }} />
         </>
       ) : (
         title

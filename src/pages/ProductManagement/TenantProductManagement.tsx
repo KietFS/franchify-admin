@@ -156,7 +156,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
             </div>
 
             <div className="flex w-full flex-col gap-y-5 rounded-2xl bg-white shadow-xl">
-              <div className="h-[700px] w-full">
+              <div className="h-[750px] w-full shadow-lg">
                 <DataGrid
                   sx={{ borderRadius: '8px' }}
                   components={{
@@ -165,7 +165,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
                   loading={loading}
                   rows={products}
                   paginationMode="client"
-                  pageSize={10}
+                  pageSize={12}
                   columns={columns}
                   disableSelectionOnClick
                   onSelectionModelChange={(newSelectionModel) => {

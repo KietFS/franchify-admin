@@ -1,6 +1,9 @@
 import React, { lazy, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import MainLayout from '../components/MainLayout';
+import LoadingSkeleton from '../components/LoadingSkeleton';
+import Spinner from '../components/Spinner';
 
 // Lazy load components
 const DashBoard = lazy(() => import('../pages/DashBoard'));
@@ -40,7 +43,18 @@ export default function RootApp() {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <MainLayout
+          title=""
+          content={
+            <div className="flex h-full w-full items-center justify-center">
+              <Spinner />
+            </div>
+          }
+        />
+      }
+    >
       <Switch>
         <Route
           path="/"

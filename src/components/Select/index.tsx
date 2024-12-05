@@ -53,12 +53,13 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
         style={{
           width: '100%',
           height: 40,
-          borderWidth: 0,
-          borderColor: 'transparent',
-          background: '#f3f4f6',
+          borderWidth: 1,
+          borderColor: '#f3f4f6',
+          background: 'white',
           borderRadius: 7,
           maxHeight: 100,
         }}
+        aria-placeholder={placeholder}
         renderValue={(value) => (
           <div className="flex h-full items-center">
             <p className="items-center text-sm text-gray-900">{optionSelected[keyLabel]}</p>
