@@ -32,7 +32,10 @@ const Button: React.FC<IButtonProps> = (props) => {
       } border ${
         variant === 'secondary' ? 'border-gray-500' : 'border-transparent'
       } text-lg font-semibold`}
-      onClick={() => onClick?.()}
+      onClick={(e) => {
+        e?.stopPropagation();
+        onClick && onClick();
+      }}
       type={type}
     >
       {isLoading ? (

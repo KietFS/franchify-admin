@@ -8,6 +8,8 @@ import ProductForm from './ProductForm';
 import { EyeIcon, PlusIcon } from '@heroicons/react/24/outline';
 import SpinnerWrapper from '../../components/SpinnerWrapper';
 import useProductManagement from '../../hooks/useProductMangement';
+import SimpleInput from '../../components/SimpleInput';
+import Button from '../../designs/Button';
 
 interface ITenantProductManagementProps {
   onChangeViewMode: (mode: 'tenant' | 'store') => void;
@@ -124,34 +126,32 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
           <>
             <div className="mb-6 flex w-full flex-row items-center justify-between gap-x-2 gap-y-2">
               <div className="flex flex-col space-y-2">
-                <label className="text-sm font-bold text-gray-600">Tìm kiếm sản phẩm</label>
-                <input
-                  className="w-[300px] rounded-xl border border-gray-200 px-4 py-2 text-sm"
-                  placeholder="Trà sữa"
-                  onChange={(e) => handleSearch(e.target.value)}
+                <SimpleInput
                   name="search-user"
+                  label="Tìm kiếm sản phẩm"
+                  mode="text"
+                  className="max-w-[400px] rounded-xl border border-gray-300 px-4 py-2 text-sm"
+                  placeholder="Trà sữa"
+                  autoComplete="off"
+                  onChangeValue={(value) => handleSearch(value as string)}
                 />
               </div>
               <div className="flex items-center gap-x-4">
-                <button
+                <Button
+                  title="Thêm sản phẩm"
                   onClick={() => {
                     setOpenUpdateModal(true);
                     setSelectedItem(null);
                   }}
                   className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
-                >
-                  <PlusIcon className="h-[20px] w-[20px] font-bold text-white" />
-                  <p>Thêm sản phẩm</p>
-                </button>
-                <button
+                ></Button>
+                <Button
+                  title="Xem theo cửa hàng"
                   onClick={() => {
                     props.onChangeViewMode?.('store');
                   }}
-                  className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
-                >
-                  <EyeIcon className="mr-1 h-[20px] w-[20px] font-bold text-white" />
-                  <p>Xem theo cửa hàng</p>
-                </button>
+                  className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-6 py-1 font-bold text-white hover:opacity-80"
+                ></Button>
               </div>
             </div>
 

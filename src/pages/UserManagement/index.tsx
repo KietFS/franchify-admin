@@ -9,6 +9,7 @@ import Button from '../../designs/Button';
 import { useAuth } from '../../hooks/useAuth';
 import useUserManagement from '../../hooks/useUserManagement';
 import SpinnerWrapper from '../../components/SpinnerWrapper';
+import SimpleInput from '../../components/SimpleInput';
 
 const UserManagement = () => {
   const [deleteDisable, setDeleteDisable] = React.useState<boolean>(false);
@@ -91,7 +92,7 @@ const UserManagement = () => {
     {
       field: 'role',
       headerName: 'Vai trò',
-      width: 250,
+      width: 200,
       renderCell: (params) => {
         switch (params.value) {
           case 'admin':
@@ -144,8 +145,7 @@ const UserManagement = () => {
     // },
   ];
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleSearch = (value: string) => {
     if (value?.length > 0) {
       const filteredData = users.filter((user: any) => {
         if (user?.username.toLowerCase().includes(value.toLowerCase())) {
@@ -176,16 +176,15 @@ const UserManagement = () => {
         content={
           <div className="flex w-full flex-col gap-y-5 rounded-xl bg-white">
             <div className="flex flex-row items-center justify-between">
-              <div className="flex flex-col space-y-2">
-                <label className="text-sm font-bold text-gray-600">Tìm kiếm người dùng</label>
-                <input
-                  className="w-[300px] rounded-xl border border-gray-300 px-4 py-2 text-sm"
-                  placeholder="John Doe"
-                  onChange={handleSearch}
-                  name="search-user"
-                />
-              </div>
-
+              <SimpleInput
+                name="search-user"
+                label="Tìm kiếm người dùng"
+                mode="text"
+                className="max-w-[400px] rounded-xl border border-gray-300 px-4 py-2 text-sm"
+                placeholder="John Doe"
+                autoComplete="off"
+                onChangeValue={(value) => handleSearch(value as string)}
+              />
               <div>
                 {isAuthorizedForManager && (
                   <Button
@@ -209,15 +208,13 @@ const UserManagement = () => {
                 components={{
                   LoadingOverlay: SpinnerWrapper,
                 }}
-                filterMode="client"
-                onFilterModelChange={(model) => console.log(model)}
                 loading={loading}
                 paginationMode="client"
                 hideFooterSelectedRowCount={false}
                 columns={columns}
                 disableSelectionOnClick
-                pageSize={15}
-                rowHeight={42}
+                pageSize={12}
+                rowHeight={50}
                 onSelectionModelChange={(newSelectionModel) => {
                   setDeleteDisable(!deleteDisable);
                   setSelectionModel(newSelectionModel);
