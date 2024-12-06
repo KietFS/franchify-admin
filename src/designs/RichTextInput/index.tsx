@@ -62,7 +62,7 @@ const RichTextInput: React.FC<IRichTextInputProps> = (props) => {
         )}
       </div>
       <div
-        className={`flex h-[100px] w-full items-center rounded-lg bg-gray-100 py-1 focus-within:bg-gray-50`}
+        className={`border-box flex h-[100px] w-full items-center rounded-lg border border-gray-300 bg-white py-1 focus-within:bg-gray-50`}
       >
         <textarea
           placeholder="abcdefg@gmail.com"
@@ -70,7 +70,7 @@ const RichTextInput: React.FC<IRichTextInputProps> = (props) => {
           {...field}
           multiline
           onChange={(e) => onValueChange(e.target.value)}
-          className={`h-[100px] w-full rounded-lg border-transparent bg-gray-100 px-2 py-1 text-sm text-gray-700 outline-none outline-white ring-0 focus:border-transparent focus:bg-gray-50 focus:outline-transparent focus:ring-0`}
+          className={`right-0 h-[100px] w-full rounded-lg border-transparent bg-white px-2 py-1 text-sm text-gray-700 outline-none outline-white ring-0 ring-transparent focus:border-transparent focus:bg-white focus:outline-transparent focus:ring-0`}
         />
       </div>
       {isError && <p className="mt-1 text-xs font-semibold text-red-500">{meta.error}</p>}

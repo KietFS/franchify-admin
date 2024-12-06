@@ -13,6 +13,7 @@ import Spinner from '../../components/Spinner';
 import ActionMenu from '../../components/ActionMenu';
 import SpinnerWrapper from '../../components/SpinnerWrapper';
 import SimpleInput from '../../components/SimpleInput';
+import Button from '../../designs/Button';
 
 interface IStoreProps {
   id: number;
@@ -154,16 +155,14 @@ const StoreMangement = () => {
               onChangeValue={(value) => handleSearch(value as string)}
             />
             <div className="flex flex-row gap-x-2">
-              <button
+              <Button
+                title="Thêm cửa hàng"
                 onClick={() => {
                   setSelectedItem(null);
                   setOpenCreateModal(true);
                 }}
                 className="flex h-[40px] w-fit items-center rounded-lg bg-gray-500 px-3 py-1 font-bold text-white hover:opacity-80"
-              >
-                <PlusIcon className="h-[20px] w-[20px] font-bold text-white" />
-                <p>Thêm cửa hàng</p>
-              </button>
+              ></Button>
             </div>
           </div>
           <div className="h-[700px] w-full">
