@@ -1,7 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IUser } from "../../../types/user";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type IInputMode = "INPUT_OTP" | "INPUT_PHONE_NUMBER";
+export type IInputMode = 'INPUT_OTP' | 'INPUT_PHONE_NUMBER';
 interface IInitialState {
   listCategory: IProductCategory[];
 }
@@ -11,7 +10,7 @@ const initialState: IInitialState = {
 };
 
 const categorySlice = createSlice({
-  name: "categories",
+  name: 'categories',
   initialState,
   reducers: {
     setListCategory: (state, actions: PayloadAction<IProductCategory[]>) => {

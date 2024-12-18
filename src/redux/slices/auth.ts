@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IUser } from "../../../types/user";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IUser } from '../../type/models';
 
-export type IInputMode = "INPUT_OTP" | "INPUT_PHONE_NUMBER";
+export type IInputMode = 'INPUT_OTP' | 'INPUT_PHONE_NUMBER';
 interface IInitialState {
   isAuth: boolean;
   accessToken: string | null;
@@ -11,13 +11,13 @@ interface IInitialState {
 
 const initialState: IInitialState = {
   isAuth: false,
-  accessToken: "",
+  accessToken: '',
   user: null,
   openSideBar: true,
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     setAuth: (state, actions: PayloadAction<boolean>) => {
@@ -35,6 +35,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setAuth, setUser, setOpenSideBar, setAccessToken } =
-  authSlice.actions;
+export const { setAuth, setUser, setOpenSideBar, setAccessToken } = authSlice.actions;
 export default authSlice.reducer;

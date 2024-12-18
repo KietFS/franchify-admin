@@ -1,8 +1,7 @@
-import { IPaymentStatus } from "../../types/user";
-import React from "react";
+import React from 'react';
 
 interface IPaymentStatusBadgeProps {
-  status: IPaymentStatus;
+  status: any;
 }
 
 const PaymentStatusBadge: React.FC<IPaymentStatusBadgeProps> = (props) => {
@@ -10,22 +9,22 @@ const PaymentStatusBadge: React.FC<IPaymentStatusBadgeProps> = (props) => {
   return (
     <>
       {!status && (
-        <p className="rounded-full bg-red-100 text-red-800 font-semibold px-[8px] py-[2px] text-[10px] w-fit text-sm">
+        <p className="w-fit rounded-full bg-red-100 px-[8px] py-[2px] text-[10px] text-sm font-semibold text-red-800">
           Không có thông tin
         </p>
       )}
-      {status == "PENDING" && (
-        <p className="rounded-full bg-yellow-100 text-yellow-800 font-semibold px-[8px] py-[2px] text-[10px] w-fit text-sm">
+      {status == 'PENDING' && (
+        <p className="w-fit rounded-full bg-yellow-100 px-[8px] py-[2px] text-[10px] text-sm font-semibold text-yellow-800">
           Đang đợi thanh toán
         </p>
       )}
-      {status == "COMPLETED" && (
-        <p className="rounded-full bg-green-100 text-green-800 font-semibold px-[8px] py-[2px] text-[10px] w-fit text-sm">
+      {status == 'COMPLETED' && (
+        <p className="w-fit rounded-full bg-green-100 px-[8px] py-[2px] text-[10px] text-sm font-semibold text-green-800">
           Đã thanh toán
         </p>
       )}
-      {status == "OVERDUE" && (
-        <p className="rounded-full bg-gray-100 text-gray-800 font-semibold px-[8px] py-[2px] text-[10px] w-fit text-sm">
+      {status == 'OVERDUE' && (
+        <p className="w-fit rounded-full bg-gray-100 px-[8px] py-[2px] text-[10px] text-sm font-semibold text-gray-800">
           Đã hết hạn thanh toán
         </p>
       )}

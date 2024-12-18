@@ -62,7 +62,7 @@ const RichTextInput: React.FC<IRichTextInputProps> = (props) => {
         )}
       </div>
       <div
-        className={`border-box flex h-[100px] w-full items-center rounded-lg border border-gray-300 bg-white py-1 focus-within:bg-gray-50`}
+        className={`border-box flex w-full items-center rounded-lg border border-gray-300 bg-white py-1 focus-within:bg-gray-50`}
       >
         <textarea
           placeholder="abcdefg@gmail.com"

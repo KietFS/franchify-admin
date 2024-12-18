@@ -20,6 +20,7 @@ import {
   InboxStackIcon,
   TagIcon,
   UserCircleIcon,
+  EnvelopeIcon,
 } from '@heroicons/react/24/outline';
 import {
   BuildingStorefrontIcon as BuildingStorefrontIconSolid,
@@ -30,11 +31,13 @@ import {
   UserCircleIcon as UserCircleIconSolid,
   Cog8ToothIcon as Cog8ToothIconSolid,
   CreditCardIcon as CreditCardIconSolid,
+  EnvelopeIcon as EnvelopeIconSolid,
 } from '@heroicons/react/24/solid';
 
 import UserMenu from '../UserMenu';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useState } from 'react';
 
 const drawerWidth = 270;
 
@@ -114,6 +117,7 @@ interface ISideBarProps {
 export default function MainLayout(props: ISideBarProps) {
   const { path } = useRouteMatch();
   const { user } = useAuth();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const { content, title } = props;
 
@@ -163,9 +167,14 @@ export default function MainLayout(props: ISideBarProps) {
     {
       id: '7',
       name: 'Cài đặt',
-      to: '/settings',
+      to: '#',
       activeIcon: <Cog8ToothIconSolid className="h-6 w-6 font-semibold text-white" />,
       icon: <Cog8ToothIcon className="h-6 w-6 text-white" />,
+      children: [
+        { id: '7-1', name: 'Nội dung hiển thị', to: '/settings/cms-management' },
+        { id: '7-2', name: 'Quản lý chi phí', to: '/settings/fee-management' },
+        { id: '7-3', name: 'Điểm thưởng và tích lũy', to: '/settings/submenu3' },
+      ],
     },
     {
       id: '8',
@@ -174,13 +183,13 @@ export default function MainLayout(props: ISideBarProps) {
       activeIcon: <CreditCardIconSolid className="h-6 w-6 font-semibold text-white" />,
       icon: <CreditCardIcon className="h-6 w-6 text-white" />,
     },
-    // {
-    //   id: '9',
-    //   name: 'Quản lý đơn hàng',
-    //   to: '/orders-management',
-    //   activeIcon: <DocumentIcon className="h-6 w-6 font-semibold text-white" />,
-    //   icon: <DocumentIcon className="h-6 w-6 text-white" />,
-    // },
+    {
+      id: '9',
+      name: 'Quản lý khuyến mãi',
+      to: '/promotions-management',
+      activeIcon: <EnvelopeIconSolid className="h-6 w-6 font-semibold text-white" />,
+      icon: <EnvelopeIcon className="h-6 w-6 text-white" />,
+    },
   ];
 
   const mangerRoutes = [
@@ -258,8 +267,8 @@ export default function MainLayout(props: ISideBarProps) {
         </DrawerHeader>
         <Divider sx={{ backgroundColor: 'gray' }} />
         <List>
-          {routes.map((route, index) => (
-            <Link key={`route-to-${route.to}`} to={route.to}>
+          {routes.map((route: any, index) => (
+            <div key={`route-to-${route.to}`}>
               <ListItem
                 key={route.id}
                 disablePadding
@@ -267,37 +276,91 @@ export default function MainLayout(props: ISideBarProps) {
                   display: 'block',
                 }}
               >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    mb: 2,
-                    justifyContent: 'initial',
-                    px: 4,
-                    '&:hover': {
-                      background: 'rgb(41.5, 48, 61) !important',
-                    },
-                  }}
-                >
-                  <ListItemIcon
+                <Link to={route?.children?.length > 0 ? '#' : route.to}>
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: 3,
-                      color: path == route.to ? 'primary' : 'black',
+                      minHeight: 48,
+                      mb: 2,
+                      justifyContent: 'initial',
+                      px: 4,
+                      '&:hover': {
+                        background: 'rgb(41.5, 48, 61) !important',
+                      },
                     }}
-                    color={path == route.to ? 'blue' : 'black'}
+                    onClick={() => {
+                      if (route?.children?.length > 0) {
+                        setSettingsOpen(!settingsOpen);
+                      } else {
+                      }
+                    }}
                   >
-                    {path == route.to ? route.activeIcon : route.icon}
-                  </ListItemIcon>
-                  <p
-                    className={`text-sm ${
-                      path == route.to ? 'font-semibold text-white' : 'text-white'
-                    }`}
-                  >
-                    {route.name}
-                  </p>
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: 3,
+                        color: path == route.to ? 'primary' : 'black',
+                      }}
+                      color={path == route.to ? 'blue' : 'black'}
+                    >
+                      {path == route.to ? route.activeIcon : route.icon}
+                    </ListItemIcon>
+                    <p
+                      className={`text-sm ${
+                        path == route.to ? 'font-semibold text-white' : 'text-white'
+                      }`}
+                    >
+                      {route.name}
+                    </p>
+                  </ListItemButton>
+                </Link>
               </ListItem>
-            </Link>
+              {route.name === 'Cài đặt' && settingsOpen && (
+                <List component="div" disablePadding>
+                  {route.children.map((child: any) => (
+                    <Link key={`route-to-${child.to}`} to={child.to}>
+                      <ListItem
+                        key={child.id}
+                        disablePadding
+                        sx={{
+                          display: 'block',
+                          pl: 4,
+                        }}
+                      >
+                        <ListItemButton
+                          sx={{
+                            minHeight: 48,
+                            mb: 2,
+                            justifyContent: 'initial',
+                            px: 4,
+                            '&:hover': {
+                              background: 'rgb(41.5, 48, 61) !important',
+                            },
+                          }}
+                        >
+                          <ListItemIcon
+                            sx={{
+                              minWidth: 0,
+                              mr: 3,
+                              color: path == child.to ? 'primary' : 'black',
+                            }}
+                            color={path == child.to ? 'blue' : 'black'}
+                          >
+                            {path == child.to ? child.activeIcon : child.icon}
+                          </ListItemIcon>
+                          <p
+                            className={`text-sm ${
+                              path == child.to ? 'font-semibold text-white' : 'text-white'
+                            }`}
+                          >
+                            {child.name}
+                          </p>
+                        </ListItemButton>
+                      </ListItem>
+                    </Link>
+                  ))}
+                </List>
+              )}
+            </div>
           ))}
         </List>
         <Divider />

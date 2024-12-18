@@ -14,6 +14,8 @@ const StoreMangement = lazy(() => import('../pages/StoreManagement'));
 const TenantManagement = lazy(() => import('../pages/TenantMangement'));
 const OrdersManagement = lazy(() => import('../pages/OrdersManagement'));
 const UserManagement = lazy(() => import('../pages/UserManagement'));
+const CmsManagement = lazy(() => import('../pages/CmsManagement'));
+const FeeManagement = lazy(() => import('../pages/FeeManagement'));
 
 export default function RootApp() {
   const { accessToken, user } = useAuth();
@@ -23,6 +25,9 @@ export default function RootApp() {
       <>
         <Route path="/home" component={DashBoard} />
         <Route path="/user-management" component={UserManagement} />
+        <Route path="/orders-management" component={OrdersManagement} />
+        <Route path="/settings/cms-management" component={CmsManagement} />
+        <Route path="/settings/fee-management" component={FeeManagement} />
         <Route path="/category-management" component={CategoryMangement} />
         <Route path="/products-management" component={ProductManagement} />
         <Route path="/store-management" component={StoreMangement} />

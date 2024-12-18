@@ -1,9 +1,9 @@
-import jwtDecode from "jwt-decode";
-import Cookies from "universal-cookie";
+import jwtDecode from 'jwt-decode';
+import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
 
-export const cookieKey = ":token";
+export const cookieKey = ':token';
 
 export const getUserCookies = (): any => {
   return cookies.get(cookieKey);
@@ -14,9 +14,5 @@ export const getUserCookies = (): any => {
  */
 export const getLoggedInAccount = () => {
   const account = getUserCookies();
-  return account
-    ? typeof account === "object"
-      ? account
-      : JSON.parse(account)
-    : null;
+  return account ? (typeof account === 'object' ? account : JSON.parse(account)) : null;
 };

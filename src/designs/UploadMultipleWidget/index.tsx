@@ -35,7 +35,7 @@ const UploadMultipleWidget: React.FC<IUploadMultipleWidgetProps> = (props) => {
     <>
       <p className="text-md mr-1 font-bold text-gray-700">Upload các ảnh khác</p>
       <button
-        className="rounded-lg border-gray-300 bg-gray-200 px-4 py-2 text-sm text-gray-600"
+        className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-left text-sm text-gray-600"
         onClick={() => widgetRef.current?.open()}
       >
         {props.thumbnailUploaded?.length > 0 ? 'Các ảnh' : 'Đăng các ảnh khác'}
