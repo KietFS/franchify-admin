@@ -1,0 +1,3 @@
+[submodule "src/type"]
+	path = src/type
+	url = git@github.com:KietFS/market-floor-types.git
