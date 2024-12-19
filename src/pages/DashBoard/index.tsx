@@ -255,7 +255,7 @@ export default function DashBoard() {
 
   return (
     <MainLayout
-      title="Tổng quan thông tin của sàn"
+      title="Báo cáo và doanh thu"
       content={
         statisticData ? (
           <div className="flex flex-col gap-y-10 px-10">

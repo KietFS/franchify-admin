@@ -124,7 +124,7 @@ export default function MainLayout(props: ISideBarProps) {
   const adminRoutes = [
     {
       id: '1',
-      name: 'Tổng quan',
+      name: 'Phân tích và báo cáo',
       to: '/home',
       activeIcon: <ChartBarSquareIconSolid className="h-6 w-6 font-semibold text-white" />,
       icon: <ChartBarSquareIcon className="h-6 w-6 text-white" />,
