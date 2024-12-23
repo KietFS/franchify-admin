@@ -298,15 +298,15 @@ export default function MainLayout(props: ISideBarProps) {
                                             sx={{
                                                 minWidth: 0,
                                                 mr: 3,
-                                                color: path == route.to ? 'primary' : 'black',
+                                                color: path === route.to ? 'primary' : 'black',
                                             }}
-                                            color={path == route.to ? 'blue' : 'black'}
+                                            color={path === route.to ? 'blue' : 'black'}
                                         >
-                                            {path == route.to ? route.activeIcon : route.icon}
+                                            {path === route.to ? route.activeIcon : route.icon}
                                         </ListItemIcon>
                                         <p
                                             className={`text-sm ${
-                                                path == route.to ? 'font-semibold text-white' : 'text-white'
+                                                path === route.to ? 'font-semibold text-white' : 'text-white'
                                             }`}
                                         >
                                             {route.name}
@@ -341,15 +341,15 @@ export default function MainLayout(props: ISideBarProps) {
                                                         sx={{
                                                             minWidth: 0,
                                                             mr: 3,
-                                                            color: path == child.to ? 'primary' : 'black',
+                                                            color: path === child.to ? 'primary' : 'black',
                                                         }}
-                                                        color={path == child.to ? 'blue' : 'black'}
+                                                        color={path === child.to ? 'blue' : 'black'}
                                                     >
-                                                        {path == child.to ? child.activeIcon : child.icon}
+                                                        {path === child.to ? child.activeIcon : child.icon}
                                                     </ListItemIcon>
                                                     <p
                                                         className={`text-sm ${
-                                                            path == child.to ? 'font-semibold text-white' : 'text-white'
+                                                            path === child.to ? 'font-semibold text-white' : 'text-white'
                                                         }`}
                                                     >
                                                         {child.name}

@@ -144,7 +144,7 @@ const UserManagement = () => {
 
     React.useEffect(() => {
         getAllUser({addLoadingEffect: true, overrideCache: false});
-    });
+    }, []);
 
     useEffect(() => {
         setUserTableData(users);
