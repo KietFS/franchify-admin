@@ -34,7 +34,7 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
             options?: string[];
         }[]
     >([]);
-    const [isRefresh, setIsRefresh] = useState<boolean>(false);
+    const [isRefresh] = useState<boolean>(false);
     const [nameValue, setNameValue] = useState<string>("");
     const nameInputRef = React.useRef(null);
 
@@ -203,8 +203,7 @@ const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
                                         </button>
                                     </>
 
-                                    <div className="flex justify-between w-full mt-8">
-                                        <div></div>
+                                    <div className="flex flex-row-reverse justify-between w-full mt-8">
                                         <div className="flex gap-x-2">
                                             <Button
                                                 variant="secondary"
