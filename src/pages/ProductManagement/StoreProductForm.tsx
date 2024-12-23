@@ -4,10 +4,9 @@ import * as yup from 'yup';
 import Button from '../../designs/Button';
 import RichTextInput from '../../designs/RichTextInput';
 import BaseInput from '../../components/BaseInput';
-import {useAppSelector} from '../../hooks/useRedux';
 import UploadWidget from '../../designs/UploadWidget';
 import UploadMultipleWidget from '../../designs/UploadMultipleWidget';
-import {ICategory, IProductPrice, IStoreProduct} from "../../types/models";
+import {IProductPrice, IStoreProduct} from "../../types/models";
 
 interface IFormValue extends Omit<IStoreProduct, 'id'> {
 }
@@ -24,8 +23,6 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
     const [initialValues, setInitialValues] = React.useState<IFormValue | null>(
         currentProduct || null,
     );
-    const {accessToken} = useAppSelector((state) => state.auth);
-    const [selectedCategory, setSelectedCategory] = React.useState<ICategory | null>(null);
     const [thumbnailSelected, setThumbnailSelected] = React.useState<string>('');
     const [images, setImagesSelected] = React.useState<string[]>([]);
 
@@ -154,8 +151,7 @@ const StoreProductForm: React.FC<IProductFormProps> = (props) => {
                                 placeholder="Mô tả sản phẩm"
                             />
                         </div>
-                        <div className="flex items-center justify-between">
-                            <div></div>
+                        <div className="flex flex-row-reverse items-center justify-between">
                             <div className="flex items-center">
                                 <Button variant="secondary" onClick={() => onClose()} title="Đóng"/>
                                 <Button

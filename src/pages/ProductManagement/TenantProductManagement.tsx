@@ -59,7 +59,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
                         onActionSuccess: () => getAllProducts(),
                     },
                 ];
-                return actionLoading && selectedRow == params.row?.id ? (
+                return actionLoading && selectedRow === params.row?.id ? (
                     <Spinner size={20}/>
                 ) : (
                     <ActionMenu options={options}/>
@@ -115,8 +115,11 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
     ];
 
     React.useEffect(() => {
-        products?.length == 0 && getAllProducts();
-    }, []);
+        getAllProducts({
+            addLoadingEffect: true,
+            overrideCache: false,
+        });
+    });
 
     return (
         <>
@@ -149,7 +152,7 @@ const TenantProductManagement: React.FC<ITenantProductManagementProps> = (props)
                                     onClick={() => {
                                         props.onChangeViewMode?.('store');
                                     }}
-                                   
+
                                 ></Button>
                             </div>
                         </div>

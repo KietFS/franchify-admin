@@ -36,7 +36,7 @@ const UpdateStoreForm: React.FC<IStoreFormProps> = ({
                                                         loading,
                                                         onSuccess,
                                                     }) => {
-    const [initialValues, setInitialValues] = useState<IStoreFormValue>(
+    const [initialValues] = useState<IStoreFormValue>(
         currentStore || {
             id: null,
             name: '',

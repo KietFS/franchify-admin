@@ -18,24 +18,27 @@ const useProductManagement = () => {
     const [storeProductResponse, setStoreProductResponse] = useState<IProduct[]>([]);
     const {products, storeProducts} = useAppSelector((state) => state.products);
 
-    const getAllProducts = async () => {
+    const getAllProducts = async (payload?: { addLoadingEffect: boolean, overrideCache: boolean }) => {
+        const {addLoadingEffect = true, overrideCache = false} = payload || {};
         try {
-            setLoading(true);
-            const response = await axios.get(`${apiURL}/products?&page=1&pageSize=1000`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-            if (response?.data?.success) {
-                dispatch(setProducts(response?.data?.data?.results));
-                setProductResponse(response?.data?.data?.results);
-            } else {
-                dispatch(setProducts([]));
+            addLoadingEffect && setLoading(true);
+            if (products?.length == 0 || overrideCache) {
+                const response = await axios.get(`${apiURL}/products?&page=1&pageSize=1000`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                if (response?.data?.success) {
+                    dispatch(setProducts(response?.data?.data?.results));
+                    setProductResponse(response?.data?.data?.results);
+                } else {
+                    dispatch(setProducts([]));
+                }
             }
         } catch (error) {
             console.log('GET PRODUCT RESPONSE', error);
         } finally {
-            setLoading(false);
+            addLoadingEffect && setLoading(false);
         }
     };
 
@@ -64,7 +67,7 @@ const useProductManagement = () => {
                 setActionLoading(false);
                 toast.success('Thêm sản phẩm thành công');
                 onSuccess?.();
-                await getAllProducts();
+                await getAllProducts({overrideCache: true, addLoadingEffect: false});
             } else {
                 toast.error(response?.data?.error || 'Thêm sản phẩm thất bại');
                 console.log('Error', response?.data?.data, response?.data?.error);
@@ -91,7 +94,7 @@ const useProductManagement = () => {
                 setActionLoading(false);
                 toast.success('Cập nhật sản phẩm thành công');
                 onSuccess?.();
-                await getAllProducts();
+                await getAllProducts({overrideCache: true, addLoadingEffect: false});
             } else {
                 toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
             }
@@ -111,7 +114,7 @@ const useProductManagement = () => {
             });
             if (response?.data?.success) {
                 setActionLoading(false);
-                await getAllProducts();
+                await getAllProducts({overrideCache: true, addLoadingEffect: false});
                 toast.success('Xóa sản phẩm thành công');
             } else {
                 toast.error(response?.data?.data || response?.data?.error || 'Xóa sản phẩm thất bại');
@@ -122,29 +125,36 @@ const useProductManagement = () => {
         }
     };
 
-    const getAllStoreProducts = async () => {
+    const getAllStoreProducts = async (payload?: {
+        addLoadingEffect: boolean;
+        overrideCache: boolean;
+    }) => {
+        const {addLoadingEffect = true, overrideCache = false} = payload || {};
         try {
-            setLoading(true);
-            const response = await axios.get(
-                `${apiURL}/products/by-store?storeId=${user?.store?.id}&page=${1}&pageSize=1000`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
+            addLoadingEffect && setLoading(true);
+            if (storeProducts?.length == 0 || overrideCache) {
+                const response = await axios.get(
+                    `${apiURL}/products/by-store?storeId=${user?.store?.id}&page=${1}&pageSize=1000`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
                     },
-                },
-            );
+                );
 
-            if (response?.data?.success) {
-                setStoreProductResponse(response?.data?.data?.results);
-                dispatch(setStoreProducts(response?.data?.data?.results));
-            } else {
-                setStoreProductResponse([]);
-                dispatch(setStoreProducts([]));
+                if (response?.data?.success) {
+                    setStoreProductResponse(response?.data?.data?.results);
+                    dispatch(setStoreProducts(response?.data?.data?.results));
+                } else {
+                    setStoreProductResponse([]);
+                    dispatch(setStoreProducts([]));
+                }
             }
+
         } catch (error) {
             console.log('GET PRODUCT RESPONSE', error);
         } finally {
-            setLoading(false);
+            addLoadingEffect && setLoading(false);
         }
     };
 

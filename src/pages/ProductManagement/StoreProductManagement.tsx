@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {useEffect} from 'react';
 import {DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel} from '@mui/x-data-grid';
 import MainLayout from '../../components/MainLayout';
 import axios from 'axios';
@@ -103,10 +102,13 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                             setSelectedItem(params.row as IStoreProduct);
                             setOpenUpdateModal(true);
                         },
-                        onActionSuccess: () => getAllStoreProducts(),
+                        onActionSuccess: () => getAllStoreProducts({
+                            overrideCache: true,
+                            addLoadingEffect: false,
+                        }),
                     },
                 ];
-                return actionLoading && selectedRow == params.row?.id ? (
+                return actionLoading && selectedRow === params.row?.id ? (
                     <Spinner size={20}/>
                 ) : (
                     <ActionMenu options={options}/>
@@ -131,7 +133,10 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                 setActionLoading(false);
                 toast.success('Cập nhật sản phẩm thành công');
                 setOpenUpdateModal(false);
-                await getAllStoreProducts();
+                await getAllStoreProducts({
+                    overrideCache: true,
+                    addLoadingEffect: false,
+                });
             } else {
                 toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
             }
@@ -144,7 +149,10 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
 
     React.useEffect(() => {
         if (!!currentStore) {
-            getAllStoreProducts();
+            getAllStoreProducts({
+                overrideCache: false,
+                addLoadingEffect: true,
+            });
         }
     }, [currentStore]);
 
@@ -152,12 +160,6 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
         getAllStores();
     }, []);
 
-    useEffect(() => {
-        const currentStore = listStore.find((store) => store.id == user.store.id);
-        if (currentStore) {
-            setCurrentStore(currentStore);
-        }
-    }, [listStore]);
 
     return (
         <>
@@ -171,8 +173,8 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                                     optionSelected={currentStore}
                                     options={listStore}
                                     name="currentStore"
-                                    disabled={user.role == 'admin' ? false : true}
-                                    label={user.role == 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
+                                    disabled={user.role !== 'admin'}
+                                    label={user.role === 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
                                     onSelect={(store) => {
                                         if (store.id === 'all') {
                                             props.onChangeViewMode('tenant');
@@ -180,7 +182,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                                             setCurrentStore(store);
                                         }
                                     }}
-                                    placeholder={user.role == 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
+                                    placeholder={user.role === 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
                                 />
                             </div>
                             <button
@@ -229,7 +231,10 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                     onClose={() => setOpenImportProductModal(false)}
                     children={
                         <ImportProductForm
-                            onImportSuccess={() => getAllStoreProducts()}
+                            onImportSuccess={() => getAllStoreProducts({
+                                overrideCache: true,
+                                addLoadingEffect: false,
+                            })}
                             storeId={currentStore?.id as number}
                             currentStoreProduct={storeProducts}
                             open={openImportProductModal}
@@ -250,9 +255,9 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                             onClose={() => setOpenImportProductModal(false)}
                             loading={actionLoading}
                             currentProduct={selectedItem}
-                            onConfirm={(storeProductValue) => {
+                            onConfirm={async (storeProductValue) => {
                                 if (!!selectedItem) {
-                                    updateStoreProduct(selectedItem?.product?.upc as string, storeProductValue);
+                                    await updateStoreProduct(selectedItem?.product?.upc as string, storeProductValue);
                                 }
                             }}
                         />

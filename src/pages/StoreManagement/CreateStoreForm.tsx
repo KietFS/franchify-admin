@@ -30,7 +30,7 @@ interface IStoreFormProps {
 }
 
 const CreateStoreForm: React.FC<IStoreFormProps> = ({onClose, loading, onSuccess}) => {
-    const [initialValues, setInitialValues] = useState<IStoreFormValue>({
+    const [initialValues] = useState<IStoreFormValue>({
         name: '',
         storeCode: '', // Changed to empty string
         supportDelivery: false,

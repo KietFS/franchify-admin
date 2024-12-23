@@ -129,9 +129,7 @@ const StoreMangement = () => {
     const handleSearch = (value: string) => {
         if (value?.length > 0) {
             const filteredData = listStore.filter((category: any) => {
-                if (category?.name.toLowerCase().includes(value.toLowerCase())) {
-                    return true;
-                }
+                return category?.name.toLowerCase().includes(value.toLowerCase())
             });
             setStoreTableData([...filteredData]);
         } else {
@@ -192,9 +190,9 @@ const StoreMangement = () => {
                         >
                             <UpdateStoreForm
                                 onClose={() => setOpenUpdateModal(false)}
-                                onSuccess={() => {
+                                onSuccess={async () => {
                                     setOpenUpdateModal(false);
-                                    getAllStores();
+                                    await getAllStores();
                                     toast.success('Cập nhật cửa hàng thành công');
                                 }}
                                 // @ts-ignore
@@ -212,9 +210,9 @@ const StoreMangement = () => {
                         >
                             <CreateStoreForm
                                 onClose={() => setOpenCreateModal(false)}
-                                onSuccess={() => {
+                                onSuccess={async () => {
                                     setOpenCreateModal(false);
-                                    getAllStores();
+                                    await getAllStores();
                                     toast.success('Tạo cửa hàng thành công');
                                 }}
                                 loading={loading}

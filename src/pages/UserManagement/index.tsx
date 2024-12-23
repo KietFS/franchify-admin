@@ -17,7 +17,7 @@ const UserManagement = () => {
     const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
     const [openDialog, setOpenDialog] = React.useState<boolean>(false);
     const [userNeedToUpdate, setUserNeedToUpdate] = React.useState<IUser | null>(null);
-    const {users, getAllUser, loading, handleDeactivateUser, handleActivateUser, setUsers} =
+    const {users, getAllUser, loading, handleDeactivateUser, handleActivateUser} =
         useUserManagement();
     const [userTableData, setUserTableData] = React.useState<IUser[]>([]);
 
@@ -31,33 +31,31 @@ const UserManagement = () => {
             width: 100,
             renderCell: (params: GridRenderCellParams<any>) => {
                 if (isAuthorizedForManager) {
-                    {
-                        const options = [
-                            params?.row?.isActive == true
-                                ? {
-                                    id: 'deactivate',
-                                    title: 'Khóa',
-                                    onPress: () => handleDeactivateUser(params.row?.id),
-                                    onActionSuccess: () => getAllUser({addLoadingEffect: false}),
-                                }
-                                : {
-                                    id: 'activate',
-                                    title: 'Cập nhật',
-                                    onPress: () => handleActivateUser(params.row?.id),
-                                    onActionSuccess: () => getAllUser({addLoadingEffect: false}),
-                                },
-                            {
-                                id: 'update-account',
+                    const options = [
+                        params?.row?.isActive
+                            ? {
+                                id: 'deactivate',
+                                title: 'Khóa',
+                                onPress: () => handleDeactivateUser(params.row?.id),
+                                onActionSuccess: () => getAllUser({addLoadingEffect: false}),
+                            }
+                            : {
+                                id: 'activate',
                                 title: 'Cập nhật',
-                                onPress: () => {
-                                    setOpenDialog(true);
-                                    setUserNeedToUpdate(params.row);
-                                },
+                                onPress: () => handleActivateUser(params.row?.id),
                                 onActionSuccess: () => getAllUser({addLoadingEffect: false}),
                             },
-                        ];
-                        return <ActionMenu options={options}/>;
-                    }
+                        {
+                            id: 'update-account',
+                            title: 'Cập nhật',
+                            onPress: () => {
+                                setOpenDialog(true);
+                                setUserNeedToUpdate(params.row);
+                            },
+                            onActionSuccess: () => getAllUser({addLoadingEffect: false}),
+                        },
+                    ];
+                    return <ActionMenu options={options}/>;
                 } else {
                     return <></>;
                 }
@@ -126,24 +124,6 @@ const UserManagement = () => {
         },
         {field: 'email', headerName: 'Email', width: 250},
         {field: 'phoneNumber', headerName: 'Số điện thoại', width: 200},
-        // {
-        //   field: 'isActive',
-        //   headerName: 'Trạng thái',
-        //   types: 'string',
-        //   width: 150,
-        //   headerAlign: 'left',
-        //   align: 'left',
-        //   renderCell: (params: GridRenderCellParams<boolean>) =>
-        //     params.value === true ? (
-        //       <p className="rounded-full bg-green-50 px-2 py-1 text-xs font-bold text-green-800">
-        //         Đang hoạt động
-        //       </p>
-        //     ) : (
-        //       <p className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-800">
-        //         Đã bị khóa
-        //       </p>
-        //     ),
-        // },
     ];
 
     const handleSearch = (value: string) => {
@@ -163,8 +143,8 @@ const UserManagement = () => {
     };
 
     React.useEffect(() => {
-        getAllUser({addLoadingEffect: true});
-    }, []);
+        getAllUser({addLoadingEffect: true, overrideCache: false});
+    });
 
     useEffect(() => {
         setUserTableData(users);

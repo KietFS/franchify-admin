@@ -29,7 +29,7 @@ const CategoryManagement = () => {
     const [categoryTableData, setCategoryTableData] = React.useState<ICategory[]>([]);
 
     const dispatch = useDispatch();
-    const {user, accessToken} = useAppSelector((state: IRootState) => state.auth);
+    const {accessToken} = useAppSelector((state: IRootState) => state.auth);
 
     const fetchCategories = async () => {
         try {
@@ -45,7 +45,7 @@ const CategoryManagement = () => {
                 dispatch(setListCategory(response?.data?.data?.data));
             }
         } catch (error) {
-            console.error('GET PRODUCT CATEGORY ERROR', error);
+            console.error('Get product category error', error);
         } finally {
             setLoading(false);
         }
@@ -82,11 +82,11 @@ const CategoryManagement = () => {
             });
             if (response?.data?.success) {
                 onSuccess();
-                fetchCategories();
+                await fetchCategories();
                 toast.success('Tạo danh mục mới thành công');
             } else {
                 onSuccess();
-                fetchCategories();
+                await fetchCategories();
                 toast.error('Tạo danh mục mới thất bại');
             }
         } catch (error) {
@@ -104,7 +104,7 @@ const CategoryManagement = () => {
                 },
             });
             if (response?.data?.success) {
-                fetchCategories();
+                await fetchCategories();
                 toast.success('Xóa danh mục thành công');
             } else {
                 console.error('Error', response?.data?.data, response?.data?.error);
@@ -211,7 +211,7 @@ const CategoryManagement = () => {
                             <Button
                                 title="Tạo danh mục"
                                 onClick={() => setOpenCreateDialog(true)}
-                            
+
                             />
                         </div>
                         <div className="h-[700px] w-full rounded-xl">
@@ -263,9 +263,8 @@ const ViewHistoryCell: React.FC<IViewCustomFieldCellProps> = (props) => {
     const [openPropertyDialog, setOpenPropertyDialog] = React.useState<boolean>(false);
     const [openCustomField, setOpenCustomField] = React.useState<boolean>(false);
     const [currentItem, setCurrentItem] = React.useState<ICategory | null>(null);
-    const {user} = useAppSelector((state: IRootState) => state.auth);
 
-    const {category, onUpdateItem} = props;
+    const {category} = props;
 
     const handleOpenCustomField = (item: any) => {
         setOpenCustomField(true);
@@ -303,8 +302,7 @@ const ViewHistoryCell: React.FC<IViewCustomFieldCellProps> = (props) => {
                     props.onUpdateItem({...category, properties: [...cloned]}, actionSuccess);
                     setOpenCustomField(false);
                 }}
-                //@ts-ignore
-                options={currentItem?.options}
+                options={(currentItem as any)?.options as any}
             />
         </div>
     );
