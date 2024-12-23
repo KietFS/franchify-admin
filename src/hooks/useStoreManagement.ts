@@ -2,6 +2,7 @@ import {useState} from 'react'
 import axios from "axios";
 import {apiURL} from "../config/constanst";
 import {useAuth} from "./useAuth";
+import {IStore} from "../types/models";
 
 
 const useStoreManagement = () => {

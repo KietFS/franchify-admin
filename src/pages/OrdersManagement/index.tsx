@@ -11,6 +11,7 @@ import CustomDialog from '../../components/CustomDialog';
 import OrderForm from './OrderForm';
 import SelectComponent from '../../components/Select';
 import SpinnerWrapper from "../../components/SpinnerWrapper";
+import {IOrder} from "../../types/models";
 
 interface IUser {
     id: string;

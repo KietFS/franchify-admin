@@ -1,4 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {IProduct, IStoreProduct} from "../../types/models";
 
 
 interface IInitialState {
