@@ -5,7 +5,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Project Description
 Market Floor is an multi-tenant application using multi-tenant logic. Every tenant manage their own resources, data, ensuring stable and security for their customer. This project is written with various tech stacks like: NextJS14, React, NestJS, TailwindCSS, Redux, Redux-Persist, ElasticSearch, Redis cache,...
-Advisor: Mr Nguyen Huu Trung, HCMUTE.
+## Advisor: 
+Mr Nguyen Huu Trung, HCMUTE.
 
 ![Screenshot 2024-12-24 at 23 34 10](https://github.com/user-attachments/assets/d189e7e3-23c2-4fb4-bd51-21b641c9367c)
 
