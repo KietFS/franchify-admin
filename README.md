@@ -1,7 +1,3 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 
 ## Project Description
 Market Floor is an multi-tenant application using multi-tenant logic. Every tenant manage their own resources, data, ensuring stable and security for their customer. This project is written with various tech stacks like: NextJS14, React, NestJS, TailwindCSS, Redux, Redux-Persist, ElasticSearch, Redis cache,...
