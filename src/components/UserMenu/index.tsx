@@ -8,8 +8,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Logout from '@mui/icons-material/Logout';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { setAccessToken, setUser } from '../../redux/slices/auth';
-import { useAuth } from '../../hooks/useAuth';
+import { setAccessToken, setUser } from '@/redux/slices/auth';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function UserMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

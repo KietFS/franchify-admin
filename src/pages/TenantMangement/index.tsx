@@ -1,13 +1,13 @@
 import * as React from 'react';
-import MainLayout from '../../components/MainLayout';
+import MainLayout from '@/components/MainLayout';
 import axios from 'axios';
-import BaseInput from '../../components/BaseInput';
+import BaseInput from '@/components/BaseInput';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import RichTextInput from '../../designs/RichTextInput';
-import Button from '../../designs/Button';
-import { apiURL } from '../../config/constanst';
-import UploadWidget from '../../designs/UploadWidget';
+import RichTextInput from '@/designs/RichTextInput';
+import Button from '@/designs/Button';
+import { apiURL } from '@/config/constanst';
+import UploadWidget from '@/designs/UploadWidget';
 import { CircularProgress } from '@mui/material';
 
 interface IFormValue {

@@ -1,24 +1,23 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IUser} from "../../types/models";
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IUser } from '@/types/models';
 
 interface IInitialState {
-    users: IUser[]
+  users: IUser[];
 }
 
 const initialState: IInitialState = {
-    users: [],
+  users: [],
 };
 
 const userSlice = createSlice({
-    name: "users",
-    initialState,
-    reducers: {
-        setUsers: (state, actions: PayloadAction<IUser[]>) => {
-            state.users = actions.payload;
-        },
+  name: 'users',
+  initialState,
+  reducers: {
+    setUsers: (state, actions: PayloadAction<IUser[]>) => {
+      state.users = actions.payload;
     },
+  },
 });
 
-export const {setUsers} = userSlice.actions;
+export const { setUsers } = userSlice.actions;
 export default userSlice.reducer;

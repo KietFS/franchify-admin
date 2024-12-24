@@ -1,29 +1,28 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IProduct, IStoreProduct} from "../../types/models";
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IProduct, IStoreProduct } from '@/types/models';
 
 interface IInitialState {
-    products: IProduct[]
-    storeProducts: IStoreProduct[]
+  products: IProduct[];
+  storeProducts: IStoreProduct[];
 }
 
 const initialState: IInitialState = {
-    products: [],
-    storeProducts: []
+  products: [],
+  storeProducts: [],
 };
 
 const productsSlice = createSlice({
-    name: "products",
-    initialState,
-    reducers: {
-        setProducts: (state, actions: PayloadAction<IProduct[]>) => {
-            state.products = actions.payload;
-        },
-        setStoreProducts: (state, actions: PayloadAction<IStoreProduct[]>) => {
-            state.storeProducts = actions.payload;
-        }
+  name: 'products',
+  initialState,
+  reducers: {
+    setProducts: (state, actions: PayloadAction<IProduct[]>) => {
+      state.products = actions.payload;
     },
+    setStoreProducts: (state, actions: PayloadAction<IStoreProduct[]>) => {
+      state.storeProducts = actions.payload;
+    },
+  },
 });
 
-export const {setProducts, setStoreProducts} = productsSlice.actions;
+export const { setProducts, setStoreProducts } = productsSlice.actions;
 export default productsSlice.reducer;

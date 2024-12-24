@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../hooks/useAuth';
-import { useAppSelector } from '../../hooks/useRedux';
-import { IRootState } from '../../redux';
-import { setAccessToken, setUser } from '../../redux/slices/auth';
+import { useAppSelector } from '@/hooks/useRedux';
+import { IRootState } from '@/redux';
+import { setAccessToken, setUser } from '@/redux/slices/auth';
 import LogoutConfirmDialog from '../LogoutConfirmDialog';
 
 interface IHeaderProps {

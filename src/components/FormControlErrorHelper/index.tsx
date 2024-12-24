@@ -1,15 +1,11 @@
-import React, { ReactComponentElement, ReactNode } from "react";
+import React, { ReactNode } from 'react';
 
 interface IProps {
   children?: ReactNode;
 }
 
 const FormControlErrorHelper: React.FC<IProps> = ({ children }) => {
-  return (
-    <div className="flex items-center mt-1 text-14 text-red-500">
-      {children}
-    </div>
-  );
+  return <div className="text-14 mt-1 flex items-center text-red-500">{children}</div>;
 };
 
 export default FormControlErrorHelper;

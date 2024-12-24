@@ -1,237 +1,204 @@
-import React, {useState} from "react";
+import React, { useState } from 'react';
 
 //styles
-import {Dialog, DialogContent, IconButton, Tooltip} from "@mui/material";
-import {XMarkIcon} from "@heroicons/react/20/solid";
+import { Dialog, DialogContent, IconButton, Tooltip } from '@mui/material';
+import { XMarkIcon } from '@heroicons/react/20/solid';
 
-import {PlusCircleIcon, TrashIcon,} from "@heroicons/react/24/outline";
-import Button from "../../designs/Button";
-import LoadingSkeleton from "../../components/LoadingSkeleton";
-import SelectCustomFieldComponent from "../../components/SelectCustomField";
-import {ICategory, ICategoryProperty} from "../../types/models";
+import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import Button from '../../designs/Button';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
+import SelectCustomFieldComponent from '../../components/SelectCustomField';
+import { ICategory, ICategoryProperty } from '@/types/models';
 
 interface ICreateCategoryDialogProps {
-    onClose: () => void;
-    open: boolean;
-    onOpenCustomFields: (item: ICategoryProperty) => void;
-    onCreateCategory: (
-        params: Omit<ICategory, "id">,
-        actionSuccess: () => void
-    ) => void;
+  onClose: () => void;
+  open: boolean;
+  onOpenCustomFields: (item: ICategoryProperty) => void;
+  onCreateCategory: (params: Omit<ICategory, 'id'>, actionSuccess: () => void) => void;
 }
 
 const CreateCategoryDialog: React.FC<ICreateCategoryDialogProps> = ({
-                                                                        onClose,
-                                                                        open,
-                                                                        onOpenCustomFields,
-                                                                        onCreateCategory: onUpdateFields,
-                                                                    }) => {
-    const [propertyValues, setPropertyValues] = useState<
-        {
-            displayName: string;
-            name: string;
-            type: string;
-            options?: string[];
-        }[]
-    >([]);
-    const [isRefresh] = useState<boolean>(false);
-    const [nameValue, setNameValue] = useState<string>("");
-    const nameInputRef = React.useRef(null);
+  onClose,
+  open,
+  onOpenCustomFields,
+  onCreateCategory: onUpdateFields,
+}) => {
+  const [propertyValues, setPropertyValues] = useState<
+    {
+      displayName: string;
+      name: string;
+      type: string;
+      options?: string[];
+    }[]
+  >([]);
+  const [isRefresh] = useState<boolean>(false);
+  const [nameValue, setNameValue] = useState<string>('');
+  const nameInputRef = React.useRef(null);
 
-    const handleRemoveProperty = (index: number) => {
-        let updatedProperties = [...propertyValues];
-        updatedProperties.splice(index, 1);
-        setPropertyValues(updatedProperties);
-    };
+  const handleRemoveProperty = (index: number) => {
+    let updatedProperties = [...propertyValues];
+    updatedProperties.splice(index, 1);
+    setPropertyValues(updatedProperties);
+  };
 
-    const handleAddProperty = () => {
-        let updatedProperties = [...propertyValues];
-        updatedProperties.push({
-            displayName: "",
-            name: "",
-            type: "string",
-            options: [],
-        });
-        setPropertyValues(updatedProperties);
-    };
+  const handleAddProperty = () => {
+    let updatedProperties = [...propertyValues];
+    updatedProperties.push({
+      displayName: '',
+      name: '',
+      type: 'string',
+      options: [],
+    });
+    setPropertyValues(updatedProperties);
+  };
 
-    return (
-        <>
-            <Dialog
-                onClose={onClose}
-                open={open}
-                className="rounded-lg"
-                maxWidth="lg"
-                fullWidth={true}
-            >
-                {isRefresh ? (
-                    <DialogContent className="max-h-[800px]">
-                        <LoadingSkeleton/>
-                    </DialogContent>
-                ) : (
-                    <DialogContent className="max-h-[800px]">
-                        <div className="flex flex-col gap-y-5">
-                            <div className="flex justify-between items-center">
-                                <h1 className="text-gray-600 font-bold text-2xl mb-2">
-                                    Thêm danh mục
-                                </h1>
-                                <Tooltip onClick={onClose} title="Đóng">
-                                    <XMarkIcon
-                                        className="w-8    h-8 p-1 hover:bg-gray-200 rounded-full cursor-pointer"/>
-                                </Tooltip>
+  return (
+    <>
+      <Dialog onClose={onClose} open={open} className="rounded-lg" maxWidth="lg" fullWidth={true}>
+        {isRefresh ? (
+          <DialogContent className="max-h-[800px]">
+            <LoadingSkeleton />
+          </DialogContent>
+        ) : (
+          <DialogContent className="max-h-[800px]">
+            <div className="flex flex-col gap-y-5">
+              <div className="flex items-center justify-between">
+                <h1 className="mb-2 text-2xl font-bold text-gray-600">Thêm danh mục</h1>
+                <Tooltip onClick={onClose} title="Đóng">
+                  <XMarkIcon className="h-8 w-8 cursor-pointer rounded-full p-1 hover:bg-gray-200" />
+                </Tooltip>
+              </div>
+
+              <div>
+                <p className="text-md mb-2 font-semibold text-gray-600">Tên danh mục</p>
+                <input
+                  placeholder="Nhập tên danh mục"
+                  title="Tên danh mục"
+                  defaultValue={''}
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  className="border-1 h-[40px] w-full rounded-lg bg-gray-100 px-4 py-1 text-gray-900 focus-within:border-gray-500 focus:border-gray-500"
+                />
+              </div>
+
+              <div className="mt-4 flex flex-col">
+                <p className="text-md mb-2 font-semibold text-gray-600">Các trường của danh mục</p>
+                <>
+                  <div
+                    className="flex w-full items-center justify-between gap-x-5 rounded-t-lg border border-gray-300 bg-white px-4 py-2 shadow-lg"
+                    key="header"
+                  >
+                    <div className="w-1/4">
+                      <p className="font-semibold text-gray-600">Tên hiển thị</p>
+                    </div>
+                    <div className="w-1/4">
+                      <p className="font-semibold text-gray-600">Tên trường</p>
+                    </div>
+                    <div className="w-1/4">
+                      <p className="font-semibold text-gray-600">Kiểu dữ liệu</p>
+                    </div>
+                    <div className="w-1/4">
+                      <p className="font-semibold text-gray-600">Hành động</p>
+                    </div>
+                  </div>
+                  <>
+                    {propertyValues?.length > 0 &&
+                      propertyValues?.map((item: any, index: number) => (
+                        <div>
+                          <div className="flex w-full items-center justify-between gap-x-5 border-b border-l border-r border-gray-300 bg-white px-4 py-2">
+                            <div className="w-1/4">
+                              <input
+                                ref={nameInputRef}
+                                value={propertyValues[index].displayName}
+                                className="rounded-lg border border-gray-300 py-1 pl-4"
+                                onChange={(e) => {
+                                  const newValue = e.target.value;
+                                  setPropertyValues((prevValues) =>
+                                    prevValues.map((prevValue, idx) =>
+                                      idx === index
+                                        ? {
+                                            ...prevValue,
+                                            displayName: newValue,
+                                          }
+                                        : prevValue,
+                                    ),
+                                  );
+                                }}
+                              />
                             </div>
-
-                            <div>
-                                <p className="font-semibold text-gray-600 text-md mb-2">
-                                    Tên danh mục
-                                </p>
-                                <input
-                                    placeholder="Nhập tên danh mục"
-                                    title="Tên danh mục"
-                                    defaultValue={""}
-                                    value={nameValue}
-                                    onChange={(e) => setNameValue(e.target.value)}
-                                    className="w-full rounded-lg px-4 py-1 h-[40px] text-gray-900  bg-gray-100 focus:border-gray-500 focus-within:border-gray-500 border-1"
-                                />
+                            <div className="w-1/4">
+                              <input
+                                ref={nameInputRef}
+                                value={propertyValues[index].name}
+                                className="rounded-lg border border-gray-300 py-1 pl-4"
+                                onChange={(e) => {
+                                  const newValue = e.target.value;
+                                  setPropertyValues((prevValues) =>
+                                    prevValues.map((prevValue, idx) =>
+                                      idx === index ? { ...prevValue, name: newValue } : prevValue,
+                                    ),
+                                  );
+                                }}
+                              />
                             </div>
-
-                            <div className="flex flex-col mt-4">
-                                <p className="font-semibold text-gray-600 text-md mb-2">
-                                    Các trường của danh mục
-                                </p>
-                                <>
-                                    <div
-                                        className="w-full flex gap-x-5 items-center px-4 py-2 rounded-t-lg bg-white border shadow-lg border-gray-300  justify-between"
-                                        key="header"
-                                    >
-                                        <div className="w-1/4">
-                                            <p className="font-semibold text-gray-600">
-                                                Tên hiển thị
-                                            </p>
-                                        </div>
-                                        <div className="w-1/4">
-                                            <p className="font-semibold text-gray-600">
-                                                Tên trường
-                                            </p>
-                                        </div>
-                                        <div className="w-1/4">
-                                            <p className="font-semibold text-gray-600">
-                                                Kiểu dữ liệu
-                                            </p>
-                                        </div>
-                                        <div className="w-1/4">
-                                            <p className="font-semibold text-gray-600">Hành động</p>
-                                        </div>
-                                    </div>
-                                    <>
-                                        {propertyValues?.length > 0 &&
-                                            propertyValues?.map((item: any, index: number) => (
-                                                <div>
-                                                    <div
-                                                        className="w-full flex gap-x-5 items-center px-4 py-2 bg-white border-b border-l border-r border-gray-300  justify-between">
-                                                        <div className="w-1/4">
-                                                            <input
-                                                                ref={nameInputRef}
-                                                                value={propertyValues[index].displayName}
-                                                                className="pl-4 py-1 border border-gray-300 rounded-lg"
-                                                                onChange={(e) => {
-                                                                    const newValue = e.target.value;
-                                                                    setPropertyValues((prevValues) =>
-                                                                        prevValues.map((prevValue, idx) =>
-                                                                            idx === index
-                                                                                ? {
-                                                                                    ...prevValue,
-                                                                                    displayName: newValue,
-                                                                                }
-                                                                                : prevValue
-                                                                        )
-                                                                    );
-                                                                }}
-                                                            />
-                                                        </div>
-                                                        <div className="w-1/4">
-                                                            <input
-                                                                ref={nameInputRef}
-                                                                value={propertyValues[index].name}
-                                                                className="pl-4 py-1 border border-gray-300 rounded-lg"
-                                                                onChange={(e) => {
-                                                                    const newValue = e.target.value;
-                                                                    setPropertyValues((prevValues) =>
-                                                                        prevValues.map((prevValue, idx) =>
-                                                                            idx === index
-                                                                                ? {...prevValue, name: newValue}
-                                                                                : prevValue
-                                                                        )
-                                                                    );
-                                                                }}
-                                                            />
-                                                        </div>
-                                                        <div className="w-1/4">
-                                                            <SelectCustomFieldComponent
-                                                                placeholder={`Chọn trường`}
-                                                                name={"type"}
-                                                                label={``}
-                                                                options={["string", "number", "boolean"]}
-                                                                optionSelected={propertyValues?.[index].type}
-                                                                onSelect={(option) => {
-                                                                    let clonedPropertyValue = [
-                                                                        ...propertyValues,
-                                                                    ];
-                                                                    clonedPropertyValue[index].type = option;
-                                                                    setPropertyValues([...clonedPropertyValue]);
-                                                                }}
-                                                            />
-                                                        </div>
-                                                        <div className="w-1/4 flex items-center">
-                                                            <IconButton
-                                                                title="Xem hoặc chỉnh sửa"
-                                                                onClick={() => handleRemoveProperty(index)}
-                                                            >
-                                                                <TrashIcon
-                                                                    className="text-gray-600 font-bold w-4 h-4"/>
-                                                            </IconButton>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-
-                                        <button
-                                            className="w-full flex gap-x-5 items-center px-4 py-2 rounded-b-lg bg-white border-b border-l border-r border-gray-300  justify-center">
-                                            <IconButton onClick={() => handleAddProperty()}>
-                                                <PlusCircleIcon className="text-gray-600 font-bold w-6 h-6"/>
-                                            </IconButton>
-                                        </button>
-                                    </>
-
-                                    <div className="flex flex-row-reverse justify-between w-full mt-8">
-                                        <div className="flex gap-x-2">
-                                            <Button
-                                                variant="secondary"
-                                                title="Đóng"
-                                                onClick={() => onClose()}
-                                            />
-                                            <Button
-                                                title="Cập nhật"
-                                                onClick={() => {
-                                                    onUpdateFields(
-                                                        {
-                                                            name: nameValue,
-                                                            properties: propertyValues as any,
-                                                        } as any,
-                                                        () => onClose()
-                                                    );
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                </>
+                            <div className="w-1/4">
+                              <SelectCustomFieldComponent
+                                placeholder={`Chọn trường`}
+                                name={'type'}
+                                label={``}
+                                options={['string', 'number', 'boolean']}
+                                optionSelected={propertyValues?.[index].type}
+                                onSelect={(option) => {
+                                  let clonedPropertyValue = [...propertyValues];
+                                  clonedPropertyValue[index].type = option;
+                                  setPropertyValues([...clonedPropertyValue]);
+                                }}
+                              />
                             </div>
+                            <div className="flex w-1/4 items-center">
+                              <IconButton
+                                title="Xem hoặc chỉnh sửa"
+                                onClick={() => handleRemoveProperty(index)}
+                              >
+                                <TrashIcon className="h-4 w-4 font-bold text-gray-600" />
+                              </IconButton>
+                            </div>
+                          </div>
                         </div>
-                    </DialogContent>
-                )}
-            </Dialog>
-        </>
-    );
+                      ))}
+
+                    <button className="flex w-full items-center justify-center gap-x-5 rounded-b-lg border-b border-l border-r border-gray-300 bg-white px-4 py-2">
+                      <IconButton onClick={() => handleAddProperty()}>
+                        <PlusCircleIcon className="h-6 w-6 font-bold text-gray-600" />
+                      </IconButton>
+                    </button>
+                  </>
+
+                  <div className="mt-8 flex w-full flex-row-reverse justify-between">
+                    <div className="flex gap-x-2">
+                      <Button variant="secondary" title="Đóng" onClick={() => onClose()} />
+                      <Button
+                        title="Cập nhật"
+                        onClick={() => {
+                          onUpdateFields(
+                            {
+                              name: nameValue,
+                              properties: propertyValues as any,
+                            } as any,
+                            () => onClose(),
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              </div>
+            </div>
+          </DialogContent>
+        )}
+      </Dialog>
+    </>
+  );
 };
 
 export default CreateCategoryDialog;

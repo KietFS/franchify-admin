@@ -1,23 +1,19 @@
-import React from "react";
+import React from 'react';
 
 interface ILoadingSkeletonProps {}
 
 const LoadingSkeleton: React.FC<ILoadingSkeletonProps> = (props) => {
   return (
     <>
-      {/* <div className="flex justify-between">
-        <div></div>
-        <div className="w-[200px] h-[50px] rounded-md animate-pulse bg-gray-200"></div>
-      </div> */}
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-10"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
-      <div className="w-full h-[50px] rounded-md animate-pulse bg-gray-200 mt-4"></div>
+      <div className="mt-10 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
+      <div className="mt-4 h-[50px] w-full animate-pulse rounded-md bg-gray-200"></div>
     </>
   );
 };
