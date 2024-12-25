@@ -1,5 +1,5 @@
-import { MenuItem, Select } from '@mui/material';
-import React, { ReactNode, useRef } from 'react';
+import {MenuItem, Select} from '@mui/material';
+import React, {ReactNode, useRef} from 'react';
 
 interface ISelectProps<T = any> {
   name: string;
@@ -31,6 +31,7 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
     error = '',
   } = props;
 
+
   return (
     <div className="flex flex-col gap-y-1">
       <p className="mb-1 mr-1 text-sm font-bold text-gray-600">{label}</p>
@@ -40,27 +41,28 @@ const SelectComponent: React.FC<ISelectProps> = (props) => {
         name={name}
         disabled={disabled}
         placeholder={placeholder}
-        value={optionSelected}
+        value={optionSelected || {}}
         style={{
           width: '100%',
+            background: 'white',
           height: 40,
-          background: 'white',
           borderRadius: 7,
           maxHeight: 100,
         }}
-        aria-placeholder={placeholder}
-        renderValue={(value) => (
-          <div className="flex h-full items-center">
-            <p className="items-center text-sm text-gray-900">{optionSelected[keyLabel]}</p>
-          </div>
-        )}
+        renderValue={(value) => {
+            return (
+                <div className="flex h-full items-center">
+                    <p className="items-center text-sm text-gray-800">{optionSelected?.[keyLabel]}</p>
+                </div>
+            )
+        }}
         sx={{
-          boxShadow: 'none',
-          '.MuiOutlinedInput-notchedOutline': { border: 0 },
+            boxShadow: 'none',
+            '.MuiOutlinedInput-notchedOutline': {border: 0},
         }}
       >
-        {renderOption
-          ? renderOption(options)
+          {renderOption
+              ? renderOption(options)
           : options.map((option, index) => (
               <MenuItem
                 value={option[keyValue]}

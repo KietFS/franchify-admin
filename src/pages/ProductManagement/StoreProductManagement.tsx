@@ -1,22 +1,19 @@
 import * as React from 'react';
-import { DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel } from '@mui/x-data-grid';
+import {DataGrid, GridColDef, GridRenderCellParams, GridSelectionModel} from '@mui/x-data-grid';
 import MainLayout from '@/components/MainLayout';
-import axios from 'axios';
-import { useAppSelector } from '@/hooks/useRedux';
-import { IRootState } from '@/redux';
+import {useAppSelector} from '@/hooks/useRedux';
+import {IRootState} from '@/redux';
 import Spinner from '@/components/Spinner';
-import { apiURL } from '@/config/constanst';
 import ActionMenu from '@/components/ActionMenu';
-import { toast } from 'react-toastify';
 import CustomDialog from '@/components/CustomDialog';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import {PlusIcon} from '@heroicons/react/24/outline';
 import SelectComponent from '@/components/Select';
 import ImportProductForm from './ImportProducForm';
 import StoreProductForm from './StoreProductForm';
 import useStoreManagement from '@/hooks/useStoreManagement';
 import SpinnerWrapper from '@/components/SpinnerWrapper';
 import useProductManagement from '@/hooks/useProductMangement';
-import { IStore, IStoreProduct } from '@/types/models';
+import {IStoreProduct} from '@/types/models';
 
 interface IStoreManagementProps {
   onChangeViewMode: (mode: 'tenant' | 'store') => void;
@@ -31,11 +28,10 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
   const [selectedRow, setSelectedRow] = React.useState<string | number>('');
   const [selectedItem, setSelectedItem] = React.useState<IStoreProduct | null>(null);
   const [openImportProductModal, setOpenImportProductModal] = React.useState<boolean>(false);
-  const [currentStore, setCurrentStore] = React.useState<IStore | null>(null);
   const [openUpdateModal, setOpenUpdateModal] = React.useState<boolean>(false);
 
-  const { getAllStores, listStore, loading: storeLoading } = useStoreManagement();
-  const { getAllStoreProducts, storeProducts, storeProductLoading } = useProductManagement();
+  const { getAllStores, listStore, loading: storeLoading, currentStore, dispatchSetCurrentStore } = useStoreManagement();
+  const { getAllStoreProducts, storeProducts, storeProductLoading, updateStoreProduct } = useProductManagement();
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -118,35 +114,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
     },
   ];
 
-  const updateStoreProduct = async (upc: string, values: Omit<IStoreProduct, 'id'>) => {
-    try {
-      setActionLoading(true);
-      const response = await axios.put(
-        `${apiURL}/products/${currentStore?.id}/products/${upc}`,
-        values,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      if (response?.data?.success) {
-        setActionLoading(false);
-        toast.success('Cập nhật sản phẩm thành công');
-        setOpenUpdateModal(false);
-        await getAllStoreProducts({
-          overrideCache: true,
-          addLoadingEffect: false,
-        });
-      } else {
-        toast.error(response?.data?.data || response?.data?.error || 'Cập nhật sản phẩm thất bại');
-      }
-    } catch (error) {
-      setActionLoading(false);
-      setOpenUpdateModal(false);
-      console.log('Client Error', error);
-    }
-  };
+
 
   React.useEffect(() => {
     if (!!currentStore) {
@@ -158,8 +126,10 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
   }, [currentStore]);
 
   React.useEffect(() => {
-    getAllStores();
+    getAllStores({showLoading: true, overrideCache: false});
   }, []);
+
+  console.log('listStore', listStore);
 
   return (
     <>
@@ -173,13 +143,13 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
                   optionSelected={currentStore}
                   options={listStore}
                   name="currentStore"
-                  disabled={user.role !== 'admin'}
+                  keyLabel="name"
                   label={user.role === 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
                   onSelect={(store) => {
                     if (store.id === 'all') {
                       props.onChangeViewMode('tenant');
                     } else {
-                      setCurrentStore(store);
+                      dispatchSetCurrentStore(store);
                     }
                   }}
                   placeholder={user.role === 'admin' ? 'Chọn cửa hàng' : 'Cửa hàng'}
@@ -201,7 +171,7 @@ const StoreProductManagement: React.FC<IStoreManagementProps> = (props) => {
               <div className="h-[700px] w-full">
                 <DataGrid
                   sx={{ borderRadius: '8px' }}
-                  loading={false}
+                  loading={storeLoading || storeProductLoading}
                   components={{
                     LoadingOverlay: SpinnerWrapper,
                   }}

@@ -1,7 +1,7 @@
-import { CSSObject, styled, Theme } from '@mui/material/styles';
+import {CSSObject, styled, Theme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -35,9 +35,9 @@ import {
 } from '@heroicons/react/24/solid';
 
 import UserMenu from '../UserMenu';
-import { Link, useRouteMatch } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { useState } from 'react';
+import {Link, useRouteMatch} from 'react-router-dom';
+import {useAuth} from '@/hooks/useAuth';
+import {useState} from 'react';
 
 const drawerWidth = 270;
 
@@ -220,6 +220,13 @@ export default function MainLayout(props: ISideBarProps) {
       to: '/orders-management',
       activeIcon: <DocumentIcon className="h-6 w-6 font-semibold text-white" />,
       icon: <DocumentIcon className="h-6 w-6 text-white" />,
+    },
+    {
+      id: '9',
+      name: 'Quản lý khuyến mãi',
+      to: '/promotions-management',
+      activeIcon: <EnvelopeIconSolid className="h-6 w-6 font-semibold text-white" />,
+      icon: <EnvelopeIcon className="h-6 w-6 text-white" />,
     },
   ];
 

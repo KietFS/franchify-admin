@@ -1,19 +1,22 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import axios from 'axios';
-import { apiURL } from '../config/constanst';
-import { useAuth } from './useAuth';
-import { IStore } from '../types/models';
-import { useAppSelector } from './useRedux';
-import { useDispatch } from 'react-redux';
-import { setListStore } from '../redux/slices/store';
+import {apiURL} from '@/config/constanst';
+import {useAuth} from './useAuth';
+import {IStore} from '@/types/models';
+import {useAppSelector} from './useRedux';
+import {useDispatch} from 'react-redux';
+import {setCurrentStore, setListStore} from '@/redux/slices/store';
 
 const useStoreManagement = () => {
-  const { listStore } = useAppSelector((state) => state.store);
+  const { listStore, currentStore } = useAppSelector((state) => state.store);
   const [loading, setLoading] = useState<boolean>(false);
-  const [currentStore, setCurrentStore] = useState<IStore>();
   const { accessToken, user } = useAuth();
 
   const dispatch = useDispatch();
+
+  const dispatchSetCurrentStore = (store: IStore) => {
+    dispatch(setCurrentStore(store));
+  }
 
   const getAllStores = async (payload?: { overrideCache: boolean; showLoading: boolean }) => {
     const { overrideCache = false, showLoading = false } = payload || {};
@@ -41,9 +44,9 @@ const useStoreManagement = () => {
             dispatch(setListStore(response?.data?.data?.results));
             setLoading(false);
           }
-          setCurrentStore(
-            response?.data?.data?.results?.find((store: IStore) => store.id == user.store.id),
-          );
+          dispatch(setCurrentStore(
+              response?.data?.data?.results?.find((store: IStore) => store.id == user.store.id),
+          ))
         } else {
           showLoading && setLoading(false);
         }
@@ -106,6 +109,7 @@ const useStoreManagement = () => {
     updateStore,
     loading,
     listStore,
+    dispatchSetCurrentStore,
   };
 };
 
