@@ -66,6 +66,7 @@ export default function DashBoard() {
           'Tháng 12',
         ],
       },
+      colors: ['rgba(0, 0, 0, 0.87)'],
     },
     series: [
       {
@@ -92,6 +93,9 @@ export default function DashBoard() {
           'Dior',
         ],
       },
+      fill: {
+        colors: ['#1f2937'],
+      },
     },
     series: [
       {
@@ -112,6 +116,7 @@ export default function DashBoard() {
       theme: {
         monochrome: {
           enabled: true,
+          color: '#1f2937',
         },
       },
       responsive: [
@@ -197,6 +202,7 @@ export default function DashBoard() {
             theme: {
               monochrome: {
                 enabled: true,
+                color: '#1f2937',
               },
             },
             responsive: [
@@ -230,6 +236,9 @@ export default function DashBoard() {
             xaxis: {
               categories: categories,
             },
+            fill: {
+              colors: ['#1f2937'],
+            },
           },
           series: [
             {
@@ -247,110 +256,93 @@ export default function DashBoard() {
     }
   };
 
-  useEffect(() => {
-    if (!!user) {
-      getStatisticData();
-    }
-  }, [user]);
-
   return (
     <MainLayout
       title="Báo cáo và doanh thu"
       content={
-        statisticData ? (
-          <div className="flex flex-col gap-y-10 px-10">
-            <div className="grid w-full grid-cols-2 flex-row items-center gap-x-5">
-              <div className="rounded-xl bg-white px-10 py-5 shadow-lg drop-shadow-md">
-                <p className="text-center text-xl font-bold text-gray-500">
-                  Thống kê doanh thu của sàn
-                </p>
-                <div className="mt-4 flex w-full justify-center">
-                  <div className="grid w-full grid-cols-2 gap-x-10 gap-y-4">
-                    <div className="w-full">
-                      <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
-                        <p className="text-right text-sm font-bold text-gray-500">
-                          Tổng lợi nhuận của sàn
-                        </p>
-                        <div className="my-2 flex flex-col items-center">
-                          <img src={RevenueIcon} className="h-[80px] w-[100px]" />
-                        </div>
-                        <p className="text-md text-right font-bold text-green-600">
-                          {(983)?.toString().prettyMoney()}
-                        </p>
+        <div className="flex flex-col gap-y-10 px-10">
+          <div className="grid w-full grid-cols-2 flex-row items-center gap-x-5">
+            <div className="rounded-xl bg-white px-10 py-5 shadow-lg drop-shadow-md">
+              <p className="text-center text-xl font-bold text-gray-500">
+                Thống kê doanh thu của sàn
+              </p>
+              <div className="mt-4 flex w-full justify-center">
+                <div className="grid w-full grid-cols-2 gap-x-10 gap-y-4">
+                  <div className="w-full">
+                    <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
+                      <p className="text-right text-sm font-bold text-gray-500">
+                        Tổng lợi nhuận của sàn
+                      </p>
+                      <div className="my-2 flex flex-col items-center">
+                        <img src={RevenueIcon} className="h-[80px] w-[100px]" />
                       </div>
+                      <p className="text-md text-right font-bold text-green-600">
+                        {(983)?.toString().prettyMoney()}
+                      </p>
                     </div>
-                    <div className="w-full">
-                      <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
-                        <p className="text-right text-sm font-bold text-gray-500">
-                          Lợi nhuận trung bình / sản phẩm
-                        </p>
-                        <div className="my-2 flex flex-col items-center">
-                          <img src={RevenueOnEveryBid} className="h-[80px] w-[100px]" />
-                        </div>
-                        <p className="text-md text-right font-bold text-green-600">
-                          {(91)?.toString().prettyMoney()}
-                        </p>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
+                      <p className="text-right text-sm font-bold text-gray-500">
+                        Lợi nhuận trung bình / sản phẩm
+                      </p>
+                      <div className="my-2 flex flex-col items-center">
+                        <img src={RevenueOnEveryBid} className="h-[80px] w-[100px]" />
                       </div>
+                      <p className="text-md text-right font-bold text-green-600">
+                        {(91)?.toString().prettyMoney()}
+                      </p>
                     </div>
-                    <div className="w-full">
-                      <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
-                        <p className="text-right text-sm font-bold text-gray-500">
-                          Lợi nhuận chiết khấu
-                        </p>
-                        <div className="my-2 flex flex-col items-center">
-                          <img src={GiveMoneyIcon} className="h-[80px] w-[100px]" />
-                        </div>
-                        <p className="text-md text-right font-bold text-green-600">
-                          {(889)?.toString().prettyMoney()}
-                        </p>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
+                      <p className="text-right text-sm font-bold text-gray-500">
+                        Lợi nhuận chiết khấu
+                      </p>
+                      <div className="my-2 flex flex-col items-center">
+                        <img src={GiveMoneyIcon} className="h-[80px] w-[100px]" />
                       </div>
+                      <p className="text-md text-right font-bold text-green-600">
+                        {(889)?.toString().prettyMoney()}
+                      </p>
                     </div>
-                    <div className="w-full">
-                      <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
-                        <p className="text-right text-sm font-bold text-gray-500">
-                          Lợi nhuận từ phí đăng
-                        </p>
-                        <div className="my-2 flex flex-col items-center">
-                          <img src={CreateFeeRevenue} className="h-[80px] w-[100px]" />
-                        </div>
-                        <p className="text-md text-right font-bold text-green-600">
-                          {(94)?.toString().prettyMoney()}
-                        </p>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex h-[180px] w-full cursor-pointer flex-col justify-between rounded-xl border border-gray-100 p-4 shadow-lg drop-shadow-md hover:opacity-50">
+                      <p className="text-right text-sm font-bold text-gray-500">
+                        Lợi nhuận từ phí đăng
+                      </p>
+                      <div className="my-2 flex flex-col items-center">
+                        <img src={CreateFeeRevenue} className="h-[80px] w-[100px]" />
                       </div>
+                      <p className="text-md text-right font-bold text-green-600">
+                        {(94)?.toString().prettyMoney()}
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl bg-white px-10 py-5 shadow-lg drop-shadow-md">
-                <p className="mb-2 text-center text-xl font-bold text-gray-500">
-                  Biểu đồ tỷ lệ phần trăm doanh thu
-                </p>
-                <Chart
-                  options={pieState.options as any}
-                  series={pieState.series}
-                  type="pie"
-                  height="380"
-                />
-              </div>
             </div>
-            <div className="w-full rounded-xl bg-white px-10 py-5 shadow-lg drop-shadow-md">
-              {/* <p className="text-center text-2xl text-gray-500 font-bold mb-4">
-            Doanh thu của cửa hàng theo tháng (2023)
-          </p>
-          <Chart
-            options={lineState.options}
-            series={lineState.series}
-            types="line"
-            width="99%"
-            height="280"
-          /> */}
-              <p className="text-center text-xl font-bold text-gray-500">
-                Số lượng sản phẩm đang có trên sàn theo từng danh mục
+            <div className="rounded-xl bg-white px-10 py-5 shadow-lg drop-shadow-md">
+              <p className="mb-2 text-center text-xl font-bold text-gray-500">
+                Biểu đồ tỷ lệ phần trăm doanh thu
               </p>
-              <Chart options={barState.options} series={barState.series} type="bar" height="300" />
+              <Chart
+                options={pieState.options as any}
+                series={pieState.series}
+                type="pie"
+                height="380"
+                color="black"
+              />
             </div>
           </div>
-        ) : null
+          <div className="w-full rounded-xl bg-white px-10 py-5 shadow-lg drop-shadow-md">
+            <p className="text-center text-xl font-bold text-gray-500">
+              Số lượng sản phẩm đang có trên sàn theo từng danh mục
+            </p>
+            <Chart options={barState.options} series={barState.series} type="bar" height="300" />
+          </div>
+        </div>
       }
     />
   );
