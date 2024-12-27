@@ -20,9 +20,7 @@ const UploadWidget: React.FC<IUploadWidgetProps> = (props) => {
       function (error: any, result: any) {
         if (result.event == 'success') {
           props.setThumbnailUploaded(result?.info?.secure_url);
-          //   toast.success("Đăng thumbnail thành công");
         } else {
-          //   toast.error("Đăng thumbnail thất bại");
         }
       },
     );
