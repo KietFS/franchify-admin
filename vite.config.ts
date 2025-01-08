@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  base: '/',
-  plugins: [react()],
+export default defineConfig(async () => {
+  const { default: react } = await import('@vitejs/plugin-react');
+  const { default: tsconfigPaths } = await import('vite-tsconfig-paths');
+
+  return {
+    plugins: [react(), tsconfigPaths()],
+    server: {
+      open: true,
+    },
+  };
 });
