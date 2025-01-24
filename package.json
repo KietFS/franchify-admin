@@ -21,15 +21,19 @@
     "apexcharts": "^3.36.3",
     "axios": "^1.2.1",
     "chart.js": "^4.0.0",
+    "customize-cra": "^1.0.0",
     "dayjs": "^1.11.7",
     "dotenv": "^16.3.1",
     "firebase": "^9.15.0",
     "formik": "^2.2.9",
+    "jwt-decode": "^3.1.2",
+    "leaflet": "^1.9.4",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.0",
     "react-app-rewired": "^2.2.1",
     "react-dom": "^18.3.1",
     "react-firebase-hooks": "^5.1.1",
+    "react-leaflet": "^4.2.1",
     "react-map4d-map": "^1.3.8",
     "react-number-format": "^5.1.2",
     "react-redux": "^8.0.5",
@@ -40,6 +44,8 @@
     "redux-persist-expire": "^1.1.1",
     "redux-persist-transform-filter": "^0.0.22",
     "styled-components": "^5.3.6",
+    "twin.macro": "^3.1.0",
+    "universal-cookie": "^4.0.4",
     "vite": "^6.0.7",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4",
@@ -47,8 +53,9 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
+    "start": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
   },
   "eslintConfig": {
     "extends": [

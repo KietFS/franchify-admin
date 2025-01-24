@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { persistor, store } from './redux';
-import '@/utils/prototype';
+import './utils/prototype';
 import { PersistGate } from 'redux-persist/integration/react';
 
 export default function App() {
